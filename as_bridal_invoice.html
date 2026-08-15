@@ -20,16 +20,21 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .topbtns{display:flex;gap:5px;flex-shrink:0}
 .b{padding:6px 12px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap}
 .b-o{background:0;border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8)}.b-o:hover{background:rgba(255,255,255,.1)}
-.b-go{background:0;border:1.5px solid var(--g);color:var(--g)}.b-go:hover{background:rgba(201,168,68,.15)}
 .b-g{background:var(--g);color:var(--dm);font-weight:800}.b-g:hover{background:#D4B54E}
 .b-s{background:#2E7D32;color:#fff}.b-s:hover{background:#388E3C}
 .b-img{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);color:#fff}.b-img:hover{background:rgba(255,255,255,.25)}
 .b:disabled{opacity:.5;cursor:default}
 .hide{display:none!important}
+/* STATUS INDICATOR */
+.sb-status{display:flex;align-items:center;gap:5px;font-size:9.5px;color:rgba(255,255,255,.7);padding:0 6px}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:#888;transition:background .3s}
+.sb-dot.ok{background:#4CAF50}.sb-dot.err{background:#f44336}.sb-dot.busy{background:#FFC107;animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(80px);padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;transition:transform .3s;white-space:nowrap;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.3)}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .appfooter{position:fixed;bottom:0;left:0;right:0;height:26px;background:var(--dm);display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,.75);letter-spacing:.5px;z-index:90;border-top:1px solid rgba(255,255,255,.08)}
 .appfooter b{color:var(--g);font-weight:700}
+/* DASHBOARD */
 #dashV{display:flex;flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
 #dashV.hide{display:none}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
@@ -42,6 +47,9 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .dtw{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden;flex:1}
 .dth{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f0e8e0}
 .dth h2{font-family:'Playfair Display',serif;font-size:15px;color:var(--dm)}
+.dth-right{display:flex;gap:8px;align-items:center}
+.dsrch{padding:6px 10px;border:1.5px solid #E0D5CF;border-radius:5px;font-size:11px;font-family:'Open Sans',sans-serif;outline:none;width:180px}
+.dsrch:focus{border-color:var(--m)}
 .itbl{width:100%;border-collapse:collapse}
 .itbl th{padding:10px 14px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#BBB;border-bottom:2px solid #f5ede8}
 .itbl td{padding:10px 14px;font-size:12px;color:var(--t);border-bottom:1px solid #faf4f0;vertical-align:middle}
@@ -51,10 +59,11 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .tact{display:flex;gap:4px;flex-wrap:nowrap}
 .tbtn{padding:5px 9px;border:none;border-radius:5px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;white-space:nowrap;transition:opacity .2s}
 .tbtn:hover{opacity:.8}
-.tbtn.vi{background:#EDE7F6;color:#5C0F28}.tbtn.ic{background:#E8F5E9;color:#1B5E20;padding:5px 8px}
-.tbtn.ed{background:#FFF8E1;color:var(--gd)}.tbtn.del{background:#FFEBEE;color:#C0392B;padding:5px 8px}
+.tbtn.vi{background:#EDE7F6;color:#5C0F28}.tbtn.ic{background:#E8F5E9;color:#1B5E20}
+.tbtn.ed{background:#FFF8E1;color:var(--gd)}.tbtn.del{background:#FFEBEE;color:#C0392B}
 .empty{padding:48px;text-align:center;color:#CCC}
 .empty div:first-child{font-size:42px;margin-bottom:12px}
+/* EDITOR */
 #editorV{display:flex;flex-direction:row;height:calc(100vh - 72px)}
 #editorV.hide{display:none}
 .fp{background:#fff;overflow-y:auto;border-right:1px solid #DDD0C8;width:390px;min-width:390px;transition:width .3s,min-width .3s,border .3s}
@@ -98,6 +107,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .pvl{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#8A6A5A}
 .ppb{padding:5px 12px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;transition:all .2s;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.3);color:var(--dm);border:1px solid rgba(92,15,40,.15)}
 .ppb:hover{background:rgba(255,255,255,.5)}
+/* INVOICE */
 #INV{width:794px;background:var(--bg);box-shadow:0 6px 40px rgba(0,0,0,.3);position:relative;overflow:hidden;flex-shrink:0}
 #INV::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--dm),var(--g),var(--dm))}
 .ih{padding:20px 28px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #EDD8C5}
@@ -187,6 +197,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
     <button class="ntab" id="tabD" onclick="showDash()">📊 Dashboard</button>
     <button class="ntab act" id="tabE" onclick="showEditor()">📝 New Invoice</button>
   </div>
+  <div class="sb-status"><div class="sb-dot" id="sbDot"></div><span id="sbTxt">Connecting...</span></div>
   <div class="topbtns">
     <button class="b b-o" id="bReset" onclick="resetAll()">↺ Reset</button>
     <button class="b b-s" id="bSave" onclick="saveInv()">💾 Save</button>
@@ -198,15 +209,18 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 
 <div id="dashV" class="hide">
   <div class="stats">
-    <div class="sc"><div class="sc-l">Total Invoices</div><div class="sc-v" id="dTot">0</div><div class="sc-s">All time</div></div>
-    <div class="sc"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">₹0</div><div class="sc-s">All invoices</div></div>
-    <div class="sc"><div class="sc-l">Paid</div><div class="sc-v" id="dPaid">0</div><div class="sc-s">Completed</div></div>
-    <div class="sc"><div class="sc-l">Pending / Partial</div><div class="sc-v" id="dPend">0</div><div class="sc-s">Outstanding</div></div>
+    <div class="sc"><div class="sc-l">Total Invoices</div><div class="sc-v" id="dTot">—</div><div class="sc-s">All time</div></div>
+    <div class="sc"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">All invoices</div></div>
+    <div class="sc"><div class="sc-l">Paid</div><div class="sc-v" id="dPaid">—</div><div class="sc-s">Completed</div></div>
+    <div class="sc"><div class="sc-l">Pending / Partial</div><div class="sc-v" id="dPend">—</div><div class="sc-s">Outstanding</div></div>
   </div>
   <div class="dtw">
     <div class="dth">
       <h2>💍 Invoice Collection</h2>
-      <button class="b b-g" style="font-size:11px;padding:6px 14px" onclick="newInv();showEditor()">＋ New Invoice</button>
+      <div class="dth-right">
+        <input class="dsrch" id="dashSearch" placeholder="🔍 Search customer / invoice..." oninput="filterDash()">
+        <button class="b b-g" style="font-size:11px;padding:6px 14px" onclick="newInv();showEditor()">＋ New Invoice</button>
+      </div>
     </div>
     <div id="dashC"></div>
   </div>
@@ -214,7 +228,6 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 
 <div id="editorV">
   <div class="fp" id="fp"><div class="fi">
-
     <div class="sec">
       <div class="sec-t">📄 Invoice Details</div>
       <div class="row r3">
@@ -223,14 +236,12 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
         <div class="fg"><label>Order ID</label><input id="fOrd" value="ASB260601001" oninput="rp()"></div>
       </div>
     </div>
-
     <div class="sec">
       <div class="sec-t">🎀 Invoice Branding</div>
       <div class="row r1"><div class="fg"><label>Brand Title</label><input id="fIBN" value="AS BRIDAL" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>Subtitle</label><input id="fIBS" value="BANGLES &amp; ACCESSORIES" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>Tagline</label><input id="fITG" value="Elegance in Every Bangle" oninput="rp()"></div></div>
     </div>
-
     <div class="sec">
       <div class="sec-t">💱 Currency &amp; Pricing</div>
       <div class="row r2">
@@ -257,7 +268,6 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
       </div>
       <div class="row r1 off" id="rDV"><div class="fg"><label id="dLbl">Discount Value</label><input id="fDV" type="number" min="0" placeholder="0" oninput="rp()"></div></div>
     </div>
-
     <div class="sec">
       <div class="sec-t">💳 Payment</div>
       <div class="row r2">
@@ -289,17 +299,15 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
       </div>
       <div class="row r1 off" id="rBank3"><div class="fg"><label>Branch (optional)</label><input id="fBB" placeholder="Branch name / location" oninput="rp()"></div></div>
     </div>
-
     <div class="sec">
       <div class="sec-t">👤 Customer</div>
       <div class="row r1"><div class="fg"><label>Name</label><input id="fCN" placeholder="Mrs. Priya Raman" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>Address</label><textarea id="fCA" placeholder="Full address..." oninput="rp()"></textarea></div></div>
       <div class="row r1"><div class="fg"><label>Phone</label><input id="fCP" placeholder="+91 XXXXX XXXXX" oninput="rp()"></div></div>
     </div>
-
     <div class="sec">
       <div class="sec-t">💎 Jewellery Care</div>
-      <div style="font-size:9.5px;color:#AAA;margin-bottom:8px">Edit care tips shown on invoice. Leave blank to hide any tip.</div>
+      <div style="font-size:9.5px;color:#AAA;margin-bottom:8px">Leave blank to hide any tip.</div>
       <div class="row r1"><div class="fg"><label>Section Title</label><input id="fCTitle" value="Jewellery Care" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>💧 Tip 1</label><input id="fC1" value="Keep away from water" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>🌸 Tip 2</label><input id="fC2" value="Avoid perfume &amp; chemicals" oninput="rp()"></div></div>
@@ -309,14 +317,12 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
       <div class="row r1"><div class="fg"><label>Care Tagline</label><textarea id="fCT" rows="2" style="min-height:40px" oninput="rp()">Packed with elegance,
 Delivered with care. ♡</textarea></div></div>
     </div>
-
     <div class="sec">
       <div class="sec-t">💍 Products</div>
       <div class="ph"><span>IMG</span><span>PRODUCT</span><span>SIZE</span><span>QTY</span><span>RATE</span><span></span></div>
       <div id="pR"></div>
       <button class="badd" onclick="addP()">＋ Add Product</button>
     </div>
-
     <div class="sec">
       <div class="sec-t">🏪 Seller Details</div>
       <div style="font-size:9px;font-weight:700;color:var(--t);letter-spacing:.5px;opacity:.7;text-transform:uppercase;margin-bottom:5px">LOGO</div>
@@ -333,12 +339,11 @@ Delivered with care. ♡</textarea></div></div>
       <div class="row r1"><div class="fg"><label>Address</label><textarea id="fSA" oninput="rp()">No. 12/1, Lakshmi Nagar, Guduvanchery, Chennai, Tamil Nadu – 603202</textarea></div></div>
       <div class="row r2">
         <div class="fg"><label>Phone</label><input id="fSPh" value="+91 98765 43210" oninput="rp()"></div>
-        <div class="fg"><label>Instagram Handle</label><input id="fSIG" value="@asbridalbangles" oninput="rp()" placeholder="@handle"></div>
+        <div class="fg"><label>Instagram Handle</label><input id="fSIG" value="@asbridalbangles" oninput="rp()"></div>
       </div>
       <div class="row r1"><div class="fg"><label>WhatsApp Number</label><input id="fWA" value="+91 98765 43210" oninput="rp()"></div></div>
-      <div class="row r1"><div class="fg"><label>Website (leave blank to hide)</label><input id="fSW" value="www.asbridalbangles.com" oninput="rp()"></div></div>
+      <div class="row r1"><div class="fg"><label>Website (blank to hide)</label><input id="fSW" value="www.asbridalbangles.com" oninput="rp()"></div></div>
     </div>
-
   </div></div>
 
   <div class="pp">
@@ -369,7 +374,7 @@ Delivered with care. ♡</textarea></div></div>
   <div class="mbar">
     <div class="mtitle" id="viewTitle">📄 Invoice Preview</div>
     <div class="macts">
-      <button class="b b-g" style="font-size:11px;padding:6px 12px" id="dlViewBtn" onclick="dlView('PDF')">⬇ PDF</button>
+      <button class="b b-g" style="font-size:11px;padding:6px 12px" onclick="dlView('PDF')">⬇ PDF</button>
       <button class="b b-img" style="font-size:11px;padding:6px 12px" onclick="dlView('JPEG')">🖼 JPEG</button>
       <button class="b b-img" style="font-size:11px;padding:6px 12px" onclick="dlView('PNG')">🖼 PNG</button>
       <button class="b b-o" style="font-size:11px;padding:6px 12px" onclick="closeViewModal()">✕ Close</button>
@@ -383,6 +388,105 @@ Delivered with care. ♡</textarea></div></div>
 <input type="file" id="logoF" accept="image/*" style="display:none" onchange="onLogoImg(event)">
 
 <script>
+/* ===== SUPABASE CONFIG ===== */
+const SB_BASE='https://tgvuoesnzolpjppyrage.supabase.co/rest/v1';
+const SB_URL=`${SB_BASE}/invoices`;
+const SB_KEYS=[
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRndnVvZXNuem9scGpwcHlyYWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzA4NTEsImV4cCI6MjEwMjMwNjg1MX0.X5xtjuyR17ySI8AqcZ4XI-bImNpuRVoqt92zi2w1P38',
+  'sb_publishable_JiZ1rL1Z7WKzjZc94P9RSw_G-3fvyox'
+];
+let SB_KEY=SB_KEYS[0];
+
+function sbH(extra={}){
+  return{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Prefer':'return=representation',...extra};
+}
+async function sbFetch(url,method='GET',body=null){
+  const opts={method,headers:sbH()};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch(url,opts);
+  if(!r.ok){const t=await r.text();throw new Error(t||`HTTP ${r.status} ${r.statusText}`);}
+  const txt=await r.text();
+  return txt?JSON.parse(txt):null;
+}
+async function sbGetAll(){return sbFetch(`${SB_URL}?select=*&order=created_at.desc`);}
+async function sbGetOne(id){const rows=await sbFetch(`${SB_URL}?select=*&id=eq.${id}`);return rows?.[0]||null;}
+async function sbInsert(row){return sbFetch(SB_URL,'POST',row);}
+async function sbUpdate(id,row){return sbFetch(`${SB_URL}?id=eq.${id}`,'PATCH',row);}
+async function sbDelete(id){
+  const r=await fetch(`${SB_URL}?id=eq.${id}`,{method:'DELETE',headers:sbH({'Prefer':''})});
+  if(!r.ok)throw new Error(await r.text());
+}
+async function sbPing(){
+  let lastErr='';
+  for(let i=0;i<SB_KEYS.length;i++){
+    SB_KEY=SB_KEYS[i];
+    try{
+      await sbFetch(`${SB_URL}?select=id&limit=1`);
+      setSbStatus('ok',`Supabase ✓`);
+      const d=document.getElementById('diagBox');if(d)d.remove();
+      return true;
+    }catch(e){lastErr=e.message;}
+  }
+  setSbStatus('err','DB Error');
+  console.error('Supabase error:',lastErr);
+  showDiag(lastErr);
+  return false;
+}
+function showDiag(msg){
+  const isTableMissing=/relation|does not exist|42P01|Could not find the table|PGRST205/i.test(msg);
+  const isRLS=/permission denied|RLS|row-level|42501/i.test(msg);
+  let d=document.getElementById('diagBox');
+  if(!d){
+    d=document.createElement('div');d.id='diagBox';
+    d.style.cssText='position:fixed;bottom:36px;left:16px;right:16px;max-width:720px;margin:0 auto;background:#fff;border:2px solid #C0392B;border-radius:10px;padding:16px 18px;z-index:9998;box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:12px;line-height:1.6';
+    document.body.appendChild(d);
+  }
+  const sql=`create table if not exists invoices (
+  id uuid primary key default gen_random_uuid(),
+  invoice_no text,
+  customer_name text,
+  status text default 'PAID',
+  total numeric default 0,
+  currency text default 'INR',
+  invoice_date text,
+  data jsonb,
+  created_at timestamptz default now()
+);
+
+alter table invoices enable row level security;
+
+drop policy if exists "public_all" on invoices;
+create policy "public_all" on invoices
+  for all to anon, authenticated
+  using (true) with check (true);
+
+grant all on invoices to anon, authenticated;`;
+  d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
+    <div style="flex:1">
+      <div style="font-weight:800;color:#C0392B;font-size:13px;margin-bottom:6px">⚠️ ${isTableMissing?'Table Not Found':isRLS?'Permission Denied (RLS)':'Supabase Connection Failed'}</div>
+      <div style="background:#FFF3F3;padding:8px 10px;border-radius:5px;font-family:monospace;font-size:10.5px;color:#7A1535;margin-bottom:10px;word-break:break-word;max-height:80px;overflow:auto">${eh(msg)}</div>
+      <div style="font-weight:700;margin-bottom:5px">✅ Fix: Run this in Supabase → SQL Editor → New Query → Run</div>
+      <textarea readonly id="fixSql" style="width:100%;height:130px;font-family:monospace;font-size:10px;padding:8px;border:1px solid #ddd;border-radius:5px;background:#FAFAFA;resize:vertical">${sql}</textarea>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button onclick="copySql()" style="background:#5C0F28;color:#fff;border:none;padding:7px 14px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif">📋 Copy SQL</button>
+        <button onclick="sbPing()" style="background:#2E7D32;color:#fff;border:none;padding:7px 14px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif">🔄 Retry Connection</button>
+        <a href="https://supabase.com/dashboard/project/tgvuoesnzolpjppyrage/sql/new" target="_blank" style="background:#C9A844;color:#5C0F28;border:none;padding:7px 14px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center">🔗 Open SQL Editor</a>
+      </div>
+    </div>
+    <button onclick="this.closest('#diagBox').remove()" style="background:0;border:none;font-size:20px;color:#999;cursor:pointer;line-height:1">×</button>
+  </div>`;
+}
+function copySql(){
+  const t=document.getElementById('fixSql');
+  t.select();document.execCommand('copy');
+  toast('✓ SQL copied — paste it in Supabase SQL Editor');
+}
+function setSbStatus(state,txt){
+  const d=document.getElementById('sbDot'),t=document.getElementById('sbTxt');
+  d.className='sb-dot '+state;t.textContent=txt;
+}
+
+/* ===== CURRENCIES ===== */
 const CURR=[
   {c:'INR',s:'₹',n:'Indian Rupee'},{c:'USD',s:'$',n:'US Dollar'},{c:'EUR',s:'€',n:'Euro'},
   {c:'GBP',s:'£',n:'British Pound'},{c:'AED',s:'د.إ',n:'UAE Dirham'},{c:'SGD',s:'S$',n:'Singapore Dollar'},
@@ -399,13 +503,13 @@ const CURR=[
   {c:'NOK',s:'kr',n:'Norwegian Krone'},{c:'NZD',s:'NZ$',n:'New Zealand Dollar'},
 ];
 const CARE_ICONS=['💧','🌸','✨','👜','❤️'];
-let prods=[], imgTgt=null, rid=0, isUD=false, curKey=null, logoImg=null;
+let prods=[],imgTgt=null,rid=0,isUD=false,curKey=null,logoImg=null,allInvs=[];
 
-// ===== THEME =====
+/* ===== THEME ===== */
 function hexToRgb(hex){const v=hex.replace('#','');const n=parseInt(v.length===3?v.split('').map(c=>c+c).join(''):v,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255};}
 function rgbToHex(r,g,b){const c=x=>Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,'0');return'#'+c(r)+c(g)+c(b);}
-function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const max=Math.max(r,g,b),min=Math.min(r,g,b);let h,s,l=(max+min)/2;if(max===min){h=s=0;}else{const d=max-min;s=l>0.5?d/(2-max-min):d/(max+min);switch(max){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}h*=60;}return{h,s,l};}
-function hslToRgb(h,s,l){h=((h%360)+360)%360/360;let r,g,b;if(s===0){r=g=b=l;}else{const hue2rgb=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);}return{r:r*255,g:g*255,b:b*255};}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h,s,l=(mx+mn)/2;if(mx===mn){h=s=0;}else{const d=mx-mn;s=l>0.5?d/(2-mx-mn):d/(mx+mn);switch(mx){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;}h*=60;}return{h,s,l};}
+function hslToRgb(h,s,l){h=((h%360)+360)%360/360;let r,g,b;if(s===0){r=g=b=l;}else{const f=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};const q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;r=f(p,q,h+1/3);g=f(p,q,h);b=f(p,q,h-1/3);}return{r:r*255,g:g*255,b:b*255};}
 function lightenHex(hex,pct){const{r,g,b}=hexToRgb(hex),hsl=rgbToHsl(r,g,b);hsl.l=Math.min(0.96,hsl.l+pct/100);const o=hslToRgb(hsl.h,hsl.s,hsl.l);return rgbToHex(o.r,o.g,o.b);}
 function darkenHex(hex,pct){const{r,g,b}=hexToRgb(hex),hsl=rgbToHsl(r,g,b);hsl.l=Math.max(0.04,hsl.l-pct/100);const o=hslToRgb(hsl.h,hsl.s,hsl.l);return rgbToHex(o.r,o.g,o.b);}
 function colorDist(c1,c2){return Math.sqrt((c1.r-c2.r)**2+(c1.g-c2.g)**2+(c1.b-c2.b)**2);}
@@ -414,13 +518,12 @@ function extractThemeFromLogo(src){
     const img=new Image();
     img.onload=()=>{
       try{
-        const w=60,h=60,cv=document.createElement('canvas');cv.width=w;cv.height=h;
-        const ctx=cv.getContext('2d');ctx.drawImage(img,0,0,w,h);
-        const data=ctx.getImageData(0,0,w,h).data,buckets={};
+        const cv=document.createElement('canvas');cv.width=60;cv.height=60;
+        cv.getContext('2d').drawImage(img,0,0,60,60);
+        const data=cv.getContext('2d').getImageData(0,0,60,60).data,buckets={};
         for(let i=0;i<data.length;i+=4){
           const r=data[i],g=data[i+1],b=data[i+2],a=data[i+3];
-          if(a<128)continue;
-          const hsl=rgbToHsl(r,g,b);
+          if(a<128)continue;const hsl=rgbToHsl(r,g,b);
           if(hsl.s<0.18||hsl.l<0.12||hsl.l>0.88)continue;
           const key=Math.round(hsl.h/15)*15%360;
           if(!buckets[key])buckets[key]={count:0,r:0,g:0,b:0};
@@ -431,9 +534,9 @@ function extractThemeFromLogo(src){
         arr.sort((a,b)=>b.count-a.count);
         const byLight=arr.slice().sort((a,b)=>rgbToHsl(a.r,a.g,a.b).l-rgbToHsl(b.r,b.g,b.b).l);
         const primary=byLight[0],accent=arr.find(c=>colorDist(c,primary)>70)||arr[1]||arr[0];
-        const dmHex=rgbToHex(primary.r,primary.g,primary.b),mHex=lightenHex(dmHex,12);
-        const gHex=rgbToHex(accent.r,accent.g,accent.b),glHex=lightenHex(gHex,35),gdHex=darkenHex(gHex,15);
-        applyTheme(mHex,dmHex,gHex,glHex,gdHex);resolve(true);
+        const dmHex=rgbToHex(primary.r,primary.g,primary.b);
+        applyTheme(lightenHex(dmHex,12),dmHex,rgbToHex(accent.r,accent.g,accent.b),lightenHex(rgbToHex(accent.r,accent.g,accent.b),35),darkenHex(rgbToHex(accent.r,accent.g,accent.b),15));
+        resolve(true);
       }catch(e){resolve(false);}
     };
     img.onerror=()=>resolve(false);img.src=src;
@@ -442,20 +545,21 @@ function extractThemeFromLogo(src){
 function applyTheme(m,dm,g,gl,gd){const s=document.documentElement.style;s.setProperty('--m',m);s.setProperty('--dm',dm);s.setProperty('--g',g);s.setProperty('--gl',gl);s.setProperty('--gd',gd);}
 function resetTheme(){['--m','--dm','--g','--gl','--gd'].forEach(p=>document.documentElement.style.removeProperty(p));toast('Theme reset to default colors');}
 
-// ===== INIT =====
+/* ===== INIT ===== */
 async function init(){
   const sel=document.getElementById('fCurr');
   CURR.forEach(c=>{const o=document.createElement('option');o.value=c.c;o.textContent=`${c.s} ${c.c} — ${c.n}`;if(c.c==='INR')o.selected=true;sel.appendChild(o);});
   const td=new Date().toISOString().split('T')[0];
   document.getElementById('fDt').value=td;document.getElementById('fPO').value=td;
+  setSbStatus('busy','Connecting...');
   await loadSavedLogo();
+  await sbPing();
   addP();addP();rp();showEditor();
 }
 
-// ===== LOGO =====
+/* ===== LOGO ===== */
 async function loadSavedLogo(){
-  const v=await getStor('asbr_logo');
-  if(v){logoImg=v;applyLogoPreview(v);await extractThemeFromLogo(v);}
+  try{const r=await window.storage.get('asbr_logo');if(r){logoImg=r.value;applyLogoPreview(r.value);await extractThemeFromLogo(r.value);}}catch(e){}
 }
 function onLogoImg(e){
   const f=e.target.files[0];if(!f)return;
@@ -463,10 +567,9 @@ function onLogoImg(e){
   reader.onload=async ev=>{
     logoImg=ev.target.result;applyLogoPreview(logoImg);
     const matched=await extractThemeFromLogo(logoImg);
-    rp();toast(matched?'✓ Logo & theme colors updated!':'✓ Logo updated!');
+    rp();toast(matched?'✓ Logo & theme updated!':'✓ Logo updated!');
     try{await window.storage.set('asbr_logo',logoImg);}catch(ex){}
   };
-  reader.onerror=()=>toast('Logo file could not be read.',true);
   reader.readAsDataURL(f);e.target.value='';
 }
 function applyLogoPreview(src){
@@ -475,39 +578,14 @@ function applyLogoPreview(src){
   document.getElementById('logoLbl').textContent='Click to change logo';
 }
 function logoEl(){
-  if(logoImg){
-    return `<div style="width:150px;height:150px;flex-shrink:0;display:block;line-height:0">
-      <img src="${logoImg}" alt="Logo" style="display:block;width:100%;height:100%;object-fit:contain;object-position:center">
-    </div>`;
-  }
-  return `<svg class="ilogosvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <defs><radialGradient id="rg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#7A1535"/><stop offset="100%" stop-color="#3A0818"/></radialGradient></defs>
-    <circle cx="100" cy="100" r="96" fill="url(#rg)"/>
-    <circle cx="100" cy="100" r="92" fill="none" stroke="#C9A844" stroke-width="2.5"/>
-    <circle cx="100" cy="100" r="84" fill="none" stroke="#C9A844" stroke-width="1" stroke-dasharray="4 3" opacity=".5"/>
-    <g fill="#C9A844"><rect x="76" y="30" width="48" height="9" rx="3"/>
-      <polygon points="76,39 72,20 84,33"/><polygon points="100,39 100,14 108,39"/><polygon points="124,39 128,20 116,33"/>
-      <circle cx="72" cy="19" r="3.5"/><circle cx="100" cy="12" r="3.5"/><circle cx="128" cy="19" r="3.5"/>
-    </g>
-    <text x="100" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="78" font-weight="700" fill="#C9A844">AS</text>
-    <g fill="#C9A844" opacity=".8">
-      <ellipse cx="25" cy="88" rx="9" ry="5" transform="rotate(-35,25,88)"/>
-      <ellipse cx="18" cy="106" rx="9" ry="5" transform="rotate(-20,18,106)"/>
-      <ellipse cx="16" cy="124" rx="9" ry="5" transform="rotate(-5,16,124)"/>
-      <ellipse cx="20" cy="140" rx="9" ry="5" transform="rotate(10,20,140)"/>
-      <ellipse cx="175" cy="88" rx="9" ry="5" transform="rotate(35,175,88)"/>
-      <ellipse cx="182" cy="106" rx="9" ry="5" transform="rotate(20,182,106)"/>
-      <ellipse cx="184" cy="124" rx="9" ry="5" transform="rotate(5,184,124)"/>
-      <ellipse cx="180" cy="140" rx="9" ry="5" transform="rotate(-10,180,140)"/>
-    </g>
-    <g fill="#C9A844" transform="translate(100,172)"><polygon points="0,-7 2,-2 7,0 2,2 0,7 -2,2 -7,0 -2,-2"/></g>
-  </svg>`;
+  if(logoImg) return `<div style="width:150px;height:150px;flex-shrink:0"><img src="${logoImg}" alt="Logo" style="width:100%;height:100%;object-fit:contain"></div>`;
+  return `<svg class="ilogosvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="rg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#7A1535"/><stop offset="100%" stop-color="#3A0818"/></radialGradient></defs><circle cx="100" cy="100" r="96" fill="url(#rg)"/><circle cx="100" cy="100" r="92" fill="none" stroke="#C9A844" stroke-width="2.5"/><g fill="#C9A844"><rect x="76" y="30" width="48" height="9" rx="3"/><polygon points="76,39 72,20 84,33"/><polygon points="100,39 100,14 108,39"/><polygon points="124,39 128,20 116,33"/><circle cx="72" cy="19" r="3.5"/><circle cx="100" cy="12" r="3.5"/><circle cx="128" cy="19" r="3.5"/></g><text x="100" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="78" font-weight="700" fill="#C9A844">AS</text><g fill="#C9A844" opacity=".8"><ellipse cx="25" cy="88" rx="9" ry="5" transform="rotate(-35,25,88)"/><ellipse cx="18" cy="106" rx="9" ry="5" transform="rotate(-20,18,106)"/><ellipse cx="16" cy="124" rx="9" ry="5" transform="rotate(-5,16,124)"/><ellipse cx="20" cy="140" rx="9" ry="5" transform="rotate(10,20,140)"/><ellipse cx="175" cy="88" rx="9" ry="5" transform="rotate(35,175,88)"/><ellipse cx="182" cy="106" rx="9" ry="5" transform="rotate(20,182,106)"/><ellipse cx="184" cy="124" rx="9" ry="5" transform="rotate(5,184,124)"/><ellipse cx="180" cy="140" rx="9" ry="5" transform="rotate(-10,180,140)"/></g></svg>`;
 }
 
-function igURL(h){if(!h)return'#';return`https://www.instagram.com/${h.replace('@','').trim()}`;}
-function waURL(p){if(!p)return'#';return`https://wa.me/${p.replace(/[^0-9]/g,'')}`;}
+function igURL(h){return`https://www.instagram.com/${(h||'').replace('@','').trim()}`;}
+function waURL(p){return`https://wa.me/${(p||'').replace(/[^0-9]/g,'')}`;}
 
-// ===== NAV =====
+/* ===== NAV ===== */
 function showDash(){
   document.getElementById('dashV').classList.remove('hide');document.getElementById('editorV').classList.add('hide');
   document.getElementById('tabD').classList.add('act');document.getElementById('tabE').classList.remove('act');
@@ -520,13 +598,13 @@ function showEditor(){
   ['bReset','bSave','bPDF','bJPEG','bPNG'].forEach(id=>document.getElementById(id).classList.remove('hide'));
 }
 
-// ===== PRODUCTS =====
+/* ===== PRODUCTS ===== */
 function addP(d={}){rid++;prods.push({id:rid,img:'',n:d.n||'',v:d.v||'',sz:d.sz||'',q:d.q||1,r:d.r||''});renderP();rp();}
 function renderP(){
   const c=document.getElementById('pR');c.innerHTML='';
   prods.forEach(p=>{
     const d=document.createElement('div');d.className='pr';
-    d.innerHTML=`<div class="pth" onclick="openImg(${p.id})" title="Upload image">${p.img?`<img src="${p.img}" alt="">`:'💍'}</div>
+    d.innerHTML=`<div class="pth" onclick="openImg(${p.id})">${p.img?`<img src="${p.img}" alt="">`:'💍'}</div>
       <div class="pnames">
         <input class="pn" type="text" placeholder="Product name" value="${eh(p.n)}" oninput="up(${p.id},'n',this.value)">
         <input class="pv" type="text" placeholder="Variant / Color" value="${eh(p.v)}" oninput="up(${p.id},'v',this.value)">
@@ -548,19 +626,19 @@ function onProdImg(e){
   r.readAsDataURL(f);e.target.value='';
 }
 
-// ===== TOGGLES =====
+/* ===== TOGGLES ===== */
 function togGST(){document.getElementById('rGC').classList.toggle('off',gv('fGST')!=='c');rp();}
 function togDisc(){const v=gv('fDisc'),s=v==='pc'||v==='fl';document.getElementById('rDV').classList.toggle('off',!s);if(s)document.getElementById('dLbl').textContent=v==='fl'?'Flat Discount Amount':'Custom Discount %';rp();}
 function togUPI(){document.getElementById('rUPI').classList.toggle('off',gv('fPM')!=='UPI');rp();}
 function togPart(){document.getElementById('rPart').classList.toggle('off',gv('fPS')!=='PARTIAL');rp();}
 function togBank(){const on=document.getElementById('fBankToggle').checked;['rBank1','rBank2','rBank3'].forEach(id=>document.getElementById(id).classList.toggle('off',!on));rp();}
 
-// ===== HELPERS =====
+/* ===== HELPERS ===== */
 function getSym(){return CURR.find(c=>c.c===gv('fCurr'))?.s||'₹';}
 function getGST(){const v=gv('fGST');return v==='c'?parseFloat(gv('fGC'))||0:parseFloat(v)||0;}
 function getDisc(s){const v=gv('fDisc');if(v==='0')return 0;const dv=parseFloat(gv('fDV'))||0;if(v==='fl')return dv;if(v==='pc')return s*dv/100;return s*(parseFloat(v.replace('p',''))||0)/100;}
 function calcTotal(){const s=prods.reduce((t,p)=>t+(parseFloat(p.q)||0)*(parseFloat(p.r)||0),0);const d=getDisc(s),g=(s-d)*getGST()/100,sh=parseFloat(gv('fShip'))||0;return s-d+g+sh;}
-function fmt(n,s){return `${s||getSym()} ${parseFloat(n||0).toFixed(2)}`;}
+function fmt(n,s){return`${s||getSym()} ${parseFloat(n||0).toFixed(2)}`;}
 function fmtD(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 function eh(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function gv(id){const e=document.getElementById(id);return e?e.value:'';}
@@ -571,7 +649,7 @@ function toast(msg,err=false){
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-// ===== BUILD INVOICE =====
+/* ===== BUILD INVOICE ===== */
 function buildHTML(){
   const sym=getSym();let sub=0;
   const ph=prods.map((p,i)=>{
@@ -589,27 +667,22 @@ function buildHTML(){
   const ig=gv('fSIG'),wa=gv('fWA'),web=gv('fSW').trim();
   const bankOn=gc('fBankToggle'),bn=gv('fBN'),bh=gv('fBH'),ba=gv('fBA'),bi=gv('fBI'),bb=gv('fBB');
   const ibn=gv('fIBN')||'AS BRIDAL',ibs=gv('fIBS')||'BANGLES & ACCESSORIES',itg=gv('fITG')||'Elegance in Every Bangle';
-  // Care section — dynamic
   const ct=gv('fCTitle')||'Jewellery Care';
-  const careTips=[gv('fC1'),gv('fC2'),gv('fC3'),gv('fC4'),gv('fC5')];
-  const careRows=careTips.map((t,i)=>t.trim()?`<div class="ifci"><span>${CARE_ICONS[i]}</span> ${eh(t)}</div>`:'').join('');
+  const careRows=[gv('fC1'),gv('fC2'),gv('fC3'),gv('fC4'),gv('fC5')].map((t,i)=>t.trim()?`<div class="ifci"><span>${CARE_ICONS[i]}</span> ${eh(t)}</div>`:'').join('');
   const ctag=(gv('fCT')||'').trim().replace(/\n/g,'<br>');
-
   let th=`<div class="itr2"><span>SUBTOTAL</span><span>${fmt(sub,sym)}</span></div>`;
   if(di>0)th+=`<div class="itr2 disc"><span>DISCOUNT</span><span>− ${fmt(di,sym)}</span></div>`;
   if(gp>0)th+=`<div class="itr2"><span>GST (${gp}%)</span><span>${fmt(ga,sym)}</span></div>`;
   th+=`<div class="itr2"><span>SHIPPING CHARGES</span><span>${fmt(sh,sym)}</span></div>`;
   th+=`<div class="itr2 gtot"><span class="gtl">TOTAL</span><span class="gta">${fmt(tot,sym)}</span></div>`;
   if(ps==='PARTIAL'){th+=`<div class="itr2 sm"><span>Amount Paid</span><span>${fmt(pa,sym)}</span></div>`;th+=`<div class="itr2 sm bal"><span>Balance Due</span><span>${fmt(tot-pa,sym)}</span></div>`;}
-  const bankHtml=(bankOn&&(bn||bh||ba||bi))?`<div class="bankdiv">
-    <div class="bankhd">🏦 Bank Account Details</div>
+  const bkHtml=(bankOn&&(bn||bh||ba||bi))?`<div class="bankdiv"><div class="bankhd">🏦 Bank Account Details</div>
     ${bn?`<div class="ipr"><span class="ipl">Bank</span><span class="ipvv">${eh(bn)}</span></div>`:''}
-    ${bh?`<div class="ipr"><span class="ipl">Account Holder</span><span class="ipvv">${eh(bh)}</span></div>`:''}
-    ${ba?`<div class="ipr"><span class="ipl">Account No.</span><span class="ipvv">${eh(ba)}</span></div>`:''}
-    ${bi?`<div class="ipr"><span class="ipl">IFSC Code</span><span class="ipvv">${eh(bi)}</span></div>`:''}
+    ${bh?`<div class="ipr"><span class="ipl">Holder</span><span class="ipvv">${eh(bh)}</span></div>`:''}
+    ${ba?`<div class="ipr"><span class="ipl">Acc No.</span><span class="ipvv">${eh(ba)}</span></div>`:''}
+    ${bi?`<div class="ipr"><span class="ipl">IFSC</span><span class="ipvv">${eh(bi)}</span></div>`:''}
     ${bb?`<div class="ipr"><span class="ipl">Branch</span><span class="ipvv">${eh(bb)}</span></div>`:''}
   </div>`:'';
-
   return `
     <div class="ih">${logoEl()}
       <div class="ibrand"><div class="ibn">${eh(ibn)}</div><div class="ibs">${eh(ibs)}</div>
@@ -646,7 +719,7 @@ function buildHTML(){
         <div class="ipr"><span class="ipl">Status</span><span class="ipvv ${ps.toLowerCase()}">${ps}</span></div>
         <div class="ipr"><span class="ipl">Paid On</span><span class="ipvv">${fmtD(gv('fPO'))}</span></div>
         ${ps==='PARTIAL'?`<div class="ipr"><span class="ipl">Amount Paid</span><span class="ipvv">${fmt(pa,sym)}</span></div>`:''}
-        ${bankHtml}
+        ${bkHtml}
         <div class="ithx">Thank you for your order! ♡</div>
       </div>
       <div class="ifb ity">
@@ -658,18 +731,14 @@ function buildHTML(){
           ${wa?`<a class="soc-link soc-wa" href="${waURL(wa)}" target="_blank">💬 WhatsApp Us</a>`:''}
         </div>
       </div>
-      <div class="ifb">
-        <div class="ifbt">${eh(ct)}</div>
+      <div class="ifb"><div class="ifbt">${eh(ct)}</div>
         ${careRows}
         ${ctag?`<div class="iftg">${ctag}</div>`:''}
       </div>
     </div>
     <div class="ibb">
       <div class="ibdg">MADE<br>WITH<br>LOVE ♡</div>
-      <div class="ibbm">
-        <div class="ibbt">PACKED WITH ELEGANCE • DELIVERED WITH CARE</div>
-        ${web?`<div class="ibbw">— ${eh(web)} —</div>`:''}
-      </div>
+      <div class="ibbm"><div class="ibbt">PACKED WITH ELEGANCE • DELIVERED WITH CARE</div>${web?`<div class="ibbw">— ${eh(web)} —</div>`:''}</div>
       <div class="ibdg">HAND<br>PICKED<br>💎</div>
     </div>`;
 }
@@ -680,95 +749,190 @@ function rp(){
   if(isUD){const w=document.querySelector('#udInv .vinvWrap');if(w)w.innerHTML=h;}
 }
 
-// ===== UNDOCK =====
+/* ===== UNDOCK ===== */
 function toggleUD(){
   if(isUD){closeUD();return;}
-  isUD=true;
-  document.getElementById('fp').classList.add('fd');
+  isUD=true;document.getElementById('fp').classList.add('fd');
   document.getElementById('udBtn').textContent='⊞ Dock Form';
   document.getElementById('udInv').innerHTML=`<div class="vinvWrap">${buildHTML()}</div>`;
   document.getElementById('udModal').classList.add('show');
 }
 function closeUD(){
-  isUD=false;
-  document.getElementById('fp').classList.remove('fd');
+  isUD=false;document.getElementById('fp').classList.remove('fd');
   document.getElementById('udBtn').textContent='⊟ Undock Preview';
   document.getElementById('udModal').classList.remove('show');
   document.getElementById('udInv').innerHTML='';
 }
 
-// ===== DOWNLOAD (PDF / JPEG / PNG) =====
+/* ===== DOWNLOAD ===== */
 async function captureEl(el){
   await document.fonts.ready;
   return html2canvas(el,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#FFFBF5',logging:false});
 }
-async function dlImage(fmt){
+async function dlImage(type){
   const ids={PDF:'bPDF',JPEG:'bJPEG',PNG:'bPNG'};
-  const btn=document.getElementById(ids[fmt]||'bPDF');
-  const orig=btn?btn.textContent:'';
+  const btn=document.getElementById(ids[type]);const orig=btn?.textContent||'';
   if(btn){btn.textContent='⏳...';btn.disabled=true;}
   try{
     const el=document.getElementById('INV');
     const canvas=await captureEl(el);
     const name=gv('fNo')||'AS-Invoice';
-    if(fmt==='PDF'){
-      const {jsPDF}=window.jspdf;
-      const wmm=210,hmm=(canvas.height*wmm)/canvas.width;
-      const pdf=new jsPDF({unit:'mm',format:[wmm,hmm]});
-      pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,wmm,hmm);
-      pdf.save(`${name}.pdf`);
-    } else {
-      const link=document.createElement('a');
-      link.href=fmt==='JPEG'?canvas.toDataURL('image/jpeg',0.95):canvas.toDataURL('image/png');
-      link.download=`${name}.${fmt==='JPEG'?'jpg':'png'}`;
-      link.click();
-    }
-    toast(`✓ ${fmt} downloaded!`);
-  }catch(e){alert(`${fmt} download failed.`);console.error(e);}
+    exportCanvas(canvas,name,type);
+    toast(`✓ ${type} downloaded!`);
+  }catch(e){alert(`${type} download failed.`);console.error(e);}
   finally{if(btn){btn.textContent=orig;btn.disabled=false;}}
 }
-async function dlView(fmt){
-  const btn=document.getElementById('dlViewBtn');
-  const orig=btn?btn.textContent:'';
-  if(btn){btn.textContent='⏳...';btn.disabled=true;}
+async function dlView(type){
   try{
-    const el=document.querySelector('#viewContent .vinvWrap');
-    if(!el){toast('Nothing to download',true);return;}
+    const el=document.querySelector('#viewContent .vinvWrap');if(!el)return;
     const canvas=await captureEl(el);
-    const name=gv('fNo')||'AS-Invoice';
-    if(fmt==='PDF'){
-      const {jsPDF}=window.jspdf;
-      const wmm=210,hmm=(canvas.height*wmm)/canvas.width;
-      const pdf=new jsPDF({unit:'mm',format:[wmm,hmm]});
-      pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,wmm,hmm);
-      pdf.save(`${name}.pdf`);
-    } else {
-      const link=document.createElement('a');
-      link.href=fmt==='JPEG'?canvas.toDataURL('image/jpeg',0.95):canvas.toDataURL('image/png');
-      link.download=`${name}.${fmt==='JPEG'?'jpg':'png'}`;
-      link.click();
-    }
-    toast(`✓ ${fmt} downloaded!`);
-  }catch(e){alert(`${fmt} download failed.`);console.error(e);}
-  finally{if(btn){btn.textContent=orig;btn.disabled=false;}}
+    exportCanvas(canvas,gv('fNo')||'AS-Invoice',type);
+    toast(`✓ ${type} downloaded!`);
+  }catch(e){console.error(e);}
+}
+function exportCanvas(canvas,name,type){
+  if(type==='PDF'){
+    const {jsPDF}=window.jspdf;
+    const wmm=210,hmm=(canvas.height*wmm)/canvas.width;
+    const pdf=new jsPDF({unit:'mm',format:[wmm,hmm]});
+    pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,wmm,hmm);
+    pdf.save(`${name}.pdf`);
+  }else{
+    const link=document.createElement('a');
+    link.href=type==='JPEG'?canvas.toDataURL('image/jpeg',0.95):canvas.toDataURL('image/png');
+    link.download=`${name}.${type==='JPEG'?'jpg':'png'}`;
+    link.click();
+  }
 }
 
-// ===== VIEW MODAL =====
-async function viewInv(key){
-  const v=await getStor(key);if(!v){toast('Failed to load invoice',true);return;}
-  const d=JSON.parse(v);
-  loadDataToForm(d);prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
-  document.getElementById('viewTitle').textContent=`📄 Invoice ${d.no||''}`;
-  document.getElementById('viewContent').innerHTML=`<div class="vinvWrap">${buildHTML()}</div>`;
-  document.getElementById('viewModal').classList.add('show');curKey=key;
+/* ===== VIEW MODAL ===== */
+async function viewInv(id){
+  try{
+    const row=await sbGetOne(id);if(!row){toast('Invoice not found',true);return;}
+    const d=row.data;curKey=id;
+    loadDataToForm(d);prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
+    document.getElementById('viewTitle').textContent=`📄 Invoice ${row.invoice_no||''}`;
+    document.getElementById('viewContent').innerHTML=`<div class="vinvWrap">${buildHTML()}</div>`;
+    document.getElementById('viewModal').classList.add('show');
+  }catch(e){toast('Failed to load: '+e.message,true);}
 }
 function closeViewModal(){document.getElementById('viewModal').classList.remove('show');}
-async function dlDash(key){await viewInv(key);await dlView('PDF');}
 
-// ===== STORAGE =====
-async function getStor(k){try{const r=await window.storage.get(k);return r?r.value:null;}catch(e){return null;}}
-async function setStor(k,v){try{const r=await window.storage.set(k,v);return r!==null;}catch(e){return false;}}
+/* ===== SAVE ===== */
+function collectData(){
+  return{no:gv('fNo'),date:gv('fDt'),ord:gv('fOrd'),curr:gv('fCurr'),
+    ibn:gv('fIBN'),ibs:gv('fIBS'),itg:gv('fITG'),
+    gst:gv('fGST'),gstc:gv('fGC'),disc:gv('fDisc'),discv:gv('fDV'),ship:gv('fShip'),
+    pm:gv('fPM'),ps:gv('fPS'),uid:gv('fUID'),po:gv('fPO'),ap:gv('fAP'),
+    cn:gv('fCN'),ca:gv('fCA'),cp:gv('fCP'),sn:gv('fSN'),sa:gv('fSA'),
+    sph:gv('fSPh'),sig:gv('fSIG'),wa:gv('fWA'),sw:gv('fSW'),
+    bankOn:gc('fBankToggle'),bn:gv('fBN'),bh:gv('fBH'),ba:gv('fBA'),bi:gv('fBI'),bb:gv('fBB'),
+    ctitle:gv('fCTitle'),c1:gv('fC1'),c2:gv('fC2'),c3:gv('fC3'),c4:gv('fC4'),c5:gv('fC5'),ct:gv('fCT'),
+    prods:prods.map(p=>({...p})),total:calcTotal(),sym:getSym()};
+}
 
+async function saveInv(){
+  const btn=document.getElementById('bSave');btn.textContent='💾 Saving...';btn.disabled=true;
+  setSbStatus('busy','Saving...');
+  try{
+    const d=collectData();
+    const row={invoice_no:d.no,customer_name:d.cn||'—',status:d.ps,total:d.total,currency:d.curr,invoice_date:d.date,data:d};
+    if(curKey){
+      await sbUpdate(curKey,row);toast('✓ Invoice updated!');
+    }else{
+      const res=await sbInsert(row);
+      curKey=Array.isArray(res)?res[0]?.id:res?.id;
+      toast('✓ Invoice saved to Supabase!');
+    }
+    document.getElementById('tabE').textContent=`📝 ${d.no}`;
+    setSbStatus('ok','Supabase ✓');
+  }catch(e){
+    console.error(e);toast('Save failed: '+e.message,true);setSbStatus('err','Save Error');
+  }finally{btn.innerHTML='💾 Save';btn.disabled=false;}
+}
+
+/* ===== DASHBOARD ===== */
+async function loadDash(){
+  document.getElementById('dashC').innerHTML=`<div class="empty"><div style="font-size:28px">⏳</div><p>Loading from Supabase...</p></div>`;
+  setSbStatus('busy','Loading...');
+  try{
+    allInvs=await sbGetAll()||[];
+    setSbStatus('ok','Supabase ✓');
+    renderDash(allInvs);
+  }catch(e){
+    setSbStatus('err','DB Error');
+    document.getElementById('dashC').innerHTML=`<div class="empty"><div>⚠️</div><p style="color:#C0392B">Failed to load: ${e.message}</p></div>`;
+  }
+}
+function filterDash(){
+  const q=document.getElementById('dashSearch').value.toLowerCase();
+  const filtered=allInvs.filter(i=>(i.invoice_no||'').toLowerCase().includes(q)||(i.customer_name||'').toLowerCase().includes(q));
+  renderDash(filtered);
+}
+function renderDash(invs){
+  if(!invs.length){showEmpty();return;}
+  const tot=invs.length,rev=invs.reduce((s,i)=>s+(parseFloat(i.total)||0),0);
+  const paid=invs.filter(i=>i.status==='PAID').length,pend=invs.filter(i=>i.status!=='PAID').length;
+  const sym=invs[0]?.currency==='INR'?'₹':'';
+  document.getElementById('dTot').textContent=tot;
+  document.getElementById('dRev').textContent=`${sym}${rev.toLocaleString('en-IN',{maximumFractionDigits:0})}`;
+  document.getElementById('dPaid').textContent=paid;
+  document.getElementById('dPend').textContent=pend;
+  const rows=invs.map(inv=>`<tr>
+    <td><b style="color:#5C0F28">${eh(inv.invoice_no||'—')}</b></td>
+    <td>${eh(inv.customer_name||'—')}</td>
+    <td>${fmtD(inv.invoice_date)}</td>
+    <td style="font-weight:700">${inv.data?.sym||'₹'} ${parseFloat(inv.total||0).toFixed(2)}</td>
+    <td><span class="bdg ${(inv.status||'paid').toLowerCase()}">${inv.status||'PAID'}</span></td>
+    <td><div class="tact">
+      <button class="tbtn vi" onclick="viewInv('${inv.id}')">👁 View</button>
+      <button class="tbtn ic" onclick="dlFromDash('${inv.id}')">⬇ PDF</button>
+      <button class="tbtn ed" onclick="editInv('${inv.id}')">✏️ Edit</button>
+      <button class="tbtn del" onclick="delInv('${inv.id}')">🗑</button>
+    </div></td>
+  </tr>`).join('');
+  document.getElementById('dashC').innerHTML=`<table class="itbl">
+    <thead><tr><th>Invoice No.</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+function showEmpty(){
+  ['dTot','dPaid','dPend'].forEach(id=>document.getElementById(id).textContent='0');
+  document.getElementById('dRev').textContent='₹0';
+  document.getElementById('dashC').innerHTML=`<div class="empty"><div>📄</div><p style="margin-bottom:14px">No invoices yet. Create your first!</p><button class="b b-g" onclick="newInv();showEditor()" style="margin:0 auto;font-size:11px;padding:7px 16px">＋ New Invoice</button></div>`;
+}
+
+/* ===== EDIT / DELETE ===== */
+async function editInv(id){
+  try{
+    const row=await sbGetOne(id);if(!row){toast('Invoice not found',true);return;}
+    const d=row.data;curKey=id;loadDataToForm(d);
+    prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
+    renderP();rp();showEditor();
+    document.getElementById('tabE').textContent=`📝 ${row.invoice_no}`;
+    toast('Invoice loaded for editing');
+  }catch(e){toast('Failed to load: '+e.message,true);}
+}
+async function delInv(id){
+  if(!confirm('Delete this invoice permanently from Supabase?'))return;
+  try{
+    await sbDelete(id);if(curKey===id)curKey=null;
+    toast('Invoice deleted');allInvs=allInvs.filter(i=>i.id!==id);renderDash(allInvs);
+  }catch(e){toast('Delete failed: '+e.message,true);}
+}
+async function dlFromDash(id){
+  try{
+    const row=await sbGetOne(id);if(!row)return;
+    const d=row.data;loadDataToForm(d);prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
+    // Temporarily render to #INV
+    const prev=document.getElementById('INV').innerHTML;
+    document.getElementById('INV').innerHTML=buildHTML();
+    await dlImage('PDF');
+    document.getElementById('INV').innerHTML=prev;rp();
+  }catch(e){toast('Download failed',true);}
+}
+function newInv(){curKey=null;resetAll(true);document.getElementById('tabE').textContent='📝 New Invoice';}
+
+/* ===== FORM LOAD ===== */
 function loadDataToForm(d){
   const sv=(id,val)=>{const e=document.getElementById(id);if(e)e.value=val||'';};
   sv('fNo',d.no);sv('fDt',d.date);sv('fOrd',d.ord);sv('fCurr',d.curr||'INR');
@@ -793,83 +957,7 @@ function loadDataToForm(d){
   ['rBank1','rBank2','rBank3'].forEach(id=>document.getElementById(id).classList.toggle('off',!d.bankOn));
 }
 
-function collectData(){
-  return{no:gv('fNo'),date:gv('fDt'),ord:gv('fOrd'),curr:gv('fCurr'),
-    ibn:gv('fIBN'),ibs:gv('fIBS'),itg:gv('fITG'),
-    gst:gv('fGST'),gstc:gv('fGC'),disc:gv('fDisc'),discv:gv('fDV'),ship:gv('fShip'),
-    pm:gv('fPM'),ps:gv('fPS'),uid:gv('fUID'),po:gv('fPO'),ap:gv('fAP'),
-    cn:gv('fCN'),ca:gv('fCA'),cp:gv('fCP'),sn:gv('fSN'),sa:gv('fSA'),
-    sph:gv('fSPh'),sig:gv('fSIG'),wa:gv('fWA'),sw:gv('fSW'),
-    bankOn:gc('fBankToggle'),bn:gv('fBN'),bh:gv('fBH'),ba:gv('fBA'),bi:gv('fBI'),bb:gv('fBB'),
-    ctitle:gv('fCTitle'),c1:gv('fC1'),c2:gv('fC2'),c3:gv('fC3'),c4:gv('fC4'),c5:gv('fC5'),ct:gv('fCT'),
-    prods:prods.map(p=>({...p})),total:calcTotal(),sym:getSym(),savedAt:Date.now()};
-}
-
-async function saveInv(){
-  if(!window.storage){toast('Storage unavailable.',true);return;}
-  const btn=document.getElementById('bSave');btn.textContent='💾 Saving...';btn.disabled=true;
-  try{
-    const data=collectData();
-    if(!curKey)curKey='asbr_inv_'+Date.now();const key=curKey;
-    const ok=await setStor(key,JSON.stringify(data));
-    if(!ok){toast('Save failed.',true);return;}
-    let idx=[];const ri=await getStor('asbr_idx');
-    if(ri)try{idx=JSON.parse(ri);}catch(e){idx=[];}
-    if(!idx.includes(key))idx.push(key);
-    await setStor('asbr_idx',JSON.stringify(idx));
-    toast('✓ Invoice saved!');document.getElementById('tabE').textContent=`📝 ${data.no}`;
-  }catch(e){toast('Save failed: '+e.message,true);}
-  finally{btn.innerHTML='💾 Save';btn.disabled=false;}
-}
-
-async function loadDash(){
-  const ri=await getStor('asbr_idx');if(!ri){showEmpty();return;}
-  let idx=[];try{idx=JSON.parse(ri);}catch(e){showEmpty();return;}
-  const invs=[];
-  for(const k of idx){const v=await getStor(k);if(v)try{invs.push({key:k,...JSON.parse(v)});}catch(e){}}
-  if(!invs.length){showEmpty();return;}
-  const tot=invs.length,rev=invs.reduce((s,i)=>s+(parseFloat(i.total)||0),0);
-  const paid=invs.filter(i=>i.ps==='PAID').length,pend=invs.filter(i=>i.ps!=='PAID').length;
-  document.getElementById('dTot').textContent=tot;document.getElementById('dRev').textContent=`₹${rev.toFixed(0)}`;
-  document.getElementById('dPaid').textContent=paid;document.getElementById('dPend').textContent=pend;
-  const rows=invs.slice().reverse().map(inv=>`<tr>
-    <td><b style="color:#5C0F28">${eh(inv.no||'—')}</b></td>
-    <td>${eh(inv.cn||'—')}</td><td>${fmtD(inv.date)}</td>
-    <td style="font-weight:700">${inv.sym||'₹'} ${parseFloat(inv.total||0).toFixed(2)}</td>
-    <td><span class="bdg ${(inv.ps||'paid').toLowerCase()}">${inv.ps||'PAID'}</span></td>
-    <td><div class="tact">
-      <button class="tbtn vi" onclick="viewInv('${inv.key}')">👁 View</button>
-      <button class="tbtn ic" onclick="dlDash('${inv.key}')" title="Download PDF">⬇</button>
-      <button class="tbtn ed" onclick="editInv('${inv.key}')">✏️ Edit</button>
-      <button class="tbtn del" onclick="delInv('${inv.key}')" title="Delete">🗑</button>
-    </div></td>
-  </tr>`).join('');
-  document.getElementById('dashC').innerHTML=`<table class="itbl">
-    <thead><tr><th>Invoice No.</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
-    <tbody>${rows}</tbody></table>`;
-}
-function showEmpty(){
-  ['dTot','dPaid','dPend'].forEach(id=>document.getElementById(id).textContent='0');
-  document.getElementById('dRev').textContent='₹0';
-  document.getElementById('dashC').innerHTML=`<div class="empty"><div>📄</div><p style="margin-bottom:14px">No invoices saved yet.</p><button class="b b-g" onclick="newInv();showEditor()" style="margin:0 auto;font-size:11px;padding:7px 16px">Create First Invoice</button></div>`;
-}
-async function editInv(key){
-  const v=await getStor(key);if(!v){toast('Failed to load',true);return;}
-  const d=JSON.parse(v);curKey=key;loadDataToForm(d);
-  prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
-  renderP();rp();showEditor();document.getElementById('tabE').textContent=`📝 ${d.no}`;
-  toast('Invoice loaded for editing');
-}
-async function delInv(key){
-  if(!confirm('Delete this invoice permanently?'))return;
-  await window.storage.delete(key).catch(()=>{});
-  let idx=[];const ri=await getStor('asbr_idx');
-  if(ri)try{idx=JSON.parse(ri);}catch(e){idx=[];}
-  idx=idx.filter(k=>k!==key);await setStor('asbr_idx',JSON.stringify(idx));
-  if(curKey===key)curKey=null;toast('Invoice deleted');loadDash();
-}
-function newInv(){curKey=null;resetAll(true);document.getElementById('tabE').textContent='📝 New Invoice';}
-
+/* ===== RESET ===== */
 function resetAll(s=false){
   if(!s&&!confirm('Reset all fields?'))return;
   ['fCN','fCA','fCP','fDV','fGC','fAP','fBN','fBH','fBA','fBI','fBB'].forEach(id=>document.getElementById(id).value='');
@@ -879,10 +967,8 @@ function resetAll(s=false){
   document.getElementById('fPM').value='UPI';document.getElementById('fPS').value='PAID';
   document.getElementById('fBankToggle').checked=false;
   document.getElementById('fCTitle').value='Jewellery Care';
-  document.getElementById('fC1').value='Keep away from water';
-  document.getElementById('fC2').value='Avoid perfume & chemicals';
-  document.getElementById('fC3').value='Wipe with soft cloth after use';
-  document.getElementById('fC4').value='Store in pouch after use';
+  document.getElementById('fC1').value='Keep away from water';document.getElementById('fC2').value='Avoid perfume & chemicals';
+  document.getElementById('fC3').value='Wipe with soft cloth after use';document.getElementById('fC4').value='Store in pouch after use';
   document.getElementById('fC5').value='Handle with care';
   document.getElementById('fCT').value='Packed with elegance,\nDelivered with care. ♡';
   const td=new Date().toISOString().split('T')[0];document.getElementById('fDt').value=td;document.getElementById('fPO').value=td;
