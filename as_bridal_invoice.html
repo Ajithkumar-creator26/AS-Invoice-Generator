@@ -398,7 +398,15 @@ const SB_KEYS=[
 let SB_KEY=SB_KEYS[0];
 
 function sbH(extra={}){
-  return{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`,'Content-Type':'application/json','Prefer':'return=representation',...extra};
+  return{
+    'apikey':SB_KEY,
+    'Authorization':`Bearer ${SB_KEY}`,
+    'Content-Type':'application/json',
+    'Accept-Profile':'public',
+    'Content-Profile':'public',
+    'Prefer':'return=representation',
+    ...extra
+  };
 }
 async function sbFetch(url,method='GET',body=null){
   const opts={method,headers:sbH()};
@@ -413,7 +421,7 @@ async function sbGetOne(id){const rows=await sbFetch(`${SB_URL}?select=*&id=eq.$
 async function sbInsert(row){return sbFetch(SB_URL,'POST',row);}
 async function sbUpdate(id,row){return sbFetch(`${SB_URL}?id=eq.${id}`,'PATCH',row);}
 async function sbDelete(id){
-  const r=await fetch(`${SB_URL}?id=eq.${id}`,{method:'DELETE',headers:sbH({'Prefer':''})});
+  const r=await fetch(`${SB_URL}?id=eq.${id}`,{method:'DELETE',headers:sbH({'Prefer':'','Accept-Profile':'public','Content-Profile':'public'})});
   if(!r.ok)throw new Error(await r.text());
 }
 async function sbPing(){
