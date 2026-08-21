@@ -338,9 +338,17 @@ Delivered with care. ♡</textarea></div></div>
         <div class="logo-ph" id="logoPH">🏪</div>
         <div class="logo-txt"><strong id="logoLbl">Click to upload your logo</strong>PNG/JPG recommended</div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-size:10px;color:#999">
-        <span>🎨 Theme auto-matches your logo colors</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:10px;color:#999">
+        <span>🎨 Theme colors</span>
         <button type="button" onclick="resetTheme()" style="background:0;border:none;color:var(--m);font-weight:700;cursor:pointer;font-size:10px;text-decoration:underline">Reset Theme</button>
+      </div>
+      <div class="row r2" style="margin-bottom:10px">
+        <div class="fg"><label>Primary Color</label>
+          <input type="color" id="pkPrimary" value="#5C0F28" onchange="manualTheme()" style="height:32px;padding:2px;cursor:pointer">
+        </div>
+        <div class="fg"><label>Accent Color</label>
+          <input type="color" id="pkAccent" value="#C9A844" onchange="manualTheme()" style="height:32px;padding:2px;cursor:pointer">
+        </div>
       </div>
       <div class="row r1"><div class="fg"><label>Business Name</label><input id="fSN" value="AS Bridal Bangles &amp; Accessories" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>Address</label><textarea id="fSA" oninput="rp()">No. 12/1, Lakshmi Nagar, Guduvanchery, Chennai, Tamil Nadu – 603202</textarea></div></div>
@@ -533,32 +541,67 @@ function extractThemeFromLogo(src){
     const img=new Image();
     img.onload=()=>{
       try{
-        const cv=document.createElement('canvas');cv.width=60;cv.height=60;
-        cv.getContext('2d').drawImage(img,0,0,60,60);
-        const data=cv.getContext('2d').getImageData(0,0,60,60).data,buckets={};
+        const cv=document.createElement('canvas');cv.width=80;cv.height=80;
+        const ctx=cv.getContext('2d');
+        ctx.drawImage(img,0,0,80,80);
+        const data=ctx.getImageData(0,0,80,80).data;
+        const buckets={};let darkSum={c:0,r:0,g:0,b:0};
         for(let i=0;i<data.length;i+=4){
           const r=data[i],g=data[i+1],b=data[i+2],a=data[i+3];
-          if(a<128)continue;const hsl=rgbToHsl(r,g,b);
-          if(hsl.s<0.18||hsl.l<0.12||hsl.l>0.88)continue;
+          if(a<100)continue;
+          const hsl=rgbToHsl(r,g,b);
+          // Track dark pixels separately (for monochrome logos)
+          if(hsl.l<0.35){darkSum.c++;darkSum.r+=r;darkSum.g+=g;darkSum.b+=b;}
+          if(hsl.s<0.15||hsl.l<0.10||hsl.l>0.90)continue;
           const key=Math.round(hsl.h/15)*15%360;
           if(!buckets[key])buckets[key]={count:0,r:0,g:0,b:0};
           buckets[key].count++;buckets[key].r+=r;buckets[key].g+=g;buckets[key].b+=b;
         }
         const arr=Object.values(buckets).map(o=>({count:o.count,r:o.r/o.count,g:o.g/o.count,b:o.b/o.count}));
-        if(!arr.length){resolve(false);return;}
-        arr.sort((a,b)=>b.count-a.count);
-        const byLight=arr.slice().sort((a,b)=>rgbToHsl(a.r,a.g,a.b).l-rgbToHsl(b.r,b.g,b.b).l);
-        const primary=byLight[0],accent=arr.find(c=>colorDist(c,primary)>70)||arr[1]||arr[0];
-        const dmHex=rgbToHex(primary.r,primary.g,primary.b);
-        applyTheme(lightenHex(dmHex,12),dmHex,rgbToHex(accent.r,accent.g,accent.b),lightenHex(rgbToHex(accent.r,accent.g,accent.b),35),darkenHex(rgbToHex(accent.r,accent.g,accent.b),15));
-        resolve(true);
-      }catch(e){resolve(false);}
+        // Need enough colored pixels to be meaningful
+        const totalColored=arr.reduce((s,c)=>s+c.count,0);
+        if(arr.length&&totalColored>60){
+          arr.sort((a,b)=>b.count-a.count);
+          const byLight=arr.slice().sort((a,b)=>rgbToHsl(a.r,a.g,a.b).l-rgbToHsl(b.r,b.g,b.b).l);
+          const primary=byLight[0];
+          const accent=arr.find(c=>colorDist(c,primary)>70)||arr[1]||arr[0];
+          const dmHex=rgbToHex(primary.r,primary.g,primary.b);
+          const gHex=rgbToHex(accent.r,accent.g,accent.b);
+          applyTheme(lightenHex(dmHex,12),dmHex,gHex,lightenHex(gHex,35),darkenHex(gHex,15));
+          syncPickers();resolve('color');return;
+        }
+        // Monochrome / black logo fallback
+        if(darkSum.c>40){
+          let dm=rgbToHex(darkSum.r/darkSum.c,darkSum.g/darkSum.c,darkSum.b/darkSum.c);
+          const hsl=rgbToHsl(...Object.values(hexToRgb(dm)));
+          if(hsl.l>0.28)dm=darkenHex(dm,Math.round((hsl.l-0.20)*100));
+          const gHex='#C9A844'; // keep elegant gold accent for mono logos
+          applyTheme(lightenHex(dm,14),dm,gHex,lightenHex(gHex,35),darkenHex(gHex,15));
+          syncPickers();resolve('mono');return;
+        }
+        resolve(false);
+      }catch(e){console.warn('Theme extract failed:',e);resolve(false);}
     };
     img.onerror=()=>resolve(false);img.src=src;
   });
 }
+function getVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||null;}
+function syncPickers(){
+  const p1=document.getElementById('pkPrimary'),p2=document.getElementById('pkAccent');
+  if(p1)p1.value=getVar('--dm')||'#5C0F28';
+  if(p2)p2.value=getVar('--g')||'#C9A844';
+}
+function manualTheme(){
+  const dm=document.getElementById('pkPrimary').value;
+  const g=document.getElementById('pkAccent').value;
+  applyTheme(lightenHex(dm,12),dm,g,lightenHex(g,35),darkenHex(g,15));
+  rp();
+}
 function applyTheme(m,dm,g,gl,gd){const s=document.documentElement.style;s.setProperty('--m',m);s.setProperty('--dm',dm);s.setProperty('--g',g);s.setProperty('--gl',gl);s.setProperty('--gd',gd);}
-function resetTheme(){['--m','--dm','--g','--gl','--gd'].forEach(p=>document.documentElement.style.removeProperty(p));toast('Theme reset to default colors');}
+function resetTheme(){
+  ['--m','--dm','--g','--gl','--gd'].forEach(p=>document.documentElement.style.removeProperty(p));
+  syncPickers();rp();toast('Theme reset to default colors');
+}
 
 /* ===== INIT ===== */
 async function init(){
@@ -582,7 +625,8 @@ function onLogoImg(e){
   reader.onload=async ev=>{
     logoImg=ev.target.result;applyLogoPreview(logoImg);
     const matched=await extractThemeFromLogo(logoImg);
-    rp();toast(matched?'✓ Logo & theme updated!':'✓ Logo updated!');
+    rp();
+    toast(matched==='color'?'✓ Logo & theme colors matched!':matched==='mono'?'✓ Logo added — monochrome theme applied':'✓ Logo updated (set colors manually below)');
     try{await window.storage.set('asbr_logo',logoImg);}catch(ex){}
   };
   reader.readAsDataURL(f);e.target.value='';
