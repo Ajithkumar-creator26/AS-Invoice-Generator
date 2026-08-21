@@ -303,7 +303,14 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
       <div class="sec-t">👤 Customer</div>
       <div class="row r1"><div class="fg"><label>Name</label><input id="fCN" placeholder="Mrs. Priya Raman" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>Address</label><textarea id="fCA" placeholder="Full address..." oninput="rp()"></textarea></div></div>
-      <div class="row r1"><div class="fg"><label>Phone</label><input id="fCP" placeholder="+91 XXXXX XXXXX" oninput="rp()"></div></div>
+      <div class="row r2">
+        <div class="fg"><label>District / City</label><input id="fCDist" placeholder="e.g. Chennai" oninput="rp()"></div>
+        <div class="fg"><label>State</label><input id="fCState" placeholder="e.g. Tamil Nadu" oninput="rp()"></div>
+      </div>
+      <div class="row r2">
+        <div class="fg"><label>Country</label><input id="fCCountry" value="India" oninput="rp()"></div>
+        <div class="fg"><label>Phone</label><input id="fCP" placeholder="+91 XXXXX XXXXX" oninput="rp()"></div>
+      </div>
     </div>
     <div class="sec">
       <div class="sec-t">💎 Jewellery Care</div>
@@ -651,6 +658,9 @@ function fmtD(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateSt
 function eh(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function gv(id){const e=document.getElementById(id);return e?e.value:'';}
 function gc(id){const e=document.getElementById(id);return e?e.checked:false;}
+function custLoc(){
+  return [gv('fCDist'),gv('fCState'),gv('fCCountry')].map(s=>s.trim()).filter(Boolean).join(', ');
+}
 function toast(msg,err=false){
   const t=document.getElementById('toast');t.textContent=msg;
   t.style.background=err?'#C0392B':'#2E7D32';
@@ -712,6 +722,7 @@ function buildHTML(){
       <div class="ipt"><div class="ipth">👤 TO</div>
         <div class="itrr"><span class="itl">Customer Name</span><span class="its">:</span><span class="itv">${eh(gv('fCN'))||'—'}</span></div>
         <div class="itrr"><span class="itl">Address</span><span class="its">:</span><span class="itv">${(gv('fCA')||'—').replace(/\n/g,'<br>')}</span></div>
+        ${custLoc()?`<div class="itrr"><span class="itl">Location</span><span class="its">:</span><span class="itv">${eh(custLoc())}</span></div>`:''}
         <div class="itrr"><span class="itl">Phone</span><span class="its">:</span><span class="itv">${eh(gv('fCP'))||'—'}</span></div>
       </div>
     </div>
@@ -832,7 +843,9 @@ function collectData(){
     ibn:gv('fIBN'),ibs:gv('fIBS'),itg:gv('fITG'),
     gst:gv('fGST'),gstc:gv('fGC'),disc:gv('fDisc'),discv:gv('fDV'),ship:gv('fShip'),
     pm:gv('fPM'),ps:gv('fPS'),uid:gv('fUID'),po:gv('fPO'),ap:gv('fAP'),
-    cn:gv('fCN'),ca:gv('fCA'),cp:gv('fCP'),sn:gv('fSN'),sa:gv('fSA'),
+    cn:gv('fCN'),ca:gv('fCA'),cp:gv('fCP'),
+    cdist:gv('fCDist'),cstate:gv('fCState'),ccountry:gv('fCCountry'),
+    sn:gv('fSN'),sa:gv('fSA'),
     sph:gv('fSPh'),sig:gv('fSIG'),wa:gv('fWA'),sw:gv('fSW'),
     bankOn:gc('fBankToggle'),bn:gv('fBN'),bh:gv('fBH'),ba:gv('fBA'),bi:gv('fBI'),bb:gv('fBB'),
     ctitle:gv('fCTitle'),c1:gv('fC1'),c2:gv('fC2'),c3:gv('fC3'),c4:gv('fC4'),c5:gv('fC5'),ct:gv('fCT'),
@@ -874,7 +887,13 @@ async function loadDash(){
 }
 function filterDash(){
   const q=document.getElementById('dashSearch').value.toLowerCase();
-  const filtered=allInvs.filter(i=>(i.invoice_no||'').toLowerCase().includes(q)||(i.customer_name||'').toLowerCase().includes(q));
+  const filtered=allInvs.filter(i=>{
+    const d=i.data||{};
+    const loc=[d.cdist,d.cstate,d.ccountry].join(' ').toLowerCase();
+    return (i.invoice_no||'').toLowerCase().includes(q)||
+           (i.customer_name||'').toLowerCase().includes(q)||
+           loc.includes(q);
+  });
   renderDash(filtered);
 }
 function renderDash(invs){
@@ -886,11 +905,15 @@ function renderDash(invs){
   document.getElementById('dRev').textContent=`${sym}${rev.toLocaleString('en-IN',{maximumFractionDigits:0})}`;
   document.getElementById('dPaid').textContent=paid;
   document.getElementById('dPend').textContent=pend;
-  const rows=invs.map(inv=>`<tr>
+  const rows=invs.map(inv=>{
+    const d=inv.data||{};
+    const loc=[d.cdist,d.cstate,d.ccountry].map(s=>(s||'').trim()).filter(Boolean).join(', ')||'—';
+    return `<tr>
     <td><b style="color:#5C0F28">${eh(inv.invoice_no||'—')}</b></td>
     <td>${eh(inv.customer_name||'—')}</td>
+    <td style="font-size:11px;color:#666">${eh(loc)}</td>
     <td>${fmtD(inv.invoice_date)}</td>
-    <td style="font-weight:700">${inv.data?.sym||'₹'} ${parseFloat(inv.total||0).toFixed(2)}</td>
+    <td style="font-weight:700">${d.sym||'₹'} ${parseFloat(inv.total||0).toFixed(2)}</td>
     <td><span class="bdg ${(inv.status||'paid').toLowerCase()}">${inv.status||'PAID'}</span></td>
     <td><div class="tact">
       <button class="tbtn vi" onclick="viewInv('${inv.id}')">👁 View</button>
@@ -898,9 +921,9 @@ function renderDash(invs){
       <button class="tbtn ed" onclick="editInv('${inv.id}')">✏️ Edit</button>
       <button class="tbtn del" onclick="delInv('${inv.id}')">🗑</button>
     </div></td>
-  </tr>`).join('');
+  </tr>`;}).join('');
   document.getElementById('dashC').innerHTML=`<table class="itbl">
-    <thead><tr><th>Invoice No.</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+    <thead><tr><th>Invoice No.</th><th>Customer</th><th>Location</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
     <tbody>${rows}</tbody></table>`;
 }
 function showEmpty(){
@@ -948,6 +971,7 @@ function loadDataToForm(d){
   sv('fGST',d.gst||'0');sv('fGC',d.gstc||'');sv('fDisc',d.disc||'0');sv('fDV',d.discv||'');sv('fShip',d.ship||'100');
   sv('fPM',d.pm||'UPI');sv('fPS',d.ps||'PAID');sv('fUID',d.uid||'');sv('fPO',d.po||'');sv('fAP',d.ap||'');
   sv('fCN',d.cn||'');sv('fCA',d.ca||'');sv('fCP',d.cp||'');
+  sv('fCDist',d.cdist||'');sv('fCState',d.cstate||'');sv('fCCountry',d.ccountry||'India');
   sv('fSN',d.sn||'');sv('fSA',d.sa||'');sv('fSPh',d.sph||'');sv('fSIG',d.sig||'');sv('fWA',d.wa||'');sv('fSW',d.sw||'');
   sv('fBN',d.bn||'');sv('fBH',d.bh||'');sv('fBA',d.ba||'');sv('fBI',d.bi||'');sv('fBB',d.bb||'');
   sv('fCTitle',d.ctitle||'Jewellery Care');
@@ -968,7 +992,8 @@ function loadDataToForm(d){
 /* ===== RESET ===== */
 function resetAll(s=false){
   if(!s&&!confirm('Reset all fields?'))return;
-  ['fCN','fCA','fCP','fDV','fGC','fAP','fBN','fBH','fBA','fBI','fBB'].forEach(id=>document.getElementById(id).value='');
+  ['fCN','fCA','fCP','fCDist','fCState','fDV','fGC','fAP','fBN','fBH','fBA','fBI','fBB'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fCCountry').value='India';
   document.getElementById('fNo').value='AS-2026-001';document.getElementById('fOrd').value='ASB260601001';
   document.getElementById('fIBN').value='AS BRIDAL';document.getElementById('fIBS').value='BANGLES & ACCESSORIES';document.getElementById('fITG').value='Elegance in Every Bangle';
   document.getElementById('fGST').value='0';document.getElementById('fDisc').value='0';document.getElementById('fShip').value='100';
