@@ -870,7 +870,10 @@ function closeUD(){
 /* ===== DOWNLOAD ===== */
 async function captureEl(el){
   await document.fonts.ready;
-  return html2canvas(el,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#FFFBF5',logging:false});
+  const imgs=[...el.querySelectorAll('img')];
+  await Promise.all(imgs.map(im=>im.complete?Promise.resolve():new Promise(r=>{im.onload=im.onerror=r;})));
+  await new Promise(r=>setTimeout(r,120));
+  return html2canvas(el,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#FFFBF5',logging:false,width:794,windowWidth:794});
 }
 async function dlImage(type){
   const ids={PDF:'bPDF',JPEG:'bJPEG',PNG:'bPNG'};
@@ -1052,16 +1055,38 @@ async function delInv(id){
     toast('Invoice deleted');allInvs=allInvs.filter(i=>i.id!==id);renderDash(allInvs);
   }catch(e){toast('Delete failed: '+e.message,true);}
 }
-async function dlFromDash(id){
+async function dlFromDash(id,type='PDF'){
+  let holder=null;
   try{
-    const row=await sbGetOne(id);if(!row)return;
-    const d=row.data;loadDataToForm(d);prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
-    // Temporarily render to #INV
-    const prev=document.getElementById('INV').innerHTML;
-    document.getElementById('INV').innerHTML=buildHTML();
-    await dlImage('PDF');
-    document.getElementById('INV').innerHTML=prev;rp();
-  }catch(e){toast('Download failed',true);}
+    toast('⏳ Preparing PDF...');
+    const row=await sbGetOne(id);
+    if(!row){toast('Invoice not found',true);return;}
+    const d=row.data;
+    loadDataToForm(d);
+    prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
+
+    // Render offscreen (dashboard hides #INV, so capture a detached clone)
+    holder=document.createElement('div');
+    holder.style.cssText='position:fixed;left:-10000px;top:0;width:794px;background:#FFFBF5;z-index:-1';
+    holder.innerHTML=`<div class="vinvWrap" style="box-shadow:none">${buildHTML()}</div>`;
+    document.body.appendChild(holder);
+
+    // Wait for images + fonts to settle
+    await document.fonts.ready;
+    const imgs=[...holder.querySelectorAll('img')];
+    await Promise.all(imgs.map(im=>im.complete?Promise.resolve():new Promise(r=>{im.onload=im.onerror=r;})));
+    await new Promise(r=>setTimeout(r,150));
+
+    const target=holder.querySelector('.vinvWrap');
+    const canvas=await html2canvas(target,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#FFFBF5',logging:false,width:794,windowWidth:794});
+    exportCanvas(canvas,row.invoice_no||'AS-Invoice',type);
+    toast(`✓ ${row.invoice_no} downloaded!`);
+  }catch(e){
+    console.error('Dashboard PDF error:',e);
+    toast('PDF failed: '+e.message,true);
+  }finally{
+    if(holder)holder.remove();
+  }
 }
 async function newInv(){
   curKey=null;
