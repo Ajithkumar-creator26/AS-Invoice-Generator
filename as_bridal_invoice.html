@@ -235,6 +235,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
         <div class="fg"><label>Date</label><input id="fDt" type="date" oninput="rp()"></div>
         <div class="fg"><label>Order ID</label><input id="fOrd" value="ASB260601001" oninput="rp()"></div>
       </div>
+      <button type="button" onclick="applyNextNumbers()" style="background:0;border:1.5px dashed var(--g);color:var(--m);border-radius:6px;padding:6px;font-size:10.5px;font-weight:700;cursor:pointer;width:100%;font-family:'Open Sans',sans-serif">🔄 Get Next Invoice Number</button>
     </div>
     <div class="sec">
       <div class="sec-t">🎀 Invoice Branding</div>
@@ -358,6 +359,11 @@ Delivered with care. ♡</textarea></div></div>
       </div>
       <div class="row r1"><div class="fg"><label>WhatsApp Number</label><input id="fWA" value="+91 98765 43210" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>Website (blank to hide)</label><input id="fSW" value="www.asbridalbangles.com" oninput="rp()"></div></div>
+      <div style="display:flex;gap:7px;margin-top:10px">
+        <button class="b b-s" style="flex:1;justify-content:center;padding:9px" onclick="saveSellerProfile()">💾 Save Seller Profile</button>
+        <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 12px" onclick="loadSellerProfile(true)" title="Restore saved profile">↺</button>
+      </div>
+      <div style="font-size:9.5px;color:#AAA;margin-top:6px;line-height:1.5">Saved profile auto-loads on every new invoice — logo, colors, and all seller fields.</div>
     </div>
   </div></div>
 
@@ -611,8 +617,10 @@ async function init(){
   document.getElementById('fDt').value=td;document.getElementById('fPO').value=td;
   setSbStatus('busy','Connecting...');
   await loadSavedLogo();
-  await sbPing();
+  await loadSellerProfile();
+  const ok=await sbPing();
   addP();addP();rp();showEditor();
+  if(ok)await applyNextNumbers();
 }
 
 /* ===== LOGO ===== */
@@ -722,7 +730,11 @@ function togBank(){const on=document.getElementById('fBankToggle').checked;['rBa
 function getSym(){return CURR.find(c=>c.c===gv('fCurr'))?.s||'₹';}
 function getGST(){const v=gv('fGST');return v==='c'?parseFloat(gv('fGC'))||0:parseFloat(v)||0;}
 function getDisc(s){const v=gv('fDisc');if(v==='0')return 0;const dv=parseFloat(gv('fDV'))||0;if(v==='fl')return dv;if(v==='pc')return s*dv/100;return s*(parseFloat(v.replace('p',''))||0)/100;}
-function calcTotal(){const s=prods.reduce((t,p)=>t+(parseFloat(p.q)||0)*(parseFloat(p.r)||0),0);const d=getDisc(s),g=(s-d)*getGST()/100,sh=parseFloat(gv('fShip'))||0;return s-d+g+sh;}
+function calcTotal(){
+  const s=prods.reduce((t,p)=>t+(parseFloat(p.q)||0)*(parseFloat(p.r)||0),0);
+  const d=getDisc(s),g=(s-d)*getGST()/100,sh=parseFloat(gv('fShip'))||0;
+  return Math.round(s-d+g+sh);
+}
 function fmt(n,s){return`${s||getSym()} ${parseFloat(n||0).toFixed(2)}`;}
 function fmtD(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 function eh(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -750,7 +762,8 @@ function buildHTML(){
       <td>${r?fmt(r,sym):'—'}</td><td style="font-weight:700;color:#5C0F28">${amt?fmt(amt,sym):'—'}</td>
     </tr>`;
   }).join('');
-  const gp=getGST(),di=getDisc(sub),sh=parseFloat(gv('fShip'))||0,ad=sub-di,ga=ad*gp/100,tot=ad+ga+sh;
+  const gp=getGST(),di=getDisc(sub),sh=parseFloat(gv('fShip'))||0,ad=sub-di,ga=ad*gp/100;
+  const rawTot=ad+ga+sh, tot=Math.round(rawTot), roundOff=tot-rawTot;
   const ps=gv('fPS'),pa=parseFloat(gv('fAP'))||0,pm=gv('fPM');
   const ig=gv('fSIG'),wa=gv('fWA'),web=gv('fSW').trim();
   const bankOn=gc('fBankToggle'),bn=gv('fBN'),bh=gv('fBH'),ba=gv('fBA'),bi=gv('fBI'),bb=gv('fBB');
@@ -762,7 +775,8 @@ function buildHTML(){
   if(di>0)th+=`<div class="itr2 disc"><span>DISCOUNT</span><span>− ${fmt(di,sym)}</span></div>`;
   if(gp>0)th+=`<div class="itr2"><span>GST (${gp}%)</span><span>${fmt(ga,sym)}</span></div>`;
   th+=`<div class="itr2"><span>SHIPPING CHARGES</span><span>${fmt(sh,sym)}</span></div>`;
-  th+=`<div class="itr2 gtot"><span class="gtl">TOTAL</span><span class="gta">${fmt(tot,sym)}</span></div>`;
+  if(Math.abs(roundOff)>=0.005)th+=`<div class="itr2" style="color:#888;font-size:10px"><span>ROUND OFF</span><span>${roundOff>0?'+':'−'} ${sym} ${Math.abs(roundOff).toFixed(2)}</span></div>`;
+  th+=`<div class="itr2 gtot"><span class="gtl">TOTAL</span><span class="gta">${sym} ${tot.toFixed(2)}</span></div>`;
   if(ps==='PARTIAL'){th+=`<div class="itr2 sm"><span>Amount Paid</span><span>${fmt(pa,sym)}</span></div>`;th+=`<div class="itr2 sm bal"><span>Balance Due</span><span>${fmt(tot-pa,sym)}</span></div>`;}
   const bkHtml=(bankOn&&(bn||bh||ba||bi))?`<div class="bankdiv"><div class="bankhd">🏦 Bank Account Details</div>
     ${bn?`<div class="ipr"><span class="ipl">Bank</span><span class="ipvv">${eh(bn)}</span></div>`:''}
@@ -1049,7 +1063,12 @@ async function dlFromDash(id){
     document.getElementById('INV').innerHTML=prev;rp();
   }catch(e){toast('Download failed',true);}
 }
-function newInv(){curKey=null;resetAll(true);document.getElementById('tabE').textContent='📝 New Invoice';}
+async function newInv(){
+  curKey=null;
+  resetAll(true);
+  await loadSellerProfile();
+  await applyNextNumbers();
+}
 
 /* ===== FORM LOAD ===== */
 function loadDataToForm(d){
