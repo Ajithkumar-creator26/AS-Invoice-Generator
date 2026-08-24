@@ -235,7 +235,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
         <div class="fg"><label>Date</label><input id="fDt" type="date" oninput="rp()"></div>
         <div class="fg"><label>Order ID</label><input id="fOrd" value="ASB260601001" oninput="rp()"></div>
       </div>
-      <button type="button" onclick="applyNextNumbers()" style="background:0;border:1.5px dashed var(--g);color:var(--m);border-radius:6px;padding:6px;font-size:10.5px;font-weight:700;cursor:pointer;width:100%;font-family:'Open Sans',sans-serif">🔄 Get Next Invoice Number</button>
+      <button type="button" id="btnNextNo" onclick="applyNextNumbers()" style="background:0;border:1.5px dashed var(--g);color:var(--m);border-radius:6px;padding:6px;font-size:10.5px;font-weight:700;cursor:pointer;width:100%;font-family:'Open Sans',sans-serif">🔄 Get Next Invoice Number</button>
     </div>
     <div class="sec">
       <div class="sec-t">🎀 Invoice Branding</div>
@@ -964,7 +964,7 @@ async function saveInv(){
       curKey=Array.isArray(res)?res[0]?.id:res?.id;
       toast(`✓ Invoice saved! (${kb}KB)`);
     }
-    document.getElementById('tabE').textContent=`📝 ${d.no}`;
+    document.getElementById('tabE').textContent=curKey?`✏️ ${d.no}`:`📝 ${d.no}`;
     setSbStatus('ok','Supabase ✓');
   }catch(e){
     console.error(e);
@@ -1041,7 +1041,7 @@ async function editInv(id){
     const d=row.data;curKey=id;loadDataToForm(d);
     prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
     renderP();rp();showEditor();
-    document.getElementById('tabE').textContent=`📝 ${row.invoice_no}`;
+    document.getElementById('tabE').textContent=`✏️ ${row.invoice_no}`;
     toast('Invoice loaded for editing');
   }catch(e){toast('Failed to load: '+e.message,true);}
 }
