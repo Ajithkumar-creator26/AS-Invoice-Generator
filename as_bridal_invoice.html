@@ -246,6 +246,21 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   </div>
 </div>
 
+<div id="pickerModal" class="modal-overlay">
+  <div style="max-width:680px;margin:32px auto;background:#fff;border-radius:12px;padding:20px 22px;box-shadow:0 10px 50px rgba(0,0,0,.5)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:17px;color:var(--dm)">📦 Pick from Inventory</h2>
+      <button onclick="closePicker()" style="background:0;border:none;font-size:22px;color:#999;cursor:pointer;line-height:1">×</button>
+    </div>
+    <input class="dsrch" id="pkSearch" style="width:100%;margin-bottom:12px;padding:9px 12px;font-size:12px" placeholder="🔍 Search code, name or color..." oninput="renderPicker()">
+    <div id="pickerList" style="max-height:400px;overflow-y:auto;border:1px solid #F0E8E0;border-radius:8px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+      <span style="font-size:10.5px;color:#AAA">Click an item to add it to the invoice</span>
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:8px 16px" onclick="closePicker()">Done</button>
+    </div>
+  </div>
+</div>
+
 <div id="itemModal" class="modal-overlay">
   <div style="max-width:560px;margin:40px auto;background:#fff;border-radius:12px;padding:22px 24px;box-shadow:0 10px 50px rgba(0,0,0,.5)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
@@ -380,7 +395,10 @@ Delivered with care. ♡</textarea></div></div>
       <div class="sec-t">💍 Products</div>
       <div class="ph"><span>IMG</span><span>PRODUCT</span><span>SIZE</span><span>QTY</span><span>RATE</span><span></span></div>
       <div id="pR"></div>
-      <button class="badd" onclick="addP()">＋ Add Product</button>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <button class="badd" style="margin:0;flex:1" onclick="addP()">＋ Blank Row</button>
+        <button class="badd" style="margin:0;flex:1.4;background:#FFF9F0;border-style:solid;border-color:var(--m);color:var(--m)" onclick="openPicker()">📦 Pick from Inventory</button>
+      </div>
     </div>
     <div class="sec">
       <div class="sec-t">🏪 Seller Details</div>
