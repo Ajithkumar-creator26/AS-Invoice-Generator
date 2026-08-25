@@ -35,8 +35,8 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .appfooter{position:fixed;bottom:0;left:0;right:0;height:26px;background:var(--dm);display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,.75);letter-spacing:.5px;z-index:90;border-top:1px solid rgba(255,255,255,.08)}
 .appfooter b{color:var(--g);font-weight:700}
 /* DASHBOARD */
-#dashV{display:flex;flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
-#dashV.hide{display:none}
+#dashV,#invV{display:flex;flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
+#dashV.hide,#invV.hide{display:none}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .sc{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .sc:nth-child(1){border-left:4px solid var(--m)}.sc:nth-child(2){border-left:4px solid var(--g)}
@@ -195,6 +195,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   <div class="brand"><div><h1>AS Invoice Generator</h1></div></div>
   <div class="navtabs">
     <button class="ntab" id="tabD" onclick="showDash()">📊 Dashboard</button>
+    <button class="ntab" id="tabI" onclick="showInv()">📦 Inventory</button>
     <button class="ntab act" id="tabE" onclick="showEditor()">📝 New Invoice</button>
   </div>
   <div class="sb-status"><div class="sb-dot" id="sbDot"></div><span id="sbTxt">Connecting...</span></div>
@@ -226,6 +227,71 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   </div>
 </div>
 
+<div id="invV" class="hide">
+  <div class="stats">
+    <div class="sc"><div class="sc-l">Total Items</div><div class="sc-v" id="iTot">—</div><div class="sc-s">SKUs in stock</div></div>
+    <div class="sc"><div class="sc-l">Stock Value</div><div class="sc-v" id="iVal">—</div><div class="sc-s">At purchase cost</div></div>
+    <div class="sc"><div class="sc-l">Potential Profit</div><div class="sc-v" id="iProf">—</div><div class="sc-s">If all sold</div></div>
+    <div class="sc"><div class="sc-l">Low Stock</div><div class="sc-v" id="iLow">—</div><div class="sc-s">Below 5 units</div></div>
+  </div>
+  <div class="dtw">
+    <div class="dth">
+      <h2>📦 Inventory</h2>
+      <div class="dth-right">
+        <input class="dsrch" id="invSearch" placeholder="🔍 Search code / name / color..." oninput="filterInv()">
+        <button class="b b-g" style="font-size:11px;padding:6px 14px" onclick="openItemModal()">＋ Add Item</button>
+      </div>
+    </div>
+    <div id="invC" style="overflow-x:auto"></div>
+  </div>
+</div>
+
+<div id="pickerModal" class="modal-overlay">
+  <div style="max-width:680px;margin:32px auto;background:#fff;border-radius:12px;padding:20px 22px;box-shadow:0 10px 50px rgba(0,0,0,.5)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:17px;color:var(--dm)">📦 Pick from Inventory</h2>
+      <button onclick="closePicker()" style="background:0;border:none;font-size:22px;color:#999;cursor:pointer;line-height:1">×</button>
+    </div>
+    <input class="dsrch" id="pkSearch" style="width:100%;margin-bottom:12px;padding:9px 12px;font-size:12px" placeholder="🔍 Search code, name or color..." oninput="renderPicker()">
+    <div id="pickerList" style="max-height:400px;overflow-y:auto;border:1px solid #F0E8E0;border-radius:8px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+      <span style="font-size:10.5px;color:#AAA">Click an item to add it to the invoice</span>
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:8px 16px" onclick="closePicker()">Done</button>
+    </div>
+  </div>
+</div>
+
+<div id="itemModal" class="modal-overlay">
+  <div style="max-width:560px;margin:40px auto;background:#fff;border-radius:12px;padding:22px 24px;box-shadow:0 10px 50px rgba(0,0,0,.5)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:17px;color:var(--dm)" id="itemModalTitle">Add Inventory Item</h2>
+      <button onclick="closeItemModal()" style="background:0;border:none;font-size:22px;color:#999;cursor:pointer;line-height:1">×</button>
+    </div>
+    <div class="row r2">
+      <div class="fg"><label>Code *</label><input id="iCode" placeholder="e.g. BB-RED-26"></div>
+      <div class="fg"><label>Name *</label><input id="iName" placeholder="e.g. Bridal Bangle Set"></div>
+    </div>
+    <div class="row r3">
+      <div class="fg"><label>Color</label><input id="iColor" placeholder="Maroon & Gold"></div>
+      <div class="fg"><label>Size</label><input id="iSize" placeholder="2.6"></div>
+      <div class="fg"><label>Quantity</label><input id="iQty" type="number" min="0" value="0" oninput="calcItemMath()"></div>
+    </div>
+    <div class="row r3">
+      <div class="fg"><label>Purchase Price</label><input id="iPur" type="number" min="0" step="0.01" placeholder="0.00" oninput="calcItemMath()"></div>
+      <div class="fg"><label>Selling Price</label><input id="iSell" type="number" min="0" step="0.01" placeholder="0.00" oninput="calcItemMath()"></div>
+      <div class="fg"><label>Offer Price</label><input id="iOffer" type="number" min="0" step="0.01" placeholder="optional" oninput="calcItemMath()"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin:12px 0">
+      <div><div style="font-size:9px;font-weight:700;color:#AAA;text-transform:uppercase;letter-spacing:1px">Profit / unit</div><div id="iProfitOut" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:#2E7D32">₹ 0.00</div></div>
+      <div><div style="font-size:9px;font-weight:700;color:#AAA;text-transform:uppercase;letter-spacing:1px">Margin</div><div id="iMarginOut" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--m)">0%</div></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeItemModal()">Cancel</button>
+      <button class="b b-s" style="padding:9px 20px" id="itemSaveBtn" onclick="saveItem()">💾 Save Item</button>
+    </div>
+  </div>
+</div>
+
 <div id="editorV">
   <div class="fp" id="fp"><div class="fi">
     <div class="sec">
@@ -235,6 +301,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
         <div class="fg"><label>Date</label><input id="fDt" type="date" oninput="rp()"></div>
         <div class="fg"><label>Order ID</label><input id="fOrd" value="ASB260601001" oninput="rp()"></div>
       </div>
+      <button type="button" id="btnNextNo" onclick="applyNextNumbers()" style="background:0;border:1.5px dashed var(--g);color:var(--m);border-radius:6px;padding:6px;font-size:10.5px;font-weight:700;cursor:pointer;width:100%;font-family:'Open Sans',sans-serif">🔄 Get Next Invoice Number</button>
     </div>
     <div class="sec">
       <div class="sec-t">🎀 Invoice Branding</div>
@@ -328,7 +395,10 @@ Delivered with care. ♡</textarea></div></div>
       <div class="sec-t">💍 Products</div>
       <div class="ph"><span>IMG</span><span>PRODUCT</span><span>SIZE</span><span>QTY</span><span>RATE</span><span></span></div>
       <div id="pR"></div>
-      <button class="badd" onclick="addP()">＋ Add Product</button>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <button class="badd" style="margin:0;flex:1" onclick="addP()">＋ Blank Row</button>
+        <button class="badd" style="margin:0;flex:1.4;background:#FFF9F0;border-style:solid;border-color:var(--m);color:var(--m)" onclick="openPicker()">📦 Pick from Inventory</button>
+      </div>
     </div>
     <div class="sec">
       <div class="sec-t">🏪 Seller Details</div>
@@ -358,6 +428,11 @@ Delivered with care. ♡</textarea></div></div>
       </div>
       <div class="row r1"><div class="fg"><label>WhatsApp Number</label><input id="fWA" value="+91 98765 43210" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>Website (blank to hide)</label><input id="fSW" value="www.asbridalbangles.com" oninput="rp()"></div></div>
+      <div style="display:flex;gap:7px;margin-top:10px">
+        <button class="b b-s" style="flex:1;justify-content:center;padding:9px" onclick="saveSellerProfile()">💾 Save Seller Profile</button>
+        <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 12px" onclick="loadSellerProfile(true)" title="Restore saved profile">↺</button>
+      </div>
+      <div style="font-size:9.5px;color:#AAA;margin-top:6px;line-height:1.5">Saved profile auto-loads on every new invoice — logo, colors, and all seller fields.</div>
     </div>
   </div></div>
 
@@ -611,8 +686,10 @@ async function init(){
   document.getElementById('fDt').value=td;document.getElementById('fPO').value=td;
   setSbStatus('busy','Connecting...');
   await loadSavedLogo();
-  await sbPing();
+  await loadSellerProfile();
+  const ok=await sbPing();
   addP();addP();rp();showEditor();
+  if(ok)await applyNextNumbers();
 }
 
 /* ===== LOGO ===== */
@@ -646,14 +723,22 @@ function waURL(p){return`https://wa.me/${(p||'').replace(/[^0-9]/g,'')}`;}
 
 /* ===== NAV ===== */
 function showDash(){
-  document.getElementById('dashV').classList.remove('hide');document.getElementById('editorV').classList.add('hide');
-  document.getElementById('tabD').classList.add('act');document.getElementById('tabE').classList.remove('act');
+  document.getElementById('dashV').classList.remove('hide');
+  document.getElementById('editorV').classList.add('hide');
+  document.getElementById('invV').classList.add('hide');
+  document.getElementById('tabD').classList.add('act');
+  document.getElementById('tabE').classList.remove('act');
+  document.getElementById('tabI').classList.remove('act');
   ['bReset','bSave','bPDF','bJPEG','bPNG'].forEach(id=>document.getElementById(id).classList.add('hide'));
   loadDash();
 }
 function showEditor(){
-  document.getElementById('editorV').classList.remove('hide');document.getElementById('dashV').classList.add('hide');
-  document.getElementById('tabE').classList.add('act');document.getElementById('tabD').classList.remove('act');
+  document.getElementById('editorV').classList.remove('hide');
+  document.getElementById('dashV').classList.add('hide');
+  document.getElementById('invV').classList.add('hide');
+  document.getElementById('tabE').classList.add('act');
+  document.getElementById('tabD').classList.remove('act');
+  document.getElementById('tabI').classList.remove('act');
   ['bReset','bSave','bPDF','bJPEG','bPNG'].forEach(id=>document.getElementById(id).classList.remove('hide'));
 }
 
@@ -678,10 +763,36 @@ function renderP(){
 function up(id,f,v){const p=prods.find(x=>x.id===id);if(p){p[f]=v;rp();}}
 function rmP(id){if(prods.length>1){prods=prods.filter(p=>p.id!==id);renderP();rp();}}
 function openImg(id){imgTgt=id;document.getElementById('imgF').click();}
+/* ===== IMAGE COMPRESSION ===== */
+function compressImg(dataUrl,maxDim=300,quality=0.72){
+  return new Promise(resolve=>{
+    const img=new Image();
+    img.onload=()=>{
+      try{
+        let{width:w,height:h}=img;
+        const scale=Math.min(maxDim/w,maxDim/h,1);
+        w=Math.round(w*scale);h=Math.round(h*scale);
+        const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+        const ctx=cv.getContext('2d');
+        ctx.fillStyle='#FFFFFF';ctx.fillRect(0,0,w,h);
+        ctx.drawImage(img,0,0,w,h);
+        resolve(cv.toDataURL('image/jpeg',quality));
+      }catch(e){resolve(dataUrl);}
+    };
+    img.onerror=()=>resolve(dataUrl);
+    img.src=dataUrl;
+  });
+}
+function payloadKB(obj){return Math.round(new Blob([JSON.stringify(obj)]).size/1024);}
+
 function onProdImg(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=ev=>{const p=prods.find(x=>x.id===imgTgt);if(p){p.img=ev.target.result;renderP();rp();}};
+  r.onload=async ev=>{
+    const small=await compressImg(ev.target.result,300,0.72);
+    const p=prods.find(x=>x.id===imgTgt);
+    if(p){p.img=small;renderP();rp();}
+  };
   r.readAsDataURL(f);e.target.value='';
 }
 
@@ -696,7 +807,11 @@ function togBank(){const on=document.getElementById('fBankToggle').checked;['rBa
 function getSym(){return CURR.find(c=>c.c===gv('fCurr'))?.s||'₹';}
 function getGST(){const v=gv('fGST');return v==='c'?parseFloat(gv('fGC'))||0:parseFloat(v)||0;}
 function getDisc(s){const v=gv('fDisc');if(v==='0')return 0;const dv=parseFloat(gv('fDV'))||0;if(v==='fl')return dv;if(v==='pc')return s*dv/100;return s*(parseFloat(v.replace('p',''))||0)/100;}
-function calcTotal(){const s=prods.reduce((t,p)=>t+(parseFloat(p.q)||0)*(parseFloat(p.r)||0),0);const d=getDisc(s),g=(s-d)*getGST()/100,sh=parseFloat(gv('fShip'))||0;return s-d+g+sh;}
+function calcTotal(){
+  const s=prods.reduce((t,p)=>t+(parseFloat(p.q)||0)*(parseFloat(p.r)||0),0);
+  const d=getDisc(s),g=(s-d)*getGST()/100,sh=parseFloat(gv('fShip'))||0;
+  return Math.round(s-d+g+sh);
+}
 function fmt(n,s){return`${s||getSym()} ${parseFloat(n||0).toFixed(2)}`;}
 function fmtD(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 function eh(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -724,7 +839,8 @@ function buildHTML(){
       <td>${r?fmt(r,sym):'—'}</td><td style="font-weight:700;color:#5C0F28">${amt?fmt(amt,sym):'—'}</td>
     </tr>`;
   }).join('');
-  const gp=getGST(),di=getDisc(sub),sh=parseFloat(gv('fShip'))||0,ad=sub-di,ga=ad*gp/100,tot=ad+ga+sh;
+  const gp=getGST(),di=getDisc(sub),sh=parseFloat(gv('fShip'))||0,ad=sub-di,ga=ad*gp/100;
+  const rawTot=ad+ga+sh, tot=Math.round(rawTot), roundOff=tot-rawTot;
   const ps=gv('fPS'),pa=parseFloat(gv('fAP'))||0,pm=gv('fPM');
   const ig=gv('fSIG'),wa=gv('fWA'),web=gv('fSW').trim();
   const bankOn=gc('fBankToggle'),bn=gv('fBN'),bh=gv('fBH'),ba=gv('fBA'),bi=gv('fBI'),bb=gv('fBB');
@@ -736,7 +852,8 @@ function buildHTML(){
   if(di>0)th+=`<div class="itr2 disc"><span>DISCOUNT</span><span>− ${fmt(di,sym)}</span></div>`;
   if(gp>0)th+=`<div class="itr2"><span>GST (${gp}%)</span><span>${fmt(ga,sym)}</span></div>`;
   th+=`<div class="itr2"><span>SHIPPING CHARGES</span><span>${fmt(sh,sym)}</span></div>`;
-  th+=`<div class="itr2 gtot"><span class="gtl">TOTAL</span><span class="gta">${fmt(tot,sym)}</span></div>`;
+  if(Math.abs(roundOff)>=0.005)th+=`<div class="itr2" style="color:#888;font-size:10px"><span>ROUND OFF</span><span>${roundOff>0?'+':'−'} ${sym} ${Math.abs(roundOff).toFixed(2)}</span></div>`;
+  th+=`<div class="itr2 gtot"><span class="gtl">TOTAL</span><span class="gta">${sym} ${tot.toFixed(2)}</span></div>`;
   if(ps==='PARTIAL'){th+=`<div class="itr2 sm"><span>Amount Paid</span><span>${fmt(pa,sym)}</span></div>`;th+=`<div class="itr2 sm bal"><span>Balance Due</span><span>${fmt(tot-pa,sym)}</span></div>`;}
   const bkHtml=(bankOn&&(bn||bh||ba||bi))?`<div class="bankdiv"><div class="bankhd">🏦 Bank Account Details</div>
     ${bn?`<div class="ipr"><span class="ipl">Bank</span><span class="ipvv">${eh(bn)}</span></div>`:''}
@@ -830,7 +947,10 @@ function closeUD(){
 /* ===== DOWNLOAD ===== */
 async function captureEl(el){
   await document.fonts.ready;
-  return html2canvas(el,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#FFFBF5',logging:false});
+  const imgs=[...el.querySelectorAll('img')];
+  await Promise.all(imgs.map(im=>im.complete?Promise.resolve():new Promise(r=>{im.onload=im.onerror=r;})));
+  await new Promise(r=>setTimeout(r,120));
+  return html2canvas(el,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#FFFBF5',logging:false,width:794,windowWidth:794});
 }
 async function dlImage(type){
   const ids={PDF:'bPDF',JPEG:'bJPEG',PNG:'bPNG'};
@@ -900,19 +1020,37 @@ async function saveInv(){
   const btn=document.getElementById('bSave');btn.textContent='💾 Saving...';btn.disabled=true;
   setSbStatus('busy','Saving...');
   try{
+    // Compress any oversized product images before saving
+    let compressed=0;
+    for(const p of prods){
+      if(p.img&&p.img.length>90000){
+        p.img=await compressImg(p.img,300,0.7);compressed++;
+      }
+    }
+    if(compressed){renderP();rp();}
+
     const d=collectData();
+    const kb=payloadKB(d);
+    if(kb>1400){
+      toast(`Payload too large (${kb}KB). Remove or shrink product images.`,true);
+      setSbStatus('err','Too large');
+      return;
+    }
     const row={invoice_no:d.no,customer_name:d.cn||'—',status:d.ps,total:d.total,currency:d.curr,invoice_date:d.date,data:d};
     if(curKey){
-      await sbUpdate(curKey,row);toast('✓ Invoice updated!');
+      await sbUpdate(curKey,row);toast(`✓ Invoice updated! (${kb}KB)`);
     }else{
       const res=await sbInsert(row);
       curKey=Array.isArray(res)?res[0]?.id:res?.id;
-      toast('✓ Invoice saved to Supabase!');
+      toast(`✓ Invoice saved! (${kb}KB)`);
     }
-    document.getElementById('tabE').textContent=`📝 ${d.no}`;
+    document.getElementById('tabE').textContent=curKey?`✏️ ${d.no}`:`📝 ${d.no}`;
     setSbStatus('ok','Supabase ✓');
   }catch(e){
-    console.error(e);toast('Save failed: '+e.message,true);setSbStatus('err','Save Error');
+    console.error(e);
+    const isTimeout=/57014|timeout/i.test(e.message);
+    toast(isTimeout?'Save timed out — payload too large. Try fewer/smaller images.':'Save failed: '+e.message,true);
+    setSbStatus('err','Save Error');
   }finally{btn.innerHTML='💾 Save';btn.disabled=false;}
 }
 
@@ -983,7 +1121,7 @@ async function editInv(id){
     const d=row.data;curKey=id;loadDataToForm(d);
     prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
     renderP();rp();showEditor();
-    document.getElementById('tabE').textContent=`📝 ${row.invoice_no}`;
+    document.getElementById('tabE').textContent=`✏️ ${row.invoice_no}`;
     toast('Invoice loaded for editing');
   }catch(e){toast('Failed to load: '+e.message,true);}
 }
@@ -994,18 +1132,45 @@ async function delInv(id){
     toast('Invoice deleted');allInvs=allInvs.filter(i=>i.id!==id);renderDash(allInvs);
   }catch(e){toast('Delete failed: '+e.message,true);}
 }
-async function dlFromDash(id){
+async function dlFromDash(id,type='PDF'){
+  let holder=null;
   try{
-    const row=await sbGetOne(id);if(!row)return;
-    const d=row.data;loadDataToForm(d);prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
-    // Temporarily render to #INV
-    const prev=document.getElementById('INV').innerHTML;
-    document.getElementById('INV').innerHTML=buildHTML();
-    await dlImage('PDF');
-    document.getElementById('INV').innerHTML=prev;rp();
-  }catch(e){toast('Download failed',true);}
+    toast('⏳ Preparing PDF...');
+    const row=await sbGetOne(id);
+    if(!row){toast('Invoice not found',true);return;}
+    const d=row.data;
+    loadDataToForm(d);
+    prods=[];rid=0;(d.prods||[]).forEach(p=>{rid++;prods.push({...p,id:rid});});
+
+    // Render offscreen (dashboard hides #INV, so capture a detached clone)
+    holder=document.createElement('div');
+    holder.style.cssText='position:fixed;left:-10000px;top:0;width:794px;background:#FFFBF5;z-index:-1';
+    holder.innerHTML=`<div class="vinvWrap" style="box-shadow:none">${buildHTML()}</div>`;
+    document.body.appendChild(holder);
+
+    // Wait for images + fonts to settle
+    await document.fonts.ready;
+    const imgs=[...holder.querySelectorAll('img')];
+    await Promise.all(imgs.map(im=>im.complete?Promise.resolve():new Promise(r=>{im.onload=im.onerror=r;})));
+    await new Promise(r=>setTimeout(r,150));
+
+    const target=holder.querySelector('.vinvWrap');
+    const canvas=await html2canvas(target,{scale:2,useCORS:true,allowTaint:true,backgroundColor:'#FFFBF5',logging:false,width:794,windowWidth:794});
+    exportCanvas(canvas,row.invoice_no||'AS-Invoice',type);
+    toast(`✓ ${row.invoice_no} downloaded!`);
+  }catch(e){
+    console.error('Dashboard PDF error:',e);
+    toast('PDF failed: '+e.message,true);
+  }finally{
+    if(holder)holder.remove();
+  }
 }
-function newInv(){curKey=null;resetAll(true);document.getElementById('tabE').textContent='📝 New Invoice';}
+async function newInv(){
+  curKey=null;
+  resetAll(true);
+  await loadSellerProfile();
+  await applyNextNumbers();
+}
 
 /* ===== FORM LOAD ===== */
 function loadDataToForm(d){
