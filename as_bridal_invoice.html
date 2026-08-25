@@ -84,10 +84,16 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .logo-ph{width:52px;height:52px;border-radius:8px;background:#f5ede8;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px dashed #E0D5CF}
 .logo-txt{font-size:11px;color:#888}
 .logo-txt strong{color:var(--m);display:block;font-size:12px}
-.ph,.pr{display:grid;grid-template-columns:38px 1fr 50px 42px 62px 26px;gap:5px}
-.ph{border-bottom:1px solid #E8DDD5;padding:4px 0 6px;margin-bottom:5px;font-size:9px;font-weight:700;text-transform:uppercase;color:var(--m)}
+.ph,.pr{display:grid;grid-template-columns:34px 1fr 42px 34px 54px 54px 22px;gap:4px}
+.ph{border-bottom:1px solid #E8DDD5;padding:4px 0 6px;margin-bottom:5px;font-size:8px;font-weight:700;text-transform:uppercase;color:var(--m)}
 .pr{margin-bottom:7px;align-items:start}
-.pth{width:38px;height:38px;border-radius:6px;border:1.5px solid #E0D5CF;background:#F5EDE8;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;overflow:hidden}
+.pth{width:34px;height:34px;border-radius:6px;border:1.5px solid #E0D5CF;background:#F5EDE8;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;overflow:hidden}
+.profitbox{background:linear-gradient(135deg,#FFF9F0,#FFF5E8);border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin-top:10px}
+.pfrow{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;color:#666}
+.pfrow.big{border-top:1px dashed var(--gl);margin-top:5px;padding-top:8px;font-size:13px}
+.pfrow.big b{font-family:'Playfair Display',serif;font-size:16px;font-weight:800}
+.pfhd{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gd);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.pfhd span:last-child{font-size:8px;color:#BBB;font-weight:400;text-transform:none;letter-spacing:0}
 .pth img{width:100%;height:100%;object-fit:cover}
 .pnames{display:flex;flex-direction:column;gap:4px}
 .pn,.pv{width:100%;border:1.5px solid #E0D5CF;border-radius:5px;font-family:'Open Sans',sans-serif;color:var(--t);background:#FFFCFA;outline:none}
@@ -193,6 +199,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   <div class="navtabs">
     <button class="ntab" id="tabD" onclick="showDash()">📊 Dashboard</button>
     <button class="ntab" id="tabI" onclick="showInv()">📦 Inventory</button>
+    <button class="ntab" id="tabR" onclick="showReports()">📈 Reports</button>
     <button class="ntab act" id="tabE" onclick="showEditor()">📝 New Invoice</button>
   </div>
   <div class="sb-status"><div class="sb-dot" id="sbDot"></div><span id="sbTxt">Connecting...</span></div>
@@ -207,11 +214,12 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 
 <!-- DASHBOARD -->
 <div id="dashV" class="hide">
-  <div class="stats">
+  <div class="stats" style="grid-template-columns:repeat(5,1fr)">
     <div class="sc"><div class="sc-l">Total Invoices</div><div class="sc-v" id="dTot">—</div><div class="sc-s">All time</div></div>
     <div class="sc"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">All invoices</div></div>
-    <div class="sc"><div class="sc-l">Paid</div><div class="sc-v" id="dPaid">—</div><div class="sc-s">Completed</div></div>
-    <div class="sc"><div class="sc-l">Pending / Partial</div><div class="sc-v" id="dPend">—</div><div class="sc-s">Outstanding</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Total Profit</div><div class="sc-v" id="dProfit" style="color:#2E7D32">—</div><div class="sc-s">After cost &amp; discount</div></div>
+    <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Margin</div><div class="sc-v" id="dMargin">—</div><div class="sc-s">Across invoices</div></div>
+    <div class="sc" style="border-left-color:#E67E22"><div class="sc-l">Pending / Partial</div><div class="sc-v" id="dPend">—</div><div class="sc-s">Outstanding</div></div>
   </div>
   <div class="dtw">
     <div class="dth">
@@ -242,6 +250,43 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
       </div>
     </div>
     <div id="invC" style="overflow-x:auto"></div>
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div id="repV" style="display:none;flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)">
+  <div style="background:#fff;border-radius:10px;padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;gap:12px;align-items:end;flex-wrap:wrap">
+    <div class="fg" style="min-width:150px"><label>From Date</label><input type="date" id="rFrom" onchange="renderReports()"></div>
+    <div class="fg" style="min-width:150px"><label>To Date</label><input type="date" id="rTo" onchange="renderReports()"></div>
+    <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:8px 14px" onclick="clearRange()">All Time</button>
+    <div style="flex:1"></div>
+    <button class="b b-s" style="padding:8px 16px" onclick="exportCSV()">📥 Export CSV</button>
+  </div>
+  <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+    <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v" id="rRev">—</div><div class="sc-s" id="rCount">—</div></div>
+    <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Total Cost</div><div class="sc-v" id="rCost" style="color:#C0392B">—</div><div class="sc-s">Goods purchased</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Net Profit</div><div class="sc-v" id="rProfit" style="color:#2E7D32">—</div><div class="sc-s">After discounts</div></div>
+    <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Order Value</div><div class="sc-v" id="rAOV">—</div><div class="sc-s">Per invoice</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px">
+    <div class="dtw" style="flex:none">
+      <div class="dth"><h2>📊 Monthly Performance</h2></div>
+      <div id="repChart" style="padding:18px"></div>
+    </div>
+    <div class="dtw" style="flex:none">
+      <div class="dth"><h2>🏆 Top Products</h2></div>
+      <div id="repTop" style="padding:6px 0"></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="dtw" style="flex:none">
+      <div class="dth"><h2>📍 Sales by Location</h2></div>
+      <div id="repLoc" style="padding:6px 0"></div>
+    </div>
+    <div class="dtw" style="flex:none">
+      <div class="dth"><h2>⚠️ Low Margin Invoices</h2></div>
+      <div id="repLow" style="padding:6px 0"></div>
+    </div>
   </div>
 </div>
 
@@ -401,11 +446,19 @@ Delivered with care. ♡</textarea></div></div>
 
     <div class="sec">
       <div class="sec-t">💍 Products</div>
-      <div class="ph"><span>IMG</span><span>PRODUCT</span><span>SIZE</span><span>QTY</span><span>RATE</span><span></span></div>
+      <div class="ph"><span>IMG</span><span>PRODUCT</span><span>SIZE</span><span>QTY</span><span>RATE</span><span>COST</span><span></span></div>
       <div id="pR"></div>
       <div style="display:flex;gap:6px;margin-top:6px">
         <button class="badd" style="flex:1" onclick="addP()">＋ Blank Row</button>
         <button class="badd" style="flex:1.3;background:#FFF9F0;border-style:solid;border-color:var(--m)" onclick="openPicker()">📦 Pick from Inventory</button>
+      </div>
+      <div class="profitbox">
+        <div class="pfhd"><span>💰 Profit Summary</span><span>internal only</span></div>
+        <div class="pfrow"><span>Revenue (Subtotal)</span><span id="pfRev">₹ 0.00</span></div>
+        <div class="pfrow"><span>Total Cost</span><span id="pfCost" style="color:#C0392B">₹ 0.00</span></div>
+        <div class="pfrow"><span>Discount Given</span><span id="pfDisc" style="color:#E67E22">₹ 0.00</span></div>
+        <div class="pfrow big"><span>Net Profit</span><b id="pfNet" style="color:#2E7D32">₹ 0.00</b></div>
+        <div class="pfrow"><span>Margin</span><span id="pfMargin" style="font-weight:700;color:var(--m)">0.0%</span></div>
       </div>
     </div>
 
@@ -678,8 +731,8 @@ function payloadKB(o){return Math.round(new Blob([JSON.stringify(o)]).size/1024)
 /* ========== NAV ========== */
 function switchView(view){
  try{
-  var views={dash:'dashV',inv:'invV',edit:'editorV'};
-  var tabs={dash:'tabD',inv:'tabI',edit:'tabE'};
+  var views={dash:'dashV',inv:'invV',rep:'repV',edit:'editorV'};
+  var tabs={dash:'tabD',inv:'tabI',rep:'tabR',edit:'tabE'};
   Object.keys(views).forEach(function(k){
    var el=document.getElementById(views[k]);
    if(el){el.style.display=(k===view)?'flex':'none';}
@@ -699,9 +752,16 @@ function switchView(view){
 function showDash(){switchView('dash');loadDash();}
 function showInv(){switchView('inv');loadInventory();}
 function showEditor(){switchView('edit');}
+async function showReports(){
+ switchView('rep');
+ if(!allInvs.length){
+  try{allInvs=await sbFetch(SB_URL+'?select=*&order=created_at.desc')||[];}catch(e){}
+ }
+ renderReports();
+}
 
 /* ========== PRODUCTS ========== */
-function addP(){rid++;prods.push({id:rid,img:'',n:'',v:'',sz:'',q:1,r:''});renderP();rp();}
+function addP(){rid++;prods.push({id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:''});renderP();rp();}
 function renderP(){
  var c=document.getElementById('pR');
  if(!c)return;
@@ -710,18 +770,49 @@ function renderP(){
   var d=document.createElement('div');
   d.className='pr';
   var thumb=p.img?`<img src="${p.img}">`:'💍';
+  var linked=p.inv_id?'title="Linked to inventory" style="border-color:#2E7D32"':'';
   d.innerHTML=
-   `<div class="pth" onclick="openImg(${p.id})">${thumb}</div>`+
+   `<div class="pth" onclick="openImg(${p.id})" ${linked}>${thumb}</div>`+
    `<div class="pnames">`+
      `<input class="pn" type="text" placeholder="Product name" value="${eh(p.n)}" oninput="up(${p.id},'n',this.value)">`+
      `<input class="pv" type="text" placeholder="Variant / Color" value="${eh(p.v)}" oninput="up(${p.id},'v',this.value)">`+
    `</div>`+
-   `<div class="pci"><input type="text" placeholder="Size" value="${eh(p.sz)}" oninput="up(${p.id},'sz',this.value)"></div>`+
+   `<div class="pci"><input type="text" placeholder="Sz" value="${eh(p.sz)}" oninput="up(${p.id},'sz',this.value)"></div>`+
    `<div class="pci"><input type="number" min="1" value="${p.q}" oninput="up(${p.id},'q',this.value)"></div>`+
-   `<div class="pci"><input type="number" min="0" step="0.01" placeholder="0.00" value="${p.r}" oninput="up(${p.id},'r',this.value)"></div>`+
+   `<div class="pci"><input type="number" min="0" step="0.01" placeholder="0" value="${p.r}" oninput="up(${p.id},'r',this.value)"></div>`+
+   `<div class="pci"><input type="number" min="0" step="0.01" placeholder="cost" value="${p.c||''}" title="Purchase cost (internal)" style="background:#FFF5F5;border-color:#EDD8D8" oninput="up(${p.id},'c',this.value)"></div>`+
    `<button class="brm" onclick="rmP(${p.id})">×</button>`;
   c.appendChild(d);
  });
+}
+
+/* ===== PROFIT CALCULATION ===== */
+function calcProfit(){
+ var revenue=0,cost=0;
+ prods.forEach(function(p){
+  var q=parseFloat(p.q)||0;
+  revenue+=q*(parseFloat(p.r)||0);
+  cost+=q*(parseFloat(p.c)||0);
+ });
+ var disc=getDisc(revenue);
+ var gross=revenue-cost;
+ var net=gross-disc;
+ var margin=revenue>0?(net/revenue)*100:0;
+ return{revenue:revenue,cost:cost,disc:disc,gross:gross,net:net,margin:margin};
+}
+function renderProfit(){
+ var p=calcProfit(),s=getSym();
+ function set(id,v,color){
+  var e=document.getElementById(id);
+  if(!e)return;
+  e.textContent=v;
+  if(color)e.style.color=color;
+ }
+ set('pfRev',s+' '+p.revenue.toFixed(2));
+ set('pfCost',s+' '+p.cost.toFixed(2));
+ set('pfDisc',s+' '+p.disc.toFixed(2));
+ set('pfNet',s+' '+p.net.toFixed(2),p.net>=0?'#2E7D32':'#C0392B');
+ set('pfMargin',p.margin.toFixed(1)+'%',p.margin>=0?'var(--m)':'#C0392B');
 }
 function up(id,f,v){var p=prods.find(function(x){return x.id===id;});if(p){p[f]=v;rp();}}
 function rmP(id){if(prods.length>1){prods=prods.filter(function(p){return p.id!==id;});renderP();rp();}}
@@ -852,7 +943,8 @@ function buildHTML(){
 function rp(){
  var h=buildHTML();
  document.getElementById('INV').innerHTML=h;
- if(isUD){var w=document.querySelector('#udInv .vinvWrap');if(w)w.innerHTML=h;}}
+ if(isUD){var w=document.querySelector('#udInv .vinvWrap');if(w)w.innerHTML=h;}
+ try{renderProfit();}catch(e){}}
 
 /* ========== UNDOCK ========== */
 function toggleUD(){
@@ -1056,10 +1148,12 @@ function useItem(id){
 function addItemToInvoice(it){
  var price=(parseFloat(it.offer_price)>0)?it.offer_price:it.selling_price;
  var target=prods.find(function(p){return !String(p.n).trim()&&!String(p.r).trim();});
- if(!target){rid++;target={id:rid,img:'',n:'',v:'',sz:'',q:1,r:''};prods.push(target);}
- target.n=it.name;target.v=it.color||'';target.sz=it.size||'';target.r=price;target.q=1;
+ if(!target){rid++;target={id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:''};prods.push(target);}
+ target.n=it.name;target.v=it.color||'';target.sz=it.size||'';
+ target.r=price;target.c=it.purchase_price||0;target.inv_id=it.id;target.q=1;
  renderP();rp();
- toast('✓ '+it.name+' added');}
+ var pf=itemProfit(it.purchase_price,it.selling_price,it.offer_price);
+ toast('✓ '+it.name+' added (profit ₹'+pf.profit.toFixed(2)+')');}
 
 /* ========== PICKER ========== */
 async function openPicker(){
@@ -1207,8 +1301,10 @@ async function saveInv(){
   renderP();rp();
   var d=collectData(),kb=payloadKB(d);
   if(kb>1400){toast('Payload too large ('+kb+'KB). Reduce images.',true);setSbStatus('err','Too large');return;}
+  var pf=calcProfit();
   var row={invoice_no:d.no,customer_name:d.cn||'—',status:d.ps,total:d.total,
-   currency:d.curr,invoice_date:d.date,data:d};
+   currency:d.curr,invoice_date:d.date,data:d,
+   total_cost:+pf.cost.toFixed(2),gross_profit:+pf.net.toFixed(2),margin:+pf.margin.toFixed(2)};
   if(curKey){await sbFetch(SB_URL+'?id=eq.'+curKey,'PATCH',row);toast('✓ Updated! ('+kb+'KB)');}
   else{
    var res=await sbFetch(SB_URL,'POST',row);
@@ -1240,36 +1336,63 @@ function filterDash(){
   return (i.invoice_no||'').toLowerCase().indexOf(q)>-1||
          (i.customer_name||'').toLowerCase().indexOf(q)>-1||
          loc.indexOf(q)>-1;}));}
+function invProfit(inv){
+ if(inv.gross_profit!==undefined&&inv.gross_profit!==null&&inv.total_cost)
+  return{cost:parseFloat(inv.total_cost)||0,net:parseFloat(inv.gross_profit)||0,margin:parseFloat(inv.margin)||0};
+ var d=inv.data||{},cost=0,rev=0;
+ (d.prods||[]).forEach(function(p){
+  var q=parseFloat(p.q)||0;
+  rev+=q*(parseFloat(p.r)||0);
+  cost+=q*(parseFloat(p.c)||0);});
+ var net=rev-cost;
+ return{cost:cost,net:cost>0?net:0,margin:(cost>0&&rev>0)?(net/rev)*100:0};
+}
 function renderDash(invs){
  if(!invs.length){
-  ['dTot','dPaid','dPend'].forEach(function(id){document.getElementById(id).textContent='0';});
+  ['dTot','dPend'].forEach(function(id){document.getElementById(id).textContent='0';});
   document.getElementById('dRev').textContent='₹0';
+  document.getElementById('dProfit').textContent='₹0';
+  document.getElementById('dMargin').textContent='0%';
   document.getElementById('dashC').innerHTML='<div class="empty"><div>📄</div><p style="margin-bottom:14px">No invoices yet.</p>'+
    '<button class="b b-g" onclick="newInv()" style="margin:0 auto;font-size:11px;padding:7px 16px">＋ New Invoice</button></div>';
   return;}
- var rev=invs.reduce(function(s,i){return s+(parseFloat(i.total)||0);},0);
+ var rev=0,profit=0,marginSum=0,marginCount=0;
+ invs.forEach(function(i){
+  rev+=parseFloat(i.total)||0;
+  var p=invProfit(i);
+  profit+=p.net;
+  if(p.cost>0){marginSum+=p.margin;marginCount++;}});
  var paid=invs.filter(function(i){return i.status==='PAID';}).length;
  document.getElementById('dTot').textContent=invs.length;
  document.getElementById('dRev').textContent='₹'+rev.toLocaleString('en-IN',{maximumFractionDigits:0});
- document.getElementById('dPaid').textContent=paid;
+ document.getElementById('dProfit').textContent='₹'+profit.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('dMargin').textContent=(marginCount?(marginSum/marginCount).toFixed(1):'0')+'%';
  document.getElementById('dPend').textContent=invs.length-paid;
  var rows=invs.map(function(inv){
   var d=inv.data||{};
   var loc=[d.cdist,d.cstate,d.ccountry].map(function(s){return (s||'').trim();}).filter(Boolean).join(', ')||'—';
+  var p=invProfit(inv);
+  var sym=d.sym||'₹';
+  var pCell=p.cost>0
+   ?'<b style="color:'+(p.net>=0?'#2E7D32':'#C0392B')+'">'+sym+' '+p.net.toFixed(2)+'</b><div style="font-size:9.5px;color:#AAA">'+p.margin.toFixed(1)+'%</div>'
+   :'<span style="color:#DDD">—</span>';
   return '<tr><td><b style="color:var(--m)">'+eh(inv.invoice_no||'—')+'</b></td>'+
    '<td>'+eh(inv.customer_name||'—')+'</td>'+
    '<td style="font-size:11px;color:#666">'+eh(loc)+'</td>'+
    '<td>'+fmtD(inv.invoice_date)+'</td>'+
-   '<td style="font-weight:700">'+(d.sym||'₹')+' '+(parseFloat(inv.total)||0).toFixed(2)+'</td>'+
+   '<td style="font-weight:700">'+sym+' '+(parseFloat(inv.total)||0).toFixed(2)+'</td>'+
+   '<td style="color:#C0392B;font-size:11px">'+(p.cost>0?sym+' '+p.cost.toFixed(2):'—')+'</td>'+
+   '<td style="text-align:right">'+pCell+'</td>'+
    '<td><span class="bdg '+(inv.status||'paid').toLowerCase()+'">'+(inv.status||'PAID')+'</span></td>'+
    '<td><div class="tact">'+
-   '<button class="tbtn vi" onclick="viewInv(\''+inv.id+'\')">👁 View</button>'+
-   '<button class="tbtn ic" onclick="dlFromDash(\''+inv.id+'\')">⬇ PDF</button>'+
-   '<button class="tbtn ed" onclick="editInv(\''+inv.id+'\')">✏️ Edit</button>'+
+   '<button class="tbtn vi" onclick="viewInv(\''+inv.id+'\')">👁</button>'+
+   '<button class="tbtn ic" onclick="dlFromDash(\''+inv.id+'\')">⬇</button>'+
+   '<button class="tbtn ed" onclick="editInv(\''+inv.id+'\')">✏️</button>'+
    '<button class="tbtn del" onclick="delInv(\''+inv.id+'\')">🗑</button>'+
    '</div></td></tr>';}).join('');
  document.getElementById('dashC').innerHTML='<table class="itbl"><thead><tr>'+
-  '<th>Invoice No.</th><th>Customer</th><th>Location</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th>'+
+  '<th>Invoice No.</th><th>Customer</th><th>Location</th><th>Date</th><th>Amount</th><th>Cost</th>'+
+  '<th style="text-align:right">Profit</th><th>Status</th><th>Actions</th>'+
   '</tr></thead><tbody>'+rows+'</tbody></table>';}
 
 async function viewInv(id){
@@ -1323,6 +1446,140 @@ function resetAll(silent){
  document.getElementById('fPO').value=td;
  ['rGC','rDV','rPart'].forEach(function(id){document.getElementById(id).classList.add('off');});
  prods=[];rid=0;addP();addP();rp();}
+
+/* ========== REPORTS ========== */
+function clearRange(){
+ document.getElementById('rFrom').value='';
+ document.getElementById('rTo').value='';
+ renderReports();}
+function repFiltered(){
+ var f=gv('rFrom'),t=gv('rTo');
+ return allInvs.filter(function(i){
+  var d=i.invoice_date||'';
+  if(f&&d<f)return false;
+  if(t&&d>t)return false;
+  return true;});}
+
+function renderReports(){
+ var list=repFiltered();
+ var rev=0,cost=0,profit=0;
+ list.forEach(function(i){
+  rev+=parseFloat(i.total)||0;
+  var p=invProfit(i);cost+=p.cost;profit+=p.net;});
+ document.getElementById('rRev').textContent='₹'+rev.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('rCount').textContent=list.length+' invoice'+(list.length===1?'':'s');
+ document.getElementById('rCost').textContent='₹'+cost.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('rProfit').textContent='₹'+profit.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('rAOV').textContent='₹'+(list.length?Math.round(rev/list.length).toLocaleString('en-IN'):'0');
+ renderMonthly(list);renderTopProducts(list);renderByLocation(list);renderLowMargin(list);}
+
+function renderMonthly(list){
+ var months={};
+ list.forEach(function(i){
+  var d=i.invoice_date;if(!d)return;
+  var key=d.slice(0,7);
+  if(!months[key])months[key]={rev:0,profit:0,count:0};
+  months[key].rev+=parseFloat(i.total)||0;
+  months[key].profit+=invProfit(i).net;
+  months[key].count++;});
+ var keys=Object.keys(months).sort().slice(-8);
+ if(!keys.length){document.getElementById('repChart').innerHTML='<div style="text-align:center;color:#CCC;padding:30px">No data in range</div>';return;}
+ var max=Math.max.apply(null,keys.map(function(k){return months[k].rev;}))||1;
+ var html='<div style="display:flex;align-items:flex-end;gap:14px;height:190px;padding:0 4px">';
+ keys.forEach(function(k){
+  var m=months[k];
+  var rh=Math.max((m.rev/max)*150,3);
+  var ph=Math.max((Math.max(m.profit,0)/max)*150,2);
+  var label=new Date(k+'-01T00:00:00').toLocaleDateString('en-IN',{month:'short',year:'2-digit'});
+  html+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">'+
+   '<div style="font-size:9px;color:#888;font-weight:700">₹'+Math.round(m.rev/1000)+'k</div>'+
+   '<div style="display:flex;gap:3px;align-items:flex-end;height:150px">'+
+   '<div style="width:16px;height:'+rh+'px;background:var(--dm);border-radius:3px 3px 0 0" title="Revenue ₹'+m.rev.toFixed(0)+'"></div>'+
+   '<div style="width:16px;height:'+ph+'px;background:#2E7D32;border-radius:3px 3px 0 0" title="Profit ₹'+m.profit.toFixed(0)+'"></div>'+
+   '</div>'+
+   '<div style="font-size:9.5px;color:#666;font-weight:600">'+label+'</div></div>';});
+ html+='</div><div style="display:flex;gap:16px;justify-content:center;margin-top:14px;font-size:10px;color:#888">'+
+  '<span><span style="display:inline-block;width:10px;height:10px;background:var(--dm);border-radius:2px;margin-right:4px"></span>Revenue</span>'+
+  '<span><span style="display:inline-block;width:10px;height:10px;background:#2E7D32;border-radius:2px;margin-right:4px"></span>Profit</span></div>';
+ document.getElementById('repChart').innerHTML=html;}
+
+function renderTopProducts(list){
+ var map={};
+ list.forEach(function(i){
+  ((i.data||{}).prods||[]).forEach(function(p){
+   var n=(p.n||'').trim();if(!n)return;
+   var q=parseFloat(p.q)||0;
+   var rev=q*(parseFloat(p.r)||0);
+   var prof=rev-q*(parseFloat(p.c)||0);
+   if(!map[n])map[n]={qty:0,rev:0,profit:0};
+   map[n].qty+=q;map[n].rev+=rev;map[n].profit+=prof;});});
+ var arr=Object.keys(map).map(function(k){return Object.assign({name:k},map[k]);})
+  .sort(function(a,b){return b.rev-a.rev;}).slice(0,8);
+ if(!arr.length){document.getElementById('repTop').innerHTML='<div style="text-align:center;color:#CCC;padding:30px">No product data</div>';return;}
+ document.getElementById('repTop').innerHTML=arr.map(function(p,i){
+  return '<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid #FAF4F0">'+
+   '<div style="width:20px;font-weight:800;color:var(--g);font-size:13px">'+(i+1)+'</div>'+
+   '<div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px;color:var(--dm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+eh(p.name)+'</div>'+
+   '<div style="font-size:9.5px;color:#AAA">'+p.qty+' sold</div></div>'+
+   '<div style="text-align:right"><div style="font-weight:700;font-size:12px">₹'+p.rev.toFixed(0)+'</div>'+
+   '<div style="font-size:9.5px;color:'+(p.profit>0?'#2E7D32':'#CCC')+'">'+(p.profit>0?'+₹'+p.profit.toFixed(0):'—')+'</div></div></div>';}).join('');}
+
+function renderByLocation(list){
+ var map={};
+ list.forEach(function(i){
+  var d=i.data||{};
+  var loc=[(d.cdist||'').trim(),(d.cstate||'').trim()].filter(Boolean).join(', ')||'Unknown';
+  if(!map[loc])map[loc]={rev:0,count:0};
+  map[loc].rev+=parseFloat(i.total)||0;
+  map[loc].count++;});
+ var arr=Object.keys(map).map(function(k){return{loc:k,rev:map[k].rev,count:map[k].count};})
+  .sort(function(a,b){return b.rev-a.rev;}).slice(0,7);
+ if(!arr.length){document.getElementById('repLoc').innerHTML='<div style="text-align:center;color:#CCC;padding:30px">No data</div>';return;}
+ var max=arr[0].rev||1;
+ document.getElementById('repLoc').innerHTML=arr.map(function(l){
+  return '<div style="padding:9px 16px;border-bottom:1px solid #FAF4F0">'+
+   '<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:5px">'+
+   '<span style="font-weight:600;color:var(--dm)">'+eh(l.loc)+'</span>'+
+   '<span style="color:#888">₹'+l.rev.toFixed(0)+' <span style="font-size:9.5px;color:#CCC">('+l.count+')</span></span></div>'+
+   '<div style="height:5px;background:#F5EDE8;border-radius:3px;overflow:hidden">'+
+   '<div style="height:100%;width:'+((l.rev/max)*100)+'%;background:linear-gradient(90deg,var(--dm),var(--g))"></div></div></div>';}).join('');}
+
+function renderLowMargin(list){
+ var arr=list.map(function(i){
+  var p=invProfit(i);
+  return{no:i.invoice_no,cust:i.customer_name,margin:p.margin,net:p.net,cost:p.cost};})
+  .filter(function(x){return x.cost>0;})
+  .sort(function(a,b){return a.margin-b.margin;}).slice(0,7);
+ if(!arr.length){
+  document.getElementById('repLow').innerHTML='<div style="text-align:center;color:#CCC;padding:30px;font-size:12px">'+
+   'No cost data yet.<br><span style="font-size:10.5px">Add cost prices to products to track margins.</span></div>';
+  return;}
+ document.getElementById('repLow').innerHTML=arr.map(function(x){
+  var col=x.margin<15?'#C0392B':x.margin<30?'#E67E22':'#2E7D32';
+  return '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid #FAF4F0">'+
+   '<div><div style="font-weight:700;color:var(--m);font-size:11.5px">'+eh(x.no||'—')+'</div>'+
+   '<div style="font-size:10px;color:#AAA">'+eh(x.cust||'—')+'</div></div>'+
+   '<div style="text-align:right"><div style="font-weight:800;color:'+col+';font-size:13px">'+x.margin.toFixed(1)+'%</div>'+
+   '<div style="font-size:9.5px;color:#AAA">₹'+x.net.toFixed(0)+'</div></div></div>';}).join('');}
+
+function exportCSV(){
+ var list=repFiltered();
+ if(!list.length){toast('No data to export',true);return;}
+ var rows=[['Invoice No','Date','Customer','District','State','Country','Amount','Cost','Profit','Margin %','Status']];
+ list.forEach(function(i){
+  var d=i.data||{},p=invProfit(i);
+  rows.push([i.invoice_no||'',i.invoice_date||'',i.customer_name||'',
+   d.cdist||'',d.cstate||'',d.ccountry||'',
+   (parseFloat(i.total)||0).toFixed(2),p.cost.toFixed(2),p.net.toFixed(2),
+   p.margin.toFixed(2),i.status||'']);});
+ var csv=rows.map(function(r){
+  return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+ var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+ var a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download='AS-Invoice-Report-'+new Date().toISOString().slice(0,10)+'.csv';
+ a.click();
+ toast('✓ CSV exported ('+list.length+' invoices)');}
 
 /* ========== INIT ========== */
 async function init(){
