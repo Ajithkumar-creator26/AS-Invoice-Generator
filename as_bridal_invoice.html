@@ -32,10 +32,8 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .appfooter{position:fixed;bottom:0;left:0;right:0;height:26px;background:var(--dm);display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,.75);z-index:90}
 .appfooter b{color:var(--g)}
-#dashV,#invV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
-#dashV.hide,#invV.hide{display:none}
+#dashV,#invV,#repV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
 #editorV{flex-direction:row;height:calc(100vh - 72px)}
-#editorV.hide{display:none}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .sc{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .sc:nth-child(1){border-left:4px solid var(--m)}.sc:nth-child(2){border-left:4px solid var(--g)}
@@ -213,7 +211,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashV" class="hide">
+<div id="dashV" style="display:none">
   <div class="stats" style="grid-template-columns:repeat(5,1fr)">
     <div class="sc"><div class="sc-l">Total Invoices</div><div class="sc-v" id="dTot">—</div><div class="sc-s">All time</div></div>
     <div class="sc"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">All invoices</div></div>
@@ -234,7 +232,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 </div>
 
 <!-- INVENTORY -->
-<div id="invV" class="hide">
+<div id="invV" style="display:none">
   <div class="stats">
     <div class="sc"><div class="sc-l">Total Items</div><div class="sc-v" id="iTot">—</div><div class="sc-s">SKUs</div></div>
     <div class="sc"><div class="sc-l">Stock Value</div><div class="sc-v" id="iVal">—</div><div class="sc-s">At purchase cost</div></div>
@@ -1599,7 +1597,7 @@ async function init(){
  try{addP();addP();rp();showEditor();}
  catch(e){console.error('Render error:',e);}
 
- setSbStatus('busy','Connecting...');
+ setSbStatus('busy',' Connecting...');
  try{await loadSavedLogo();}catch(e){console.warn('Logo load:',e);}
  try{await loadSellerProfile();}catch(e){console.warn('Profile load:',e);}
  try{rp();}catch(e){console.error('Re-render:',e);}
