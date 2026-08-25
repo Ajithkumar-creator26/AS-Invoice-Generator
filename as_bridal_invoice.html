@@ -35,8 +35,8 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .appfooter{position:fixed;bottom:0;left:0;right:0;height:26px;background:var(--dm);display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,.75);letter-spacing:.5px;z-index:90;border-top:1px solid rgba(255,255,255,.08)}
 .appfooter b{color:var(--g);font-weight:700}
 /* DASHBOARD */
-#dashV{display:flex;flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
-#dashV.hide{display:none}
+#dashV,#invV{display:flex;flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
+#dashV.hide,#invV.hide{display:none}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .sc{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .sc:nth-child(1){border-left:4px solid var(--m)}.sc:nth-child(2){border-left:4px solid var(--g)}
@@ -195,6 +195,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   <div class="brand"><div><h1>AS Invoice Generator</h1></div></div>
   <div class="navtabs">
     <button class="ntab" id="tabD" onclick="showDash()">📊 Dashboard</button>
+    <button class="ntab" id="tabI" onclick="showInv()">📦 Inventory</button>
     <button class="ntab act" id="tabE" onclick="showEditor()">📝 New Invoice</button>
   </div>
   <div class="sb-status"><div class="sb-dot" id="sbDot"></div><span id="sbTxt">Connecting...</span></div>
@@ -223,6 +224,56 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
       </div>
     </div>
     <div id="dashC"></div>
+  </div>
+</div>
+
+<div id="invV" class="hide">
+  <div class="stats">
+    <div class="sc"><div class="sc-l">Total Items</div><div class="sc-v" id="iTot">—</div><div class="sc-s">SKUs in stock</div></div>
+    <div class="sc"><div class="sc-l">Stock Value</div><div class="sc-v" id="iVal">—</div><div class="sc-s">At purchase cost</div></div>
+    <div class="sc"><div class="sc-l">Potential Profit</div><div class="sc-v" id="iProf">—</div><div class="sc-s">If all sold</div></div>
+    <div class="sc"><div class="sc-l">Low Stock</div><div class="sc-v" id="iLow">—</div><div class="sc-s">Below 5 units</div></div>
+  </div>
+  <div class="dtw">
+    <div class="dth">
+      <h2>📦 Inventory</h2>
+      <div class="dth-right">
+        <input class="dsrch" id="invSearch" placeholder="🔍 Search code / name / color..." oninput="filterInv()">
+        <button class="b b-g" style="font-size:11px;padding:6px 14px" onclick="openItemModal()">＋ Add Item</button>
+      </div>
+    </div>
+    <div id="invC" style="overflow-x:auto"></div>
+  </div>
+</div>
+
+<div id="itemModal" class="modal-overlay">
+  <div style="max-width:560px;margin:40px auto;background:#fff;border-radius:12px;padding:22px 24px;box-shadow:0 10px 50px rgba(0,0,0,.5)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:17px;color:var(--dm)" id="itemModalTitle">Add Inventory Item</h2>
+      <button onclick="closeItemModal()" style="background:0;border:none;font-size:22px;color:#999;cursor:pointer;line-height:1">×</button>
+    </div>
+    <div class="row r2">
+      <div class="fg"><label>Code *</label><input id="iCode" placeholder="e.g. BB-RED-26"></div>
+      <div class="fg"><label>Name *</label><input id="iName" placeholder="e.g. Bridal Bangle Set"></div>
+    </div>
+    <div class="row r3">
+      <div class="fg"><label>Color</label><input id="iColor" placeholder="Maroon & Gold"></div>
+      <div class="fg"><label>Size</label><input id="iSize" placeholder="2.6"></div>
+      <div class="fg"><label>Quantity</label><input id="iQty" type="number" min="0" value="0" oninput="calcItemMath()"></div>
+    </div>
+    <div class="row r3">
+      <div class="fg"><label>Purchase Price</label><input id="iPur" type="number" min="0" step="0.01" placeholder="0.00" oninput="calcItemMath()"></div>
+      <div class="fg"><label>Selling Price</label><input id="iSell" type="number" min="0" step="0.01" placeholder="0.00" oninput="calcItemMath()"></div>
+      <div class="fg"><label>Offer Price</label><input id="iOffer" type="number" min="0" step="0.01" placeholder="optional" oninput="calcItemMath()"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin:12px 0">
+      <div><div style="font-size:9px;font-weight:700;color:#AAA;text-transform:uppercase;letter-spacing:1px">Profit / unit</div><div id="iProfitOut" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:#2E7D32">₹ 0.00</div></div>
+      <div><div style="font-size:9px;font-weight:700;color:#AAA;text-transform:uppercase;letter-spacing:1px">Margin</div><div id="iMarginOut" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--m)">0%</div></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeItemModal()">Cancel</button>
+      <button class="b b-s" style="padding:9px 20px" id="itemSaveBtn" onclick="saveItem()">💾 Save Item</button>
+    </div>
   </div>
 </div>
 
@@ -654,14 +705,22 @@ function waURL(p){return`https://wa.me/${(p||'').replace(/[^0-9]/g,'')}`;}
 
 /* ===== NAV ===== */
 function showDash(){
-  document.getElementById('dashV').classList.remove('hide');document.getElementById('editorV').classList.add('hide');
-  document.getElementById('tabD').classList.add('act');document.getElementById('tabE').classList.remove('act');
+  document.getElementById('dashV').classList.remove('hide');
+  document.getElementById('editorV').classList.add('hide');
+  document.getElementById('invV').classList.add('hide');
+  document.getElementById('tabD').classList.add('act');
+  document.getElementById('tabE').classList.remove('act');
+  document.getElementById('tabI').classList.remove('act');
   ['bReset','bSave','bPDF','bJPEG','bPNG'].forEach(id=>document.getElementById(id).classList.add('hide'));
   loadDash();
 }
 function showEditor(){
-  document.getElementById('editorV').classList.remove('hide');document.getElementById('dashV').classList.add('hide');
-  document.getElementById('tabE').classList.add('act');document.getElementById('tabD').classList.remove('act');
+  document.getElementById('editorV').classList.remove('hide');
+  document.getElementById('dashV').classList.add('hide');
+  document.getElementById('invV').classList.add('hide');
+  document.getElementById('tabE').classList.add('act');
+  document.getElementById('tabD').classList.remove('act');
+  document.getElementById('tabI').classList.remove('act');
   ['bReset','bSave','bPDF','bJPEG','bPNG'].forEach(id=>document.getElementById(id).classList.remove('hide'));
 }
 
