@@ -295,9 +295,21 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
       <h2 id="itemModalTitle">Add Product</h2>
       <button class="mx" onclick="closeItemModal()">×</button>
     </div>
-    <div class="row r2">
-      <div class="fg"><label>Code *</label><input id="iCode" placeholder="BB-RED-26"></div>
-      <div class="fg"><label>Name *</label><input id="iName" placeholder="Bridal Bangle Set"></div>
+    <div style="display:flex;gap:14px;margin-bottom:14px;align-items:flex-start">
+      <div style="flex-shrink:0">
+        <label style="font-size:9px;font-weight:700;color:var(--t);opacity:.7;text-transform:uppercase;display:block;margin-bottom:4px">Product Image</label>
+        <div id="itemImgBox" onclick="document.getElementById('itemImgF').click()"
+          style="width:92px;height:92px;border:2px dashed #E0D5CF;border-radius:10px;background:#FFFCFA;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;flex-direction:column;gap:3px">
+          <span style="font-size:26px">📷</span>
+          <span style="font-size:8.5px;color:#BBB;font-weight:600">Upload</span>
+        </div>
+        <button type="button" id="itemImgClear" onclick="clearItemImg()" class="hide"
+          style="background:0;border:none;color:#C0392B;font-size:9.5px;font-weight:700;cursor:pointer;margin-top:5px;width:92px;text-decoration:underline">Remove image</button>
+      </div>
+      <div style="flex:1">
+        <div class="row r1" style="margin-bottom:7px"><div class="fg"><label>Code *</label><input id="iCode" placeholder="BB-RED-26"></div></div>
+        <div class="row r1" style="margin-bottom:0"><div class="fg"><label>Name *</label><input id="iName" placeholder="Bridal Bangle Set"></div></div>
+      </div>
     </div>
     <div class="row r3">
       <div class="fg"><label>Color</label><input id="iColor" placeholder="Maroon & Gold"></div>
@@ -531,6 +543,7 @@ Delivered with care. ♡</textarea></div></div>
 <div class="toast" id="toast"></div>
 <input type="file" id="imgF" accept="image/*" style="display:none" onchange="onProdImg(event)">
 <input type="file" id="logoF" accept="image/*" style="display:none" onchange="onLogoImg(event)">
+<input type="file" id="itemImgF" accept="image/*" style="display:none" onchange="onItemImg(event)">
 
 <script>
 /* ========== SUPABASE ========== */
@@ -1074,7 +1087,11 @@ function renderInv(items){
   var cls=q===0?'pending':(q<5?'partial':'paid');
   var txt=q===0?'OUT':(q<5?'LOW':'OK');
   var hasOffer=parseFloat(i.offer_price)>0;
-  return '<tr><td><b style="color:var(--m)">'+eh(i.code||'—')+'</b></td>'+
+  var thumb=i.image
+   ?'<img src="'+i.image+'" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid #E8D8C8">'
+   :'<div style="width:36px;height:36px;border-radius:6px;background:#F5EDE8;display:flex;align-items:center;justify-content:center;font-size:15px">💍</div>';
+  return '<tr><td style="width:46px">'+thumb+'</td>'+
+   '<td><b style="color:var(--m)">'+eh(i.code||'—')+'</b></td>'+
    '<td>'+eh(i.name||'—')+'</td>'+
    '<td style="color:#666">'+eh(i.color||'—')+'</td>'+
    '<td style="text-align:center">'+eh(i.size||'—')+'</td>'+
@@ -1089,10 +1106,39 @@ function renderInv(items){
    '<button class="tbtn ed" onclick="openItemModal(\''+i.id+'\')">✏️</button>'+
    '<button class="tbtn del" onclick="delItem(\''+i.id+'\')">🗑</button>'+
    '</div></td></tr>';}).join('');
- document.getElementById('invC').innerHTML='<table class="itbl" style="min-width:1100px"><thead><tr>'+
-  '<th>Code</th><th>Name</th><th>Color</th><th style="text-align:center">Size</th><th style="text-align:center">Qty</th>'+
+ document.getElementById('invC').innerHTML='<table class="itbl" style="min-width:1180px"><thead><tr>'+
+  '<th></th><th>Code</th><th>Name</th><th>Color</th><th style="text-align:center">Size</th><th style="text-align:center">Qty</th>'+
   '<th style="text-align:right">Purchase</th><th style="text-align:right">Selling</th><th style="text-align:right">Offer</th>'+
   '<th style="text-align:right">Profit</th><th style="text-align:right">Margin</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>';}
+
+/* ===== INVENTORY ITEM IMAGE ===== */
+var itemImg='';
+function onItemImg(e){
+ var f=e.target.files[0];if(!f)return;
+ var rd=new FileReader();
+ rd.onload=async function(ev){
+  itemImg=await compressImg(ev.target.result,300,0.72);
+  setItemImgPreview(itemImg);
+ };
+ rd.readAsDataURL(f);e.target.value='';
+}
+function setItemImgPreview(src){
+ var box=document.getElementById('itemImgBox');
+ var clr=document.getElementById('itemImgClear');
+ if(src){
+  box.innerHTML='<img src="'+src+'" style="width:100%;height:100%;object-fit:cover">';
+  box.style.borderStyle='solid';box.style.borderColor='var(--g)';
+  clr.classList.remove('hide');
+ }else{
+  box.innerHTML='<span style="font-size:26px">📷</span><span style="font-size:8.5px;color:#BBB;font-weight:600">Upload</span>';
+  box.style.borderStyle='dashed';box.style.borderColor='#E0D5CF';
+  clr.classList.add('hide');
+ }
+}
+function clearItemImg(event){
+ if(event)event.stopPropagation();
+ itemImg='';setItemImgPreview('');
+}
 
 function openItemModal(id){
  curItemId=id||null;
@@ -1103,10 +1149,14 @@ function openItemModal(id){
   document.getElementById('itemModalTitle').textContent='Edit Product';
   set('iCode',it.code);set('iName',it.name);set('iColor',it.color);set('iSize',it.size);
   set('iQty',it.quantity);set('iPur',it.purchase_price);set('iSell',it.selling_price);set('iOffer',it.offer_price);
+  itemImg=it.image||'';
  }else{
   document.getElementById('itemModalTitle').textContent='Add Product';
   ['iCode','iName','iColor','iSize','iPur','iSell','iOffer'].forEach(function(f){set(f,'');});
-  set('iQty','0');}
+  set('iQty','0');
+  itemImg='';
+ }
+ setItemImgPreview(itemImg);
  calcItemMath();
  document.getElementById('itemModal').classList.add('show');}
 function closeItemModal(){document.getElementById('itemModal').classList.remove('show');curItemId=null;}
@@ -1123,6 +1173,7 @@ async function saveItem(){
    purchase_price:parseFloat(gv('iPur'))||0,
    selling_price:parseFloat(gv('iSell'))||0,
    offer_price:parseFloat(gv('iOffer'))||0,
+   image:itemImg||'',
    profit:+r.profit.toFixed(2),margin:+r.margin.toFixed(2)};
   if(curItemId)await sbFetch(INV_URL+'?id=eq.'+curItemId,'PATCH',row);
   else await sbFetch(INV_URL,'POST',row);
@@ -1152,6 +1203,7 @@ function addItemToInvoice(it){
  if(!target){rid++;target={id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:''};prods.push(target);}
  target.n=it.name;target.v=it.color||'';target.sz=it.size||'';
  target.r=price;target.c=it.purchase_price||0;target.inv_id=it.id;target.q=1;
+ if(it.image)target.img=it.image;
  renderP();rp();
  var pf=itemProfit(it.purchase_price,it.selling_price,it.offer_price);
  toast('✓ '+it.name+' added (profit ₹'+pf.profit.toFixed(2)+')');}
@@ -1183,7 +1235,10 @@ function renderPicker(){
   var price=(parseFloat(i.offer_price)>0)?i.offer_price:i.selling_price;
   var cls=q2===0?'pending':(q2<5?'partial':'paid');
   var txt=q2===0?'OUT OF STOCK':(q2<5?q2+' LEFT':q2+' in stock');
-  return '<div class="pkrow" onclick="pickItem(\''+i.id+'\')">'+
+  var thumb=i.image
+   ?'<img src="'+i.image+'" style="width:40px;height:40px;border-radius:7px;object-fit:cover;border:1px solid #E8D8C8;flex-shrink:0">'
+   :'<div style="width:40px;height:40px;border-radius:7px;background:#F5EDE8;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">💍</div>';
+  return '<div class="pkrow" onclick="pickItem(\''+i.id+'\')">'+thumb+
    '<div style="flex:1;min-width:0"><div style="font-weight:700;color:var(--dm);font-size:12.5px">'+eh(i.name||'—')+'</div>'+
    '<div style="font-size:10.5px;color:#999;margin-top:2px"><b style="color:var(--m)">'+eh(i.code||'')+'</b>'+
    (i.color?' • '+eh(i.color):'')+(i.size?' • Size '+eh(i.size):'')+'</div></div>'+
