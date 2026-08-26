@@ -452,11 +452,12 @@ Delivered with care. ♡</textarea></div></div>
       </div>
       <div class="profitbox">
         <div class="pfhd"><span>💰 Profit Summary</span><span>internal only</span></div>
-        <div class="pfrow"><span>Revenue (Subtotal)</span><span id="pfRev">₹ 0.00</span></div>
+        <div class="pfrow"><span>Product Revenue</span><span id="pfRev">₹ 0.00</span></div>
         <div class="pfrow"><span>Total Cost</span><span id="pfCost" style="color:#C0392B">₹ 0.00</span></div>
         <div class="pfrow"><span>Discount Given</span><span id="pfDisc" style="color:#E67E22">₹ 0.00</span></div>
         <div class="pfrow big"><span>Net Profit</span><b id="pfNet" style="color:#2E7D32">₹ 0.00</b></div>
         <div class="pfrow"><span>Margin</span><span id="pfMargin" style="font-weight:700;color:var(--m)">0.0%</span></div>
+        <div style="font-size:9px;color:#BBB;text-align:center;margin-top:7px;padding-top:7px;border-top:1px dashed var(--gl)">Shipping charges excluded from profit</div>
       </div>
     </div>
 
@@ -784,12 +785,14 @@ function renderP(){
  });
 }
 
-/* ===== PROFIT CALCULATION ===== */
+/* ===== PROFIT CALCULATION =====
+   Shipping charges are pass-through (paid to courier) and are
+   deliberately EXCLUDED from all profit figures. */
 function calcProfit(){
  var revenue=0,cost=0;
  prods.forEach(function(p){
   var q=parseFloat(p.q)||0;
-  revenue+=q*(parseFloat(p.r)||0);
+  revenue+=q*(parseFloat(p.r)||0);   // product revenue only — no shipping
   cost+=q*(parseFloat(p.c)||0);
  });
  var disc=getDisc(revenue);
@@ -1335,6 +1338,7 @@ function filterDash(){
          (i.customer_name||'').toLowerCase().indexOf(q)>-1||
          loc.indexOf(q)>-1;}));}
 function invProfit(inv){
+ // Shipping is excluded from all profit figures
  if(inv.gross_profit!==undefined&&inv.gross_profit!==null&&inv.total_cost)
   return{cost:parseFloat(inv.total_cost)||0,net:parseFloat(inv.gross_profit)||0,margin:parseFloat(inv.margin)||0};
  var d=inv.data||{},cost=0,rev=0;
@@ -1597,7 +1601,7 @@ async function init(){
  try{addP();addP();rp();showEditor();}
  catch(e){console.error('Render error:',e);}
 
- setSbStatus('busy',' Connecting...');
+ setSbStatus('busy','Connecting...');
  try{await loadSavedLogo();}catch(e){console.warn('Logo load:',e);}
  try{await loadSellerProfile();}catch(e){console.warn('Profile load:',e);}
  try{rp();}catch(e){console.error('Re-render:',e);}
