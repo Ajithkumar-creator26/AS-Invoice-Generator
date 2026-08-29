@@ -212,10 +212,12 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 
 <!-- DASHBOARD -->
 <div id="dashV" style="display:none">
-  <div class="stats" style="grid-template-columns:repeat(5,1fr)">
+  <div class="stats" style="grid-template-columns:repeat(7,1fr)">
     <div class="sc"><div class="sc-l">Total Invoices</div><div class="sc-v" id="dTot">—</div><div class="sc-s">All time</div></div>
-    <div class="sc"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">All invoices</div></div>
-    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Total Profit</div><div class="sc-v" id="dProfit" style="color:#2E7D32">—</div><div class="sc-s">After cost &amp; discount</div></div>
+    <div class="sc"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">Incl. shipping &amp; GST</div></div>
+    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="dNetRev" style="color:#00838F">—</div><div class="sc-s">Excl. shipping &amp; GST</div></div>
+    <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping Collected</div><div class="sc-v" id="dShip" style="color:#7B5EA7">—</div><div class="sc-s">Paid to courier</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Total Profit</div><div class="sc-v" id="dProfit" style="color:#2E7D32">—</div><div class="sc-s">Products only</div></div>
     <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Margin</div><div class="sc-v" id="dMargin">—</div><div class="sc-s">Across invoices</div></div>
     <div class="sc" style="border-left-color:#E67E22"><div class="sc-l">Pending / Partial</div><div class="sc-v" id="dPend">—</div><div class="sc-s">Outstanding</div></div>
   </div>
@@ -260,10 +262,12 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
     <div style="flex:1"></div>
     <button class="b b-s" style="padding:8px 16px" onclick="exportCSV()">📥 Export CSV</button>
   </div>
-  <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+  <div class="stats" style="grid-template-columns:repeat(6,1fr)">
     <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v" id="rRev">—</div><div class="sc-s" id="rCount">—</div></div>
+    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="rNetRev" style="color:#00838F">—</div><div class="sc-s">Excl. ship &amp; GST</div></div>
+    <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping</div><div class="sc-v" id="rShip" style="color:#7B5EA7">—</div><div class="sc-s">Collected</div></div>
     <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Total Cost</div><div class="sc-v" id="rCost" style="color:#C0392B">—</div><div class="sc-s">Goods purchased</div></div>
-    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Net Profit</div><div class="sc-v" id="rProfit" style="color:#2E7D32">—</div><div class="sc-s">After discounts</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Net Profit</div><div class="sc-v" id="rProfit" style="color:#2E7D32">—</div><div class="sc-s">Excl. shipping</div></div>
     <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Order Value</div><div class="sc-v" id="rAOV">—</div><div class="sc-s">Per invoice</div></div>
   </div>
   <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px">
@@ -1392,6 +1396,20 @@ function filterDash(){
   return (i.invoice_no||'').toLowerCase().indexOf(q)>-1||
          (i.customer_name||'').toLowerCase().indexOf(q)>-1||
          loc.indexOf(q)>-1;}));}
+/* Net product sales = subtotal after discount, excluding shipping & GST */
+function invNetSales(inv){
+ var d=inv.data||{},sub=0;
+ (d.prods||[]).forEach(function(p){
+  sub+=(parseFloat(p.q)||0)*(parseFloat(p.r)||0);});
+ if(!sub){
+  // fallback for older invoices: strip shipping from stored total
+  return Math.max((parseFloat(inv.total)||0)-(parseFloat(d.ship)||0),0);}
+ var disc=0,dv=parseFloat(d.discv)||0;
+ if(d.disc==='fl')disc=dv;
+ else if(d.disc==='pc')disc=sub*dv/100;
+ else if(d.disc&&d.disc!=='0')disc=sub*(parseFloat(String(d.disc).replace('p',''))||0)/100;
+ return sub-disc;
+}
 function invProfit(inv){
  // Shipping is excluded from all profit figures
  if(inv.gross_profit!==undefined&&inv.gross_profit!==null&&inv.total_cost)
@@ -1408,20 +1426,26 @@ function renderDash(invs){
  if(!invs.length){
   ['dTot','dPend'].forEach(function(id){document.getElementById(id).textContent='0';});
   document.getElementById('dRev').textContent='₹0';
+  document.getElementById('dNetRev').textContent='₹0';
+  document.getElementById('dShip').textContent='₹0';
   document.getElementById('dProfit').textContent='₹0';
   document.getElementById('dMargin').textContent='0%';
   document.getElementById('dashC').innerHTML='<div class="empty"><div>📄</div><p style="margin-bottom:14px">No invoices yet.</p>'+
    '<button class="b b-g" onclick="newInv()" style="margin:0 auto;font-size:11px;padding:7px 16px">＋ New Invoice</button></div>';
   return;}
- var rev=0,profit=0,marginSum=0,marginCount=0;
+ var rev=0,ship=0,netRev=0,profit=0,marginSum=0,marginCount=0;
  invs.forEach(function(i){
   rev+=parseFloat(i.total)||0;
+  ship+=parseFloat((i.data||{}).ship)||0;
+  netRev+=invNetSales(i);
   var p=invProfit(i);
   profit+=p.net;
   if(p.cost>0){marginSum+=p.margin;marginCount++;}});
  var paid=invs.filter(function(i){return i.status==='PAID';}).length;
  document.getElementById('dTot').textContent=invs.length;
  document.getElementById('dRev').textContent='₹'+rev.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('dNetRev').textContent='₹'+netRev.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('dShip').textContent='₹'+ship.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('dProfit').textContent='₹'+profit.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('dMargin').textContent=(marginCount?(marginSum/marginCount).toFixed(1):'0')+'%';
  document.getElementById('dPend').textContent=invs.length-paid;
@@ -1519,11 +1543,15 @@ function repFiltered(){
 
 function renderReports(){
  var list=repFiltered();
- var rev=0,cost=0,profit=0;
+ var rev=0,cost=0,profit=0,ship=0,netRev=0;
  list.forEach(function(i){
   rev+=parseFloat(i.total)||0;
+  ship+=parseFloat((i.data||{}).ship)||0;
+  netRev+=invNetSales(i);
   var p=invProfit(i);cost+=p.cost;profit+=p.net;});
  document.getElementById('rRev').textContent='₹'+rev.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('rNetRev').textContent='₹'+netRev.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('rShip').textContent='₹'+ship.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('rCount').textContent=list.length+' invoice'+(list.length===1?'':'s');
  document.getElementById('rCost').textContent='₹'+cost.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('rProfit').textContent='₹'+profit.toLocaleString('en-IN',{maximumFractionDigits:0});
