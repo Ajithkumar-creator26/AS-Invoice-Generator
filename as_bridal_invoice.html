@@ -550,6 +550,32 @@ Delivered with care. ♡</textarea></div></div>
 <input type="file" id="itemImgF" accept="image/*" style="display:none" onchange="onItemImg(event)">
 
 <script>
+/* ========== LOCAL STORAGE ABSTRACTION ==========
+   window.storage exists only inside Claude artifacts.
+   On GitHub Pages / any real host we fall back to localStorage. */
+var HAS_WS=(typeof window.storage!=='undefined'&&window.storage&&typeof window.storage.get==='function');
+
+async function lsGet(key){
+ if(HAS_WS){
+  try{var r=await window.storage.get(key);return r?r.value:null;}
+  catch(e){/* key missing or API failed — fall through */}
+ }
+ try{return localStorage.getItem(key);}catch(e){return null;}
+}
+async function lsSet(key,val){
+ var ok=false;
+ if(HAS_WS){
+  try{await window.storage.set(key,val);ok=true;}catch(e){}
+ }
+ try{localStorage.setItem(key,val);ok=true;}
+ catch(e){
+  if(!ok)throw new Error(/quota/i.test(e.message||'')
+   ?'Storage full — try a smaller logo image'
+   :'Browser storage unavailable');
+ }
+ return ok;
+}
+
 /* ========== SUPABASE ========== */
 const SB_BASE='https://tgvuoesnzolpjppyrage.supabase.co/rest/v1';
 const SB_URL=SB_BASE+'/invoices';
@@ -706,16 +732,20 @@ function applyLogoPreview(src){
  t.src=src;t.classList.remove('hide');p.classList.add('hide');
  document.getElementById('logoLbl').textContent='Click to change logo';}
 async function loadSavedLogo(){
- try{var r=await window.storage.get('asbr_logo');
-  if(r){logoImg=r.value;applyLogoPreview(r.value);await extractThemeFromLogo(r.value);}}catch(e){}}
+ try{
+  var v=await lsGet('asbr_logo');
+  if(v){logoImg=v;applyLogoPreview(v);await extractThemeFromLogo(v);}
+ }catch(e){}}
 function onLogoImg(e){
  var f=e.target.files[0];if(!f)return;
  var rd=new FileReader();
  rd.onload=async function(ev){
-  logoImg=ev.target.result;applyLogoPreview(logoImg);
+  // Compress so it fits in browser storage
+  logoImg=await compressImg(ev.target.result,400,0.85);
+  applyLogoPreview(logoImg);
   var m=await extractThemeFromLogo(logoImg);rp();
   toast(m==='color'?'✓ Logo & theme matched!':m==='mono'?'✓ Logo added — mono theme':'✓ Logo updated');
-  try{await window.storage.set('asbr_logo',logoImg);}catch(x){}
+  try{await lsSet('asbr_logo',logoImg);}catch(x){console.warn('Logo not persisted:',x.message);}
  };
  rd.readAsDataURL(f);e.target.value='';}
 function logoEl(){
@@ -1282,6 +1312,7 @@ async function applyNextNumbers(){
 var SELLER_FIELDS=['fSN','fSA','fSPh','fSIG','fWA','fSW','fUID','fIBN','fIBS','fITG',
  'fCTitle','fC1','fC2','fC3','fC4','fC5','fCT','fBN','fBH','fBA','fBI','fBB'];
 async function saveSellerProfile(){
+ var btn=event&&event.target?event.target:null;
  try{
   var prof={};
   SELLER_FIELDS.forEach(function(id){prof[id]=gv(id);});
@@ -1289,14 +1320,26 @@ async function saveSellerProfile(){
   prof.primary=getVar('--dm')||'#5C0F28';
   prof.accent=getVar('--g')||'#C9A844';
   prof.logo=logoImg||'';
-  await window.storage.set('asbr_seller',JSON.stringify(prof));
-  toast('✓ Seller profile saved');
- }catch(e){toast('Could not save profile',true);}}
+  var payload=JSON.stringify(prof);
+  var kb=Math.round(new Blob([payload]).size/1024);
+  // If the logo makes it too big, shrink the logo and retry
+  if(kb>1800&&prof.logo){
+   prof.logo=await compressImg(prof.logo,220,0.7);
+   payload=JSON.stringify(prof);
+   kb=Math.round(new Blob([payload]).size/1024);
+  }
+  await lsSet('asbr_seller',payload);
+  toast('✓ Seller profile saved ('+kb+'KB)');
+ }catch(e){
+  console.error('Profile save failed:',e);
+  toast('Could not save: '+e.message,true);
+ }}
+
 async function loadSellerProfile(manual){
  try{
-  var r=await window.storage.get('asbr_seller');
-  if(!r){if(manual)toast('No saved profile yet',true);return false;}
-  var prof=JSON.parse(r.value);
+  var raw=await lsGet('asbr_seller');
+  if(!raw){if(manual)toast('No saved profile yet',true);return false;}
+  var prof=JSON.parse(raw);
   SELLER_FIELDS.forEach(function(id){
    var e=document.getElementById(id);
    if(e&&prof[id]!==undefined)e.value=prof[id];});
