@@ -197,6 +197,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   <div class="navtabs">
     <button class="ntab" id="tabD" onclick="showDash()">📊 Dashboard</button>
     <button class="ntab" id="tabI" onclick="showInv()">📦 Inventory</button>
+    <button class="ntab" id="tabRent" onclick="showRentals()">📅 Rentals</button>
     <button class="ntab" id="tabR" onclick="showReports()">📈 Reports</button>
     <button class="ntab act" id="tabE" onclick="showEditor()">📝 New Invoice</button>
   </div>
@@ -292,6 +293,54 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   </div>
 </div>
 
+<!-- RENTALS -->
+<div id="rentV" style="display:none;flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)">
+  <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+    <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Active Rentals</div><div class="sc-v" id="ktActive" style="color:#7B5EA7">—</div><div class="sc-s">Booked or out</div></div>
+    <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Overdue</div><div class="sc-v" id="ktOver" style="color:#C0392B">—</div><div class="sc-s">Past return date</div></div>
+    <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Deposits Held</div><div class="sc-v" id="ktDep" style="color:#1565C0">—</div><div class="sc-s">Refundable</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Rental Income</div><div class="sc-v" id="ktInc" style="color:#2E7D32">—</div><div class="sc-s">All bookings</div></div>
+  </div>
+  <div class="dtw">
+    <div class="dth">
+      <h2>📅 Rental Bookings</h2>
+      <div class="dth-right">
+        <select class="dsrch" id="rentFilter" style="width:150px" onchange="renderRentals()">
+          <option value="active">Active only</option>
+          <option value="overdue">Overdue</option>
+          <option value="returned">Returned</option>
+          <option value="all">All bookings</option>
+        </select>
+        <input class="dsrch" id="rentSearch" placeholder="🔍 Customer / item..." oninput="renderRentals()">
+      </div>
+    </div>
+    <div id="rentC" style="overflow-x:auto"></div>
+  </div>
+</div>
+
+<!-- RETURN MODAL -->
+<div id="returnModal" class="modal-overlay">
+  <div class="mcard" style="max-width:480px">
+    <div class="mhead"><h2>📦 Process Return</h2><button class="mx" onclick="closeReturn()">×</button></div>
+    <div id="returnInfo" style="background:#F5F0FA;border:1px solid #DDD0EA;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"></div>
+    <div class="row r2">
+      <div class="fg"><label>Actual Return Date</label><input type="date" id="retDate" onchange="calcReturn()"></div>
+      <div class="fg"><label>Damage Charges</label><input type="number" id="retDamage" min="0" step="0.01" value="0" oninput="calcReturn()"></div>
+    </div>
+    <div class="row r1"><div class="fg"><label>Notes (optional)</label><input id="retNotes" placeholder="Condition, remarks..."></div></div>
+    <div style="background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin:12px 0">
+      <div class="pfrow"><span>Deposit Held</span><span id="retDep">₹ 0.00</span></div>
+      <div class="pfrow"><span>Late Fee <span id="retLateDays" style="font-size:9.5px;color:#AAA"></span></span><span id="retLate" style="color:#C0392B">₹ 0.00</span></div>
+      <div class="pfrow"><span>Damage Charges</span><span id="retDmg" style="color:#C0392B">₹ 0.00</span></div>
+      <div class="pfrow big"><span>Refund to Customer</span><b id="retRefund" style="color:#2E7D32">₹ 0.00</b></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeReturn()">Cancel</button>
+      <button class="b b-s" style="padding:9px 20px" id="retSaveBtn" onclick="saveReturn()">✓ Confirm Return</button>
+    </div>
+  </div>
+</div>
+
 <!-- ITEM MODAL -->
 <div id="itemModal" class="modal-overlay">
   <div class="mcard">
@@ -320,14 +369,33 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
       <div class="fg"><label>Size</label><input id="iSize" placeholder="2.6"></div>
       <div class="fg"><label>Quantity</label><input id="iQty" type="number" min="0" value="0"></div>
     </div>
+    <div class="row r1" style="margin-bottom:10px">
+      <div class="fg"><label>Item Type</label>
+        <div style="display:flex;gap:8px">
+          <label style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 10px;border:1.5px solid #E0D5CF;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:700;background:#FFFCFA" id="lblSale">
+            <input type="radio" name="itemType" value="sale" id="iTypeSale" checked onchange="togItemType()" style="accent-color:var(--m)">🏷 For Sale
+          </label>
+          <label style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 10px;border:1.5px solid #E0D5CF;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:700;background:#FFFCFA" id="lblRent">
+            <input type="radio" name="itemType" value="rental" id="iTypeRental" onchange="togItemType()" style="accent-color:#7B5EA7">📅 For Rental
+          </label>
+        </div>
+      </div>
+    </div>
     <div class="row r3">
-      <div class="fg"><label>Purchase Price</label><input id="iPur" type="number" min="0" step="0.01" placeholder="0.00" oninput="calcItemMath()"></div>
+      <div class="fg"><label id="lblPur">Purchase Price</label><input id="iPur" type="number" min="0" step="0.01" placeholder="0.00" oninput="calcItemMath()"></div>
       <div class="fg"><label>Selling Price</label><input id="iSell" type="number" min="0" step="0.01" placeholder="0.00" oninput="calcItemMath()"></div>
       <div class="fg"><label>Offer Price</label><input id="iOffer" type="number" min="0" step="0.01" placeholder="optional" oninput="calcItemMath()"></div>
     </div>
+    <div class="row r3 off" id="rRental">
+      <div class="fg"><label>Rental Rate</label><input id="iRate" type="number" min="0" step="0.01" placeholder="0.00" oninput="calcItemMath()"></div>
+      <div class="fg"><label>Charged Per</label>
+        <select id="iUnit" onchange="calcItemMath()"><option value="day">Per Day</option><option value="event">Per Event (flat)</option></select>
+      </div>
+      <div class="fg"><label>Security Deposit</label><input id="iDep" type="number" min="0" step="0.01" placeholder="0.00"></div>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin:12px 0">
-      <div><div style="font-size:9px;font-weight:700;color:#AAA;text-transform:uppercase">Profit / unit</div><div id="iProfitOut" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:#2E7D32">₹ 0.00</div></div>
-      <div><div style="font-size:9px;font-weight:700;color:#AAA;text-transform:uppercase">Margin</div><div id="iMarginOut" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--m)">0%</div></div>
+      <div><div class="pfLbl" style="font-size:9px;font-weight:700;color:#AAA;text-transform:uppercase">Profit / unit</div><div id="iProfitOut" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:#2E7D32">₹ 0.00</div></div>
+      <div><div class="pfLbl" style="font-size:9px;font-weight:700;color:#AAA;text-transform:uppercase">Margin</div><div id="iMarginOut" style="font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:var(--m)">0%</div></div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeItemModal()">Cancel</button>
@@ -777,8 +845,8 @@ function payloadKB(o){return Math.round(new Blob([JSON.stringify(o)]).size/1024)
 /* ========== NAV ========== */
 function switchView(view){
  try{
-  var views={dash:'dashV',inv:'invV',rep:'repV',edit:'editorV'};
-  var tabs={dash:'tabD',inv:'tabI',rep:'tabR',edit:'tabE'};
+  var views={dash:'dashV',inv:'invV',rent:'rentV',rep:'repV',edit:'editorV'};
+  var tabs={dash:'tabD',inv:'tabI',rent:'tabRent',rep:'tabR',edit:'tabE'};
   Object.keys(views).forEach(function(k){
    var el=document.getElementById(views[k]);
    if(el){el.style.display=(k===view)?'flex':'none';}
@@ -807,18 +875,32 @@ async function showReports(){
 }
 
 /* ========== PRODUCTS ========== */
-function addP(){rid++;prods.push({id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:''});renderP();rp();}
+function addP(){rid++;prods.push({id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:'',type:'sale',from:'',to:'',days:1,dep:0,unit:'day'});renderP();rp();}
+function daysBetween(a,b){
+ if(!a||!b)return 1;
+ var d=Math.round((new Date(b)-new Date(a))/86400000)+1;
+ return d>0?d:1;
+}
+function lineAmount(p){
+ var q=parseFloat(p.q)||0,rate=parseFloat(p.r)||0;
+ if(p.type==='rental'){
+  var d=(p.unit==='event')?1:(parseInt(p.days)||1);
+  return rate*d*q;
+ }
+ return rate*q;
+}
 function renderP(){
  var c=document.getElementById('pR');
  if(!c)return;
  c.innerHTML='';
  prods.forEach(function(p){
+  var wrap=document.createElement('div');
+  var isRent=(p.type==='rental');
   var d=document.createElement('div');
   d.className='pr';
-  var thumb=p.img?`<img src="${p.img}">`:'💍';
-  var linked=p.inv_id?'title="Linked to inventory" style="border-color:#2E7D32"':'';
+  var thumb=p.img?`<img src="${p.img}">`:(isRent?'📅':'💍');
   d.innerHTML=
-   `<div class="pth" onclick="openImg(${p.id})" ${linked}>${thumb}</div>`+
+   `<div class="pth" onclick="openImg(${p.id})" ${isRent?'style="border-color:#7B5EA7"':''}>${thumb}</div>`+
    `<div class="pnames">`+
      `<input class="pn" type="text" placeholder="Product name" value="${eh(p.n)}" oninput="up(${p.id},'n',this.value)">`+
      `<input class="pv" type="text" placeholder="Variant / Color" value="${eh(p.v)}" oninput="up(${p.id},'v',this.value)">`+
@@ -826,10 +908,38 @@ function renderP(){
    `<div class="pci"><input type="text" placeholder="Sz" value="${eh(p.sz)}" oninput="up(${p.id},'sz',this.value)"></div>`+
    `<div class="pci"><input type="number" min="1" value="${p.q}" oninput="up(${p.id},'q',this.value)"></div>`+
    `<div class="pci"><input type="number" min="0" step="0.01" placeholder="0" value="${p.r}" oninput="up(${p.id},'r',this.value)"></div>`+
-   `<div class="pci"><input type="number" min="0" step="0.01" placeholder="cost" value="${p.c||''}" title="Purchase cost (internal)" style="background:#FFF5F5;border-color:#EDD8D8" oninput="up(${p.id},'c',this.value)"></div>`+
+   `<div class="pci"><input type="number" min="0" step="0.01" placeholder="cost" value="${p.c||''}" style="background:#FFF5F5;border-color:#EDD8D8" oninput="up(${p.id},'c',this.value)"></div>`+
    `<button class="brm" onclick="rmP(${p.id})">×</button>`;
-  c.appendChild(d);
+  wrap.appendChild(d);
+  if(isRent){
+   var rr=document.createElement('div');
+   rr.style.cssText='background:#F5F0FA;border:1px solid #DDD0EA;border-radius:6px;padding:7px 9px;margin:-3px 0 9px 38px';
+   rr.innerHTML=
+    `<div style="font-size:8.5px;font-weight:700;color:#7B5EA7;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">📅 Rental Period`+
+    (p.unit==='event'?' — flat per event':'')+`</div>`+
+    `<div style="display:grid;grid-template-columns:1fr 1fr 42px;gap:5px;align-items:end">`+
+      `<div class="fg"><label style="font-size:8px">From</label><input type="date" value="${p.from||''}" style="padding:5px;font-size:10.5px" oninput="up(${p.id},'from',this.value)"></div>`+
+      `<div class="fg"><label style="font-size:8px">To</label><input type="date" value="${p.to||''}" style="padding:5px;font-size:10.5px" oninput="up(${p.id},'to',this.value)"></div>`+
+      `<div class="fg"><label style="font-size:8px">Days</label><div style="padding:6px 4px;text-align:center;font-weight:800;color:#7B5EA7;font-size:12px">${p.unit==='event'?'flat':(p.days||1)}</div></div>`+
+    `</div>`+
+    `<div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px">`+
+      `<span style="color:#888">Deposit: <b style="color:#7B5EA7">₹${(parseFloat(p.dep)||0).toFixed(2)}</b> × ${p.q}</span>`+
+      `<span style="color:#888">Line: <b style="color:var(--dm)">₹${lineAmount(p).toFixed(2)}</b></span>`+
+    `</div>`;
+   wrap.appendChild(rr);
+  }
+  c.appendChild(wrap);
  });
+}
+function up(id,f,v){
+ var p=prods.find(function(x){return x.id===id;});
+ if(!p)return;
+ p[f]=v;
+ if(f==='from'||f==='to'){
+  p.days=daysBetween(p.from,p.to);
+  renderP();
+ }
+ rp();
 }
 
 /* ===== PROFIT CALCULATION =====
@@ -898,23 +1008,36 @@ function getDisc(sub){
  if(v==='pc')return sub*dv/100;
  return sub*(parseFloat(v.replace('p',''))||0)/100;}
 function calcTotal(){
- var s=prods.reduce(function(t,p){return t+(parseFloat(p.q)||0)*(parseFloat(p.r)||0);},0);
+ var s=prods.reduce(function(t,p){return t+lineAmount(p);},0);
  var d=getDisc(s),g=(s-d)*getGST()/100,sh=parseFloat(gv('fShip'))||0;
- return Math.round(s-d+g+sh);}
+ var dep=totalDeposit();
+ return Math.round(s-d+g+sh+dep);}
+function totalDeposit(){
+ return prods.reduce(function(t,p){
+  return t+(p.type==='rental'?(parseFloat(p.dep)||0)*(parseFloat(p.q)||0):0);},0);}
+function hasRental(){return prods.some(function(p){return p.type==='rental';});}
 
 /* ========== BUILD INVOICE ========== */
 function buildHTML(){
  var sym=getSym(),sub=0;
  var ph=prods.map(function(p,i){
-  var q=parseFloat(p.q)||0,r=parseFloat(p.r)||0,amt=q*r;sub+=amt;
+  var q=parseFloat(p.q)||0,r=parseFloat(p.r)||0,amt=lineAmount(p);sub+=amt;
+  var isRent=(p.type==='rental');
+  var extra='';
+  if(isRent){
+   var per=(p.unit==='event')?'per event':'× '+(p.days||1)+' day'+((p.days||1)>1?'s':'');
+   extra='<div style="font-size:9px;color:#7B5EA7;font-weight:700;margin-top:2px">📅 RENTAL '+per+
+    (p.from?'<br><span style="font-weight:400;color:#999">'+fmtD(p.from)+' → '+fmtD(p.to)+'</span>':'')+'</div>';
+  }
   return '<tr><td>'+(i+1)+'</td><td><div class="ipc"><div class="ipi">'+
-   (p.img?'<img src="'+p.img+'">':'💍')+'</div><div><div class="ipn">'+(eh(p.n)||'—')+
-   '</div><div class="ipv">'+eh(p.v)+'</div><div class="ipd">• • •</div></div></div></td><td>'+
+   (p.img?'<img src="'+p.img+'">':(isRent?'📅':'💍'))+'</div><div><div class="ipn">'+(eh(p.n)||'—')+
+   '</div><div class="ipv">'+eh(p.v)+'</div>'+(extra||'<div class="ipd">• • •</div>')+'</div></div></td><td>'+
    (eh(p.sz)||'—')+'</td><td>'+(q||'—')+'</td><td>'+(r?fmt(r,sym):'—')+
    '</td><td style="font-weight:700;color:var(--dm)">'+(amt?fmt(amt,sym):'—')+'</td></tr>';
  }).join('');
  var gp=getGST(),di=getDisc(sub),sh=parseFloat(gv('fShip'))||0;
- var ad=sub-di,ga=ad*gp/100,raw=ad+ga+sh,tot=Math.round(raw),ro=tot-raw;
+ var dep=totalDeposit();
+ var ad=sub-di,ga=ad*gp/100,raw=ad+ga+sh+dep,tot=Math.round(raw),ro=tot-raw;
  var ps=gv('fPS'),pa=parseFloat(gv('fAP'))||0,pm=gv('fPM');
  var ig=gv('fSIG'),wa=gv('fWA'),web=gv('fSW').trim();
  var ibn=gv('fIBN')||'AS BRIDAL',ibs=gv('fIBS')||'BANGLES & ACCESSORIES',itg=gv('fITG')||'Elegance in Every Bangle';
@@ -928,6 +1051,7 @@ function buildHTML(){
  if(di>0)th+='<div class="itr2 disc"><span>DISCOUNT</span><span>− '+fmt(di,sym)+'</span></div>';
  if(gp>0)th+='<div class="itr2"><span>GST ('+gp+'%)</span><span>'+fmt(ga,sym)+'</span></div>';
  th+='<div class="itr2"><span>SHIPPING CHARGES</span><span>'+fmt(sh,sym)+'</span></div>';
+ if(dep>0)th+='<div class="itr2" style="color:#7B5EA7;font-weight:600"><span>SECURITY DEPOSIT <span style="font-size:8.5px;font-weight:400">(refundable)</span></span><span>'+fmt(dep,sym)+'</span></div>';
  if(Math.abs(ro)>=0.005)th+='<div class="itr2" style="color:#888;font-size:10px"><span>ROUND OFF</span><span>'+(ro>0?'+':'−')+' '+sym+' '+Math.abs(ro).toFixed(2)+'</span></div>';
  th+='<div class="itr2 gtot"><span class="gtl">TOTAL</span><span class="gta">'+sym+' '+tot.toFixed(2)+'</span></div>';
  if(ps==='PARTIAL'){
@@ -1069,13 +1193,40 @@ function itemProfit(pur,sell,offer){
  var profit=eff-cost;
  var margin=eff>0?(profit/eff)*100:0;
  return{eff:eff,profit:profit,margin:margin};}
+function isRental(){return document.getElementById('iTypeRental').checked;}
+function togItemType(){
+ var r=isRental();
+ document.getElementById('rRental').classList.toggle('off',!r);
+ document.getElementById('lblPur').textContent=r?'Asset Value (what you paid)':'Purchase Price';
+ document.getElementById('lblSale').style.borderColor=r?'#E0D5CF':'var(--m)';
+ document.getElementById('lblSale').style.background=r?'#FFFCFA':'#FFF5F8';
+ document.getElementById('lblRent').style.borderColor=r?'#7B5EA7':'#E0D5CF';
+ document.getElementById('lblRent').style.background=r?'#F5F0FA':'#FFFCFA';
+ calcItemMath();
+}
 function calcItemMath(){
- var r=itemProfit(gv('iPur'),gv('iSell'),gv('iOffer'));
  var po=document.getElementById('iProfitOut'),mo=document.getElementById('iMarginOut');
- po.textContent='₹ '+r.profit.toFixed(2);
- po.style.color=r.profit>=0?'#2E7D32':'#C0392B';
- mo.textContent=r.margin.toFixed(1)+'%';
- mo.style.color=r.margin>=0?'var(--m)':'#C0392B';}
+ var lbls=document.querySelectorAll('#itemModal .pfLbl');
+ if(isRental()){
+  var rate=parseFloat(gv('iRate'))||0;
+  var asset=parseFloat(gv('iPur'))||0;
+  var breakeven=rate>0?Math.ceil(asset/rate):0;
+  po.textContent='₹ '+rate.toFixed(2);
+  po.style.color='#7B5EA7';
+  mo.textContent=breakeven?breakeven+'x':'—';
+  mo.style.color='#7B5EA7';
+  if(lbls[0])lbls[0].textContent='Rental income / '+(gv('iUnit')==='event'?'event':'day');
+  if(lbls[1])lbls[1].textContent='Rentals to break even';
+ }else{
+  var r=itemProfit(gv('iPur'),gv('iSell'),gv('iOffer'));
+  po.textContent='₹ '+r.profit.toFixed(2);
+  po.style.color=r.profit>=0?'#2E7D32':'#C0392B';
+  mo.textContent=r.margin.toFixed(1)+'%';
+  mo.style.color=r.margin>=0?'var(--m)':'#C0392B';
+  if(lbls[0])lbls[0].textContent='Profit / unit';
+  if(lbls[1])lbls[1].textContent='Margin';
+ }
+}
 
 async function loadInventory(){
  document.getElementById('invC').innerHTML='<div class="empty"><div style="font-size:28px">⏳</div><p>Loading inventory...</p></div>';
@@ -1121,29 +1272,43 @@ function renderInv(items){
   var cls=q===0?'pending':(q<5?'partial':'paid');
   var txt=q===0?'OUT':(q<5?'LOW':'OK');
   var hasOffer=parseFloat(i.offer_price)>0;
+  var rental=(i.item_type==='rental');
   var thumb=i.image
    ?'<img src="'+i.image+'" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid #E8D8C8">'
-   :'<div style="width:36px;height:36px;border-radius:6px;background:#F5EDE8;display:flex;align-items:center;justify-content:center;font-size:15px">💍</div>';
+   :'<div style="width:36px;height:36px;border-radius:6px;background:'+(rental?'#F5F0FA':'#F5EDE8')+';display:flex;align-items:center;justify-content:center;font-size:15px">'+(rental?'📅':'💍')+'</div>';
+  var priceCell=rental
+   ?'<td style="text-align:right;color:#7B5EA7;font-weight:700">₹'+(parseFloat(i.rental_rate)||0).toFixed(2)+
+     '<div style="font-size:9px;color:#AAA;font-weight:400">per '+(i.rental_unit||'day')+'</div></td>'+
+     '<td style="text-align:right;color:#1565C0">₹'+(parseFloat(i.deposit)||0).toFixed(2)+
+     '<div style="font-size:9px;color:#AAA">deposit</div></td>'
+   :'<td style="text-align:right">₹'+(parseFloat(i.selling_price)||0).toFixed(2)+'</td>'+
+     '<td style="text-align:right;color:'+(hasOffer?'#E67E22':'#CCC')+';font-weight:'+(hasOffer?'700':'400')+'">'+(hasOffer?'₹'+parseFloat(i.offer_price).toFixed(2):'—')+'</td>';
+  var profCell=rental
+   ?'<td style="text-align:right;color:#7B5EA7;font-weight:700">'+
+     (parseFloat(i.rental_rate)>0?Math.ceil((parseFloat(i.purchase_price)||0)/parseFloat(i.rental_rate))+'x':'—')+
+     '<div style="font-size:9px;color:#AAA;font-weight:400">to recover</div></td>'+
+     '<td style="text-align:right;color:#888">₹'+(parseFloat(i.purchase_price)||0).toFixed(0)+
+     '<div style="font-size:9px;color:#AAA">asset</div></td>'
+   :'<td style="text-align:right;font-weight:700;color:'+(r.profit>=0?'#2E7D32':'#C0392B')+'">₹'+r.profit.toFixed(2)+'</td>'+
+     '<td style="text-align:right;font-weight:700;color:'+(r.margin>=0?'var(--m)':'#C0392B')+'">'+r.margin.toFixed(1)+'%</td>';
   return '<tr><td style="width:46px">'+thumb+'</td>'+
-   '<td><b style="color:var(--m)">'+eh(i.code||'—')+'</b></td>'+
+   '<td><b style="color:var(--m)">'+eh(i.code||'—')+'</b>'+
+   '<div><span class="bdg" style="font-size:8px;padding:1px 6px;background:'+(rental?'#F0E8FA':'#FFF3E0')+';color:'+(rental?'#7B5EA7':'#E67E22')+'">'+(rental?'RENTAL':'SALE')+'</span></div></td>'+
    '<td>'+eh(i.name||'—')+'</td>'+
    '<td style="color:#666">'+eh(i.color||'—')+'</td>'+
    '<td style="text-align:center">'+eh(i.size||'—')+'</td>'+
    '<td style="text-align:center"><b>'+q+'</b> <span class="bdg '+cls+'" style="font-size:8px;padding:2px 6px">'+txt+'</span></td>'+
    '<td style="text-align:right;color:#888">₹'+(parseFloat(i.purchase_price)||0).toFixed(2)+'</td>'+
-   '<td style="text-align:right">₹'+(parseFloat(i.selling_price)||0).toFixed(2)+'</td>'+
-   '<td style="text-align:right;color:'+(hasOffer?'#E67E22':'#CCC')+';font-weight:'+(hasOffer?'700':'400')+'">'+(hasOffer?'₹'+parseFloat(i.offer_price).toFixed(2):'—')+'</td>'+
-   '<td style="text-align:right;font-weight:700;color:'+(r.profit>=0?'#2E7D32':'#C0392B')+'">₹'+r.profit.toFixed(2)+'</td>'+
-   '<td style="text-align:right;font-weight:700;color:'+(r.margin>=0?'var(--m)':'#C0392B')+'">'+r.margin.toFixed(1)+'%</td>'+
+   priceCell+profCell+
    '<td><div class="tact">'+
    '<button class="tbtn ic" onclick="useItem(\''+i.id+'\')">＋ Bill</button>'+
    '<button class="tbtn ed" onclick="openItemModal(\''+i.id+'\')">✏️</button>'+
    '<button class="tbtn del" onclick="delItem(\''+i.id+'\')">🗑</button>'+
    '</div></td></tr>';}).join('');
- document.getElementById('invC').innerHTML='<table class="itbl" style="min-width:1180px"><thead><tr>'+
-  '<th></th><th>Code</th><th>Name</th><th>Color</th><th style="text-align:center">Size</th><th style="text-align:center">Qty</th>'+
-  '<th style="text-align:right">Purchase</th><th style="text-align:right">Selling</th><th style="text-align:right">Offer</th>'+
-  '<th style="text-align:right">Profit</th><th style="text-align:right">Margin</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>';}
+ document.getElementById('invC').innerHTML='<table class="itbl" style="min-width:1220px"><thead><tr>'+
+  '<th></th><th>Code / Type</th><th>Name</th><th>Color</th><th style="text-align:center">Size</th><th style="text-align:center">Qty</th>'+
+  '<th style="text-align:right">Purchase</th><th style="text-align:right">Sell / Rate</th><th style="text-align:right">Offer / Deposit</th>'+
+  '<th style="text-align:right">Profit / Recover</th><th style="text-align:right">Margin / Asset</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>';}
 
 /* ===== INVENTORY ITEM IMAGE ===== */
 var itemImg='';
@@ -1183,15 +1348,20 @@ function openItemModal(id){
   document.getElementById('itemModalTitle').textContent='Edit Product';
   set('iCode',it.code);set('iName',it.name);set('iColor',it.color);set('iSize',it.size);
   set('iQty',it.quantity);set('iPur',it.purchase_price);set('iSell',it.selling_price);set('iOffer',it.offer_price);
+  set('iRate',it.rental_rate);set('iDep',it.deposit);set('iUnit',it.rental_unit||'day');
+  document.getElementById('iTypeRental').checked=(it.item_type==='rental');
+  document.getElementById('iTypeSale').checked=(it.item_type!=='rental');
   itemImg=it.image||'';
  }else{
   document.getElementById('itemModalTitle').textContent='Add Product';
-  ['iCode','iName','iColor','iSize','iPur','iSell','iOffer'].forEach(function(f){set(f,'');});
-  set('iQty','0');
+  ['iCode','iName','iColor','iSize','iPur','iSell','iOffer','iRate','iDep'].forEach(function(f){set(f,'');});
+  set('iQty','0');set('iUnit','day');
+  document.getElementById('iTypeSale').checked=true;
+  document.getElementById('iTypeRental').checked=false;
   itemImg='';
  }
  setItemImgPreview(itemImg);
- calcItemMath();
+ togItemType();
  document.getElementById('itemModal').classList.add('show');}
 function closeItemModal(){document.getElementById('itemModal').classList.remove('show');curItemId=null;}
 
@@ -1202,13 +1372,19 @@ async function saveItem(){
  btn.textContent='⏳ Saving...';btn.disabled=true;
  try{
   var r=itemProfit(gv('iPur'),gv('iSell'),gv('iOffer'));
+  var rental=isRental();
   var row={code:code,name:name,color:gv('iColor').trim(),size:gv('iSize').trim(),
    quantity:parseInt(gv('iQty'))||0,
    purchase_price:parseFloat(gv('iPur'))||0,
    selling_price:parseFloat(gv('iSell'))||0,
    offer_price:parseFloat(gv('iOffer'))||0,
+   item_type:rental?'rental':'sale',
+   rental_rate:parseFloat(gv('iRate'))||0,
+   rental_unit:gv('iUnit')||'day',
+   deposit:parseFloat(gv('iDep'))||0,
    image:itemImg||'',
-   profit:+r.profit.toFixed(2),margin:+r.margin.toFixed(2)};
+   profit:rental?0:+r.profit.toFixed(2),
+   margin:rental?0:+r.margin.toFixed(2)};
   if(curItemId)await sbFetch(INV_URL+'?id=eq.'+curItemId,'PATCH',row);
   else await sbFetch(INV_URL,'POST',row);
   toast(curItemId?'✓ Product updated!':'✓ Product added!');
@@ -1232,15 +1408,53 @@ function useItem(id){
  showEditor();}
 
 function addItemToInvoice(it){
- var price=(parseFloat(it.offer_price)>0)?it.offer_price:it.selling_price;
+ var rental=(it.item_type==='rental');
+ var price=rental?(parseFloat(it.rental_rate)||0)
+                 :((parseFloat(it.offer_price)>0)?it.offer_price:it.selling_price);
  var target=prods.find(function(p){return !String(p.n).trim()&&!String(p.r).trim();});
- if(!target){rid++;target={id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:''};prods.push(target);}
+ if(!target){rid++;target={id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:'',type:'sale',from:'',to:'',days:1,dep:0,unit:'day'};prods.push(target);}
  target.n=it.name;target.v=it.color||'';target.sz=it.size||'';
- target.r=price;target.c=it.purchase_price||0;target.inv_id=it.id;target.q=1;
+ target.r=price;target.inv_id=it.id;target.q=1;
+ target.type=rental?'rental':'sale';
+ target.c=rental?0:(it.purchase_price||0);
+ target.dep=rental?(parseFloat(it.deposit)||0):0;
+ target.unit=it.rental_unit||'day';
+ if(rental&&!target.from){
+  var t=new Date().toISOString().split('T')[0];
+  target.from=t;target.to=t;target.days=1;
+ }
  if(it.image)target.img=it.image;
  renderP();rp();
- var pf=itemProfit(it.purchase_price,it.selling_price,it.offer_price);
- toast('✓ '+it.name+' added (profit ₹'+pf.profit.toFixed(2)+')');}
+ if(rental)toast('📅 '+it.name+' added — set rental dates');
+ else{
+  var pf=itemProfit(it.purchase_price,it.selling_price,it.offer_price);
+  toast('✓ '+it.name+' added (profit ₹'+pf.profit.toFixed(2)+')');
+ }}
+
+/* ===== RENTAL AVAILABILITY ===== */
+async function checkAvailability(invId,from,to,excludeInvoice){
+ try{
+  var rows=await sbFetch(SB_BASE+'/rentals?select=*&inventory_id=eq.'+invId+'&status=in.(BOOKED,OUT)');
+  var clashes=(rows||[]).filter(function(r){
+   if(excludeInvoice&&r.invoice_id===excludeInvoice)return false;
+   return !(r.to_date<from||r.from_date>to);   // overlap test
+  });
+  return clashes;
+ }catch(e){return [];}
+}
+async function validateRentals(){
+ var issues=[];
+ for(var i=0;i<prods.length;i++){
+  var p=prods[i];
+  if(p.type!=='rental'||!p.inv_id||!p.from||!p.to)continue;
+  var clash=await checkAvailability(p.inv_id,p.from,p.to,curKey);
+  if(clash.length){
+   issues.push(p.n+' is already booked '+fmtD(clash[0].from_date)+' → '+fmtD(clash[0].to_date)+
+    ' ('+(clash[0].customer_name||'another customer')+')');
+  }
+ }
+ return issues;
+}
 
 /* ========== PICKER ========== */
 async function openPicker(){
@@ -1399,6 +1613,13 @@ async function saveInv(){
  btn.textContent='💾 Saving...';btn.disabled=true;
  setSbStatus('busy','Saving...');
  try{
+  // Block double-booking
+  var issues=await validateRentals();
+  if(issues.length){
+   toast('⚠ '+issues[0],true);
+   alert('Booking conflict:\n\n'+issues.join('\n\n')+'\n\nChange the dates or item, then save again.');
+   return;
+  }
   for(var i=0;i<prods.length;i++){
    if(prods[i].img&&prods[i].img.length>90000)prods[i].img=await compressImg(prods[i].img,300,0.7);}
   renderP();rp();
@@ -1413,6 +1634,7 @@ async function saveInv(){
    var res=await sbFetch(SB_URL,'POST',row);
    curKey=(res&&res[0])?res[0].id:(res?res.id:null);
    toast('✓ Saved! ('+kb+'KB)');}
+  await syncRentals(d);
   document.getElementById('tabE').textContent=(curKey?'✏️ ':'📝 ')+d.no;
   setSbStatus('ok','Supabase ✓');
  }catch(e){
@@ -1420,6 +1642,23 @@ async function saveInv(){
   toast(t?'Timed out — payload too large':'Save failed: '+e.message,true);
   setSbStatus('err','Save Error');console.error(e);
  }finally{btn.innerHTML='💾 Save';btn.disabled=false;}}
+
+/* Write rental bookings tied to this invoice */
+async function syncRentals(d){
+ if(!curKey)return;
+ try{
+  await sbDel(SB_BASE+'/rentals?invoice_id=eq.'+curKey);
+  var rows=prods.filter(function(p){return p.type==='rental';}).map(function(p){
+   return{invoice_id:curKey,inventory_id:p.inv_id||null,
+    customer_name:d.cn||'',customer_phone:d.cp||'',
+    item_name:p.n,from_date:p.from||d.date,to_date:p.to||d.date,
+    qty:parseInt(p.q)||1,rate:parseFloat(p.r)||0,
+    days:(p.unit==='event')?1:(parseInt(p.days)||1),
+    deposit:(parseFloat(p.dep)||0)*(parseInt(p.q)||1),
+    status:'BOOKED'};});
+  if(rows.length)await sbFetch(SB_BASE+'/rentals','POST',rows);
+ }catch(e){console.warn('Rental sync:',e.message);}
+}
 
 /* ========== DASHBOARD ========== */
 async function loadDash(){
@@ -1708,6 +1947,128 @@ function exportCSV(){
  a.download='AS-Invoice-Report-'+new Date().toISOString().slice(0,10)+'.csv';
  a.click();
  toast('✓ CSV exported ('+list.length+' invoices)');}
+
+/* ========== RENTALS TAB ========== */
+var allRentals=[],curRental=null;
+var RENT_URL=SB_BASE+'/rentals';
+
+function todayStr(){return new Date().toISOString().split('T')[0];}
+function isOverdue(r){
+ return (r.status==='BOOKED'||r.status==='OUT')&&r.to_date&&r.to_date<todayStr();}
+
+async function showRentals(){
+ switchView('rent');
+ document.getElementById('rentC').innerHTML='<div class="empty"><div style="font-size:28px">⏳</div><p>Loading bookings...</p></div>';
+ try{
+  allRentals=await sbFetch(RENT_URL+'?select=*&order=from_date.desc')||[];
+  renderRentals();
+ }catch(e){
+  document.getElementById('rentC').innerHTML='<div class="empty"><div>⚠️</div>'+
+   '<p style="color:#C0392B;font-size:12px;margin-bottom:8px">'+eh(e.message)+'</p>'+
+   '<p style="font-size:11px;color:#888">Run the rentals SQL in Supabase to create the table.</p></div>';}}
+
+function renderRentals(){
+ var f=gv('rentFilter'),q=gv('rentSearch').toLowerCase();
+ var list=allRentals.filter(function(r){
+  if(f==='active'&&!(r.status==='BOOKED'||r.status==='OUT'))return false;
+  if(f==='overdue'&&!isOverdue(r))return false;
+  if(f==='returned'&&r.status!=='RETURNED')return false;
+  if(q&&(r.customer_name||'').toLowerCase().indexOf(q)===-1&&
+        (r.item_name||'').toLowerCase().indexOf(q)===-1)return false;
+  return true;});
+
+ var active=allRentals.filter(function(r){return r.status==='BOOKED'||r.status==='OUT';});
+ var over=allRentals.filter(isOverdue);
+ var dep=active.reduce(function(s,r){return s+(parseFloat(r.deposit)||0);},0);
+ var inc=allRentals.reduce(function(s,r){
+  return s+(parseFloat(r.rate)||0)*(parseInt(r.days)||1)*(parseInt(r.qty)||1);},0);
+ document.getElementById('ktActive').textContent=active.length;
+ document.getElementById('ktOver').textContent=over.length;
+ document.getElementById('ktDep').textContent='₹'+dep.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('ktInc').textContent='₹'+inc.toLocaleString('en-IN',{maximumFractionDigits:0});
+
+ if(!list.length){
+  document.getElementById('rentC').innerHTML='<div class="empty"><div>📅</div><p style="font-size:12px">No bookings match this filter.</p></div>';
+  return;}
+
+ var rows=list.map(function(r){
+  var od=isOverdue(r);
+  var lateDays=od?Math.round((new Date(todayStr())-new Date(r.to_date))/86400000):0;
+  var cls=r.status==='RETURNED'?'paid':(od?'pending':'partial');
+  var txt=r.status==='RETURNED'?'RETURNED':(od?lateDays+'d LATE':r.status);
+  var amt=(parseFloat(r.rate)||0)*(parseInt(r.days)||1)*(parseInt(r.qty)||1);
+  return '<tr'+(od?' style="background:#FFF8F8"':'')+'>'+
+   '<td><b style="color:var(--dm)">'+eh(r.item_name||'—')+'</b>'+
+   '<div style="font-size:10px;color:#AAA">Qty '+(r.qty||1)+' × ₹'+(parseFloat(r.rate)||0).toFixed(0)+'</div></td>'+
+   '<td>'+eh(r.customer_name||'—')+'<div style="font-size:10px;color:#AAA">'+eh(r.customer_phone||'')+'</div></td>'+
+   '<td style="font-size:11.5px">'+fmtD(r.from_date)+'<div style="font-size:10px;color:#AAA">to '+fmtD(r.to_date)+'</div></td>'+
+   '<td style="text-align:center">'+(r.days||1)+'</td>'+
+   '<td style="text-align:right;font-weight:700">₹'+amt.toFixed(2)+'</td>'+
+   '<td style="text-align:right;color:#7B5EA7;font-weight:600">₹'+(parseFloat(r.deposit)||0).toFixed(2)+'</td>'+
+   '<td><span class="bdg '+cls+'">'+txt+'</span></td>'+
+   '<td>'+(r.status==='RETURNED'
+     ?'<div style="font-size:10px;color:#888">'+fmtD(r.actual_return_date)+
+       (r.late_fee>0?'<br><span style="color:#C0392B">Late ₹'+parseFloat(r.late_fee).toFixed(0)+'</span>':'')+
+       (r.damage_fee>0?'<br><span style="color:#C0392B">Dmg ₹'+parseFloat(r.damage_fee).toFixed(0)+'</span>':'')+'</div>'
+     :'<button class="tbtn ic" onclick="openReturn(\''+r.id+'\')">📦 Return</button>')+
+   '</td></tr>';}).join('');
+ document.getElementById('rentC').innerHTML='<table class="itbl" style="min-width:1000px"><thead><tr>'+
+  '<th>Item</th><th>Customer</th><th>Period</th><th style="text-align:center">Days</th>'+
+  '<th style="text-align:right">Rental</th><th style="text-align:right">Deposit</th><th>Status</th><th>Action</th>'+
+  '</tr></thead><tbody>'+rows+'</tbody></table>';}
+
+function openReturn(id){
+ curRental=allRentals.find(function(r){return r.id===id;});
+ if(!curRental)return;
+ var r=curRental;
+ document.getElementById('returnInfo').innerHTML=
+  '<b style="color:var(--dm)">'+eh(r.item_name)+'</b> × '+(r.qty||1)+
+  '<div style="color:#888;margin-top:4px">'+eh(r.customer_name||'')+' • '+
+  fmtD(r.from_date)+' → '+fmtD(r.to_date)+'</div>';
+ document.getElementById('retDate').value=todayStr();
+ document.getElementById('retDamage').value='0';
+ document.getElementById('retNotes').value='';
+ calcReturn();
+ document.getElementById('returnModal').classList.add('show');}
+function closeReturn(){document.getElementById('returnModal').classList.remove('show');curRental=null;}
+
+function calcReturn(){
+ if(!curRental)return;
+ var r=curRental;
+ var ret=gv('retDate')||todayStr();
+ var lateDays=Math.max(Math.round((new Date(ret)-new Date(r.to_date))/86400000),0);
+ var rate=parseFloat(r.rate)||0,qty=parseInt(r.qty)||1;
+ var lateFee=lateDays*rate*qty;              // automatic: rate × qty per late day
+ var dmg=parseFloat(gv('retDamage'))||0;
+ var dep=parseFloat(r.deposit)||0;
+ var refund=dep-lateFee-dmg;
+ document.getElementById('retDep').textContent='₹ '+dep.toFixed(2);
+ document.getElementById('retLate').textContent='₹ '+lateFee.toFixed(2);
+ document.getElementById('retLateDays').textContent=lateDays?'('+lateDays+' day'+(lateDays>1?'s':'')+' late)':'';
+ document.getElementById('retDmg').textContent='₹ '+dmg.toFixed(2);
+ var el=document.getElementById('retRefund');
+ el.textContent='₹ '+refund.toFixed(2);
+ el.style.color=refund>=0?'#2E7D32':'#C0392B';
+ if(refund<0)el.textContent='₹ '+Math.abs(refund).toFixed(2)+' DUE';
+ return{lateDays:lateDays,lateFee:lateFee,dmg:dmg,refund:refund};}
+
+async function saveReturn(){
+ if(!curRental)return;
+ var btn=document.getElementById('retSaveBtn');
+ btn.textContent='⏳ Saving...';btn.disabled=true;
+ try{
+  var c=calcReturn();
+  await sbFetch(RENT_URL+'?id=eq.'+curRental.id,'PATCH',{
+   status:'RETURNED',
+   actual_return_date:gv('retDate')||todayStr(),
+   late_fee:+c.lateFee.toFixed(2),
+   damage_fee:+c.dmg.toFixed(2),
+   notes:gv('retNotes')||null});
+  toast(c.refund>=0?'✓ Returned — refund ₹'+c.refund.toFixed(2)
+                   :'✓ Returned — ₹'+Math.abs(c.refund).toFixed(2)+' still due');
+  closeReturn();showRentals();
+ }catch(e){toast('Return failed: '+e.message,true);}
+ finally{btn.innerHTML='✓ Confirm Return';btn.disabled=false;}}
 
 /* ========== INIT ========== */
 async function init(){
