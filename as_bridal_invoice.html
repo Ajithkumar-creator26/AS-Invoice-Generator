@@ -14,7 +14,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .bar{background:var(--dm);padding:9px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.4)}
 .brand h1{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--g)}
 .navtabs{display:flex;gap:4px;flex:1}
-.ntab{padding:6px 14px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;background:rgba(255,255,255,.1);color:rgba(255,255,255,.65);transition:all .2s}
+.ntab{padding:6px 13px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;background:rgba(255,255,255,.1);color:rgba(255,255,255,.65);transition:all .2s;white-space:nowrap}
 .ntab:hover{background:rgba(255,255,255,.18);color:#fff}.ntab.act{background:var(--g);color:var(--dm)}
 .topbtns{display:flex;gap:5px;flex-shrink:0}
 .b{padding:6px 12px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap}
@@ -28,30 +28,28 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .sb-dot{width:7px;height:7px;border-radius:50%;background:#888}
 .sb-dot.ok{background:#4CAF50}.sb-dot.err{background:#f44336}.sb-dot.busy{background:#FFC107;animation:pulse .8s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(90px);padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;transition:transform .3s;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(90px);padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;transition:transform .3s;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.3);max-width:80vw;text-align:center}
 .toast.show{transform:translateX(-50%) translateY(0)}
 .appfooter{position:fixed;bottom:0;left:0;right:0;height:26px;background:var(--dm);display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,.75);z-index:90}
 .appfooter b{color:var(--g)}
-#dashV,#invV,#repV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
+#dashV,#invV,#rentV,#repV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
 #editorV{flex-direction:row;height:calc(100vh - 72px)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.sc{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.sc:nth-child(1){border-left:4px solid var(--m)}.sc:nth-child(2){border-left:4px solid var(--g)}
-.sc:nth-child(3){border-left:4px solid #2E7D32}.sc:nth-child(4){border-left:4px solid #1565C0}
+.stats{display:grid;gap:12px}
+.sc{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid var(--m)}
 .sc-l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:5px}
-.sc-v{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:var(--dm)}
-.sc-s{font-size:10px;color:#BBB;margin-top:2px}
+.sc-v{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:var(--dm)}
+.sc-s{font-size:9.5px;color:#BBB;margin-top:2px}
 .dtw{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden;flex:1}
-.dth{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f0e8e0}
+.dth{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f0e8e0;flex-wrap:wrap;gap:10px}
 .dth h2{font-family:'Playfair Display',serif;font-size:15px;color:var(--dm)}
 .dth-right{display:flex;gap:8px;align-items:center}
 .dsrch{padding:6px 10px;border:1.5px solid #E0D5CF;border-radius:5px;font-size:11px;font-family:'Open Sans',sans-serif;outline:none;width:200px}
 .dsrch:focus{border-color:var(--m)}
 .itbl{width:100%;border-collapse:collapse}
-.itbl th{padding:10px 14px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#BBB;border-bottom:2px solid #f5ede8}
+.itbl th{padding:10px 14px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#BBB;border-bottom:2px solid #f5ede8;white-space:nowrap}
 .itbl td{padding:10px 14px;font-size:12px;color:var(--t);border-bottom:1px solid #faf4f0;vertical-align:middle}
 .itbl tr:hover td{background:#fffaf6}
-.bdg{padding:3px 10px;border-radius:12px;font-size:9.5px;font-weight:700}
+.bdg{padding:3px 10px;border-radius:12px;font-size:9.5px;font-weight:700;display:inline-block}
 .bdg.paid{background:#E8F5E9;color:#2E7D32}.bdg.pending{background:#FFEBEE;color:#C0392B}.bdg.partial{background:#FFF3E0;color:#E67E22}
 .tact{display:flex;gap:4px}
 .tbtn{padding:5px 9px;border:none;border-radius:5px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;white-space:nowrap}
@@ -78,7 +76,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .chkrow input{width:14px;height:14px;accent-color:var(--m)}
 .logo-area{display:flex;align-items:center;gap:10px;padding:10px;border:2px dashed #E0D5CF;border-radius:8px;cursor:pointer;background:#FFFCFA;margin-bottom:8px}
 .logo-area:hover{border-color:var(--m)}
-.logo-thumb{width:52px;height:52px;border-radius:8px;object-fit:contain;background:#fafafa;border:1.5px solid #E0D5CF}
+.logo-thumb{width:52px;height:52px;border-radius:8px;object-fit:contain;background:repeating-conic-gradient(#f0f0f0 0% 25%,#fff 0% 50%) 50%/12px 12px;border:1.5px solid #E0D5CF}
 .logo-ph{width:52px;height:52px;border-radius:8px;background:#f5ede8;display:flex;align-items:center;justify-content:center;font-size:22px;border:2px dashed #E0D5CF}
 .logo-txt{font-size:11px;color:#888}
 .logo-txt strong{color:var(--m);display:block;font-size:12px}
@@ -86,12 +84,6 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .ph{border-bottom:1px solid #E8DDD5;padding:4px 0 6px;margin-bottom:5px;font-size:8px;font-weight:700;text-transform:uppercase;color:var(--m)}
 .pr{margin-bottom:7px;align-items:start}
 .pth{width:34px;height:34px;border-radius:6px;border:1.5px solid #E0D5CF;background:#F5EDE8;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;overflow:hidden}
-.profitbox{background:linear-gradient(135deg,#FFF9F0,#FFF5E8);border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin-top:10px}
-.pfrow{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;color:#666}
-.pfrow.big{border-top:1px dashed var(--gl);margin-top:5px;padding-top:8px;font-size:13px}
-.pfrow.big b{font-family:'Playfair Display',serif;font-size:16px;font-weight:800}
-.pfhd{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gd);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-.pfhd span:last-child{font-size:8px;color:#BBB;font-weight:400;text-transform:none;letter-spacing:0}
 .pth img{width:100%;height:100%;object-fit:cover}
 .pnames{display:flex;flex-direction:column;gap:4px}
 .pn,.pv{width:100%;border:1.5px solid #E0D5CF;border-radius:5px;font-family:'Open Sans',sans-serif;color:var(--t);background:#FFFCFA;outline:none}
@@ -101,6 +93,12 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .brm:hover{color:var(--m)}
 .badd{background:0;border:1.5px dashed var(--g);color:var(--m);border-radius:6px;padding:8px;font-size:11px;font-weight:700;cursor:pointer;width:100%;font-family:'Open Sans',sans-serif}
 .badd:hover{background:#FFF5E8}
+.profitbox{background:linear-gradient(135deg,#FFF9F0,#FFF5E8);border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin-top:10px}
+.pfrow{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;color:#666}
+.pfrow.big{border-top:1px dashed var(--gl);margin-top:5px;padding-top:8px;font-size:13px}
+.pfrow.big b{font-family:'Playfair Display',serif;font-size:16px;font-weight:800}
+.pfhd{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gd);margin-bottom:6px;display:flex;justify-content:space-between}
+.pfhd span:last-child{font-size:8px;color:#BBB;font-weight:400;text-transform:none;letter-spacing:0}
 .pp{flex:1;background:#D8CFC6;overflow-y:auto;padding:16px;display:flex;flex-direction:column;align-items:center}
 .ppbar{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:794px;margin-bottom:12px}
 .pvl{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#8A6A5A}
@@ -147,7 +145,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .ipv{font-size:9.5px;color:#888;margin-top:2px}
 .ipd{color:var(--g);font-size:10px}
 .ittw{display:flex;justify-content:flex-end;padding:8px 16px 13px}
-.itot{width:260px}
+.itot{width:280px}
 .itr2{display:flex;justify-content:space-between;padding:5px 10px;font-size:11px;color:#555;border-bottom:1px solid #EDE0D4}
 .itr2.disc{color:#C0392B}
 .itr2.gtot{background:var(--dm);color:#fff;border-radius:4px;padding:10px 13px;margin-top:5px;border:none}
@@ -215,12 +213,12 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 <div id="dashV" style="display:none">
   <div class="stats" style="grid-template-columns:repeat(7,1fr)">
     <div class="sc"><div class="sc-l">Total Invoices</div><div class="sc-v" id="dTot">—</div><div class="sc-s">All time</div></div>
-    <div class="sc"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">Incl. shipping &amp; GST</div></div>
-    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="dNetRev" style="color:#00838F">—</div><div class="sc-s">Excl. shipping &amp; GST</div></div>
-    <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping Collected</div><div class="sc-v" id="dShip" style="color:#7B5EA7">—</div><div class="sc-s">Paid to courier</div></div>
+    <div class="sc" style="border-left-color:var(--g)"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">Incl. ship &amp; GST</div></div>
+    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="dNetRev" style="color:#00838F">—</div><div class="sc-s">Excl. ship &amp; GST</div></div>
+    <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping</div><div class="sc-v" id="dShip" style="color:#7B5EA7">—</div><div class="sc-s">Collected</div></div>
     <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Total Profit</div><div class="sc-v" id="dProfit" style="color:#2E7D32">—</div><div class="sc-s">Products only</div></div>
     <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Margin</div><div class="sc-v" id="dMargin">—</div><div class="sc-s">Across invoices</div></div>
-    <div class="sc" style="border-left-color:#E67E22"><div class="sc-l">Pending / Partial</div><div class="sc-v" id="dPend">—</div><div class="sc-s">Outstanding</div></div>
+    <div class="sc" style="border-left-color:#E67E22"><div class="sc-l">Pending</div><div class="sc-v" id="dPend">—</div><div class="sc-s">Outstanding</div></div>
   </div>
   <div class="dtw">
     <div class="dth">
@@ -230,17 +228,17 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
         <button class="b b-g" style="font-size:11px;padding:6px 14px" onclick="newInv()">＋ New Invoice</button>
       </div>
     </div>
-    <div id="dashC"></div>
+    <div id="dashC" style="overflow-x:auto"></div>
   </div>
 </div>
 
 <!-- INVENTORY -->
 <div id="invV" style="display:none">
-  <div class="stats">
+  <div class="stats" style="grid-template-columns:repeat(4,1fr)">
     <div class="sc"><div class="sc-l">Total Items</div><div class="sc-v" id="iTot">—</div><div class="sc-s">SKUs</div></div>
-    <div class="sc"><div class="sc-l">Stock Value</div><div class="sc-v" id="iVal">—</div><div class="sc-s">At purchase cost</div></div>
-    <div class="sc"><div class="sc-l">Potential Profit</div><div class="sc-v" id="iProf">—</div><div class="sc-s">If all sold</div></div>
-    <div class="sc"><div class="sc-l">Low Stock</div><div class="sc-v" id="iLow">—</div><div class="sc-s">Below 5 units</div></div>
+    <div class="sc" style="border-left-color:var(--g)"><div class="sc-l">Stock Value</div><div class="sc-v" id="iVal">—</div><div class="sc-s">At purchase cost</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Potential Profit</div><div class="sc-v" id="iProf">—</div><div class="sc-s">If all sold</div></div>
+    <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Low Stock</div><div class="sc-v" id="iLow">—</div><div class="sc-s">Below 5 units</div></div>
   </div>
   <div class="dtw">
     <div class="dth">
@@ -254,47 +252,8 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   </div>
 </div>
 
-<!-- REPORTS -->
-<div id="repV" style="display:none;flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)">
-  <div style="background:#fff;border-radius:10px;padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;gap:12px;align-items:end;flex-wrap:wrap">
-    <div class="fg" style="min-width:150px"><label>From Date</label><input type="date" id="rFrom" onchange="renderReports()"></div>
-    <div class="fg" style="min-width:150px"><label>To Date</label><input type="date" id="rTo" onchange="renderReports()"></div>
-    <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:8px 14px" onclick="clearRange()">All Time</button>
-    <div style="flex:1"></div>
-    <button class="b b-s" style="padding:8px 16px" onclick="exportCSV()">📥 Export CSV</button>
-  </div>
-  <div class="stats" style="grid-template-columns:repeat(6,1fr)">
-    <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v" id="rRev">—</div><div class="sc-s" id="rCount">—</div></div>
-    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="rNetRev" style="color:#00838F">—</div><div class="sc-s">Excl. ship &amp; GST</div></div>
-    <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping</div><div class="sc-v" id="rShip" style="color:#7B5EA7">—</div><div class="sc-s">Collected</div></div>
-    <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Total Cost</div><div class="sc-v" id="rCost" style="color:#C0392B">—</div><div class="sc-s">Goods purchased</div></div>
-    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Net Profit</div><div class="sc-v" id="rProfit" style="color:#2E7D32">—</div><div class="sc-s">Excl. shipping</div></div>
-    <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Order Value</div><div class="sc-v" id="rAOV">—</div><div class="sc-s">Per invoice</div></div>
-  </div>
-  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px">
-    <div class="dtw" style="flex:none">
-      <div class="dth"><h2>📊 Monthly Performance</h2></div>
-      <div id="repChart" style="padding:18px"></div>
-    </div>
-    <div class="dtw" style="flex:none">
-      <div class="dth"><h2>🏆 Top Products</h2></div>
-      <div id="repTop" style="padding:6px 0"></div>
-    </div>
-  </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div class="dtw" style="flex:none">
-      <div class="dth"><h2>📍 Sales by Location</h2></div>
-      <div id="repLoc" style="padding:6px 0"></div>
-    </div>
-    <div class="dtw" style="flex:none">
-      <div class="dth"><h2>⚠️ Low Margin Invoices</h2></div>
-      <div id="repLow" style="padding:6px 0"></div>
-    </div>
-  </div>
-</div>
-
 <!-- RENTALS -->
-<div id="rentV" style="display:none;flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)">
+<div id="rentV" style="display:none">
   <div class="stats" style="grid-template-columns:repeat(4,1fr)">
     <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Active Rentals</div><div class="sc-v" id="ktActive" style="color:#7B5EA7">—</div><div class="sc-s">Booked or out</div></div>
     <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Overdue</div><div class="sc-v" id="ktOver" style="color:#C0392B">—</div><div class="sc-s">Past return date</div></div>
@@ -318,45 +277,45 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   </div>
 </div>
 
-<!-- RETURN MODAL -->
-<div id="returnModal" class="modal-overlay">
-  <div class="mcard" style="max-width:480px">
-    <div class="mhead"><h2>📦 Process Return</h2><button class="mx" onclick="closeReturn()">×</button></div>
-    <div id="returnInfo" style="background:#F5F0FA;border:1px solid #DDD0EA;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"></div>
-    <div class="row r2">
-      <div class="fg"><label>Actual Return Date</label><input type="date" id="retDate" onchange="calcReturn()"></div>
-      <div class="fg"><label>Damage Charges</label><input type="number" id="retDamage" min="0" step="0.01" value="0" oninput="calcReturn()"></div>
-    </div>
-    <div class="row r1"><div class="fg"><label>Notes (optional)</label><input id="retNotes" placeholder="Condition, remarks..."></div></div>
-    <div style="background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin:12px 0">
-      <div class="pfrow"><span>Deposit Held</span><span id="retDep">₹ 0.00</span></div>
-      <div class="pfrow"><span>Late Fee <span id="retLateDays" style="font-size:9.5px;color:#AAA"></span></span><span id="retLate" style="color:#C0392B">₹ 0.00</span></div>
-      <div class="pfrow"><span>Damage Charges</span><span id="retDmg" style="color:#C0392B">₹ 0.00</span></div>
-      <div class="pfrow big"><span>Refund to Customer</span><b id="retRefund" style="color:#2E7D32">₹ 0.00</b></div>
-    </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end">
-      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeReturn()">Cancel</button>
-      <button class="b b-s" style="padding:9px 20px" id="retSaveBtn" onclick="saveReturn()">✓ Confirm Return</button>
-    </div>
+<!-- REPORTS -->
+<div id="repV" style="display:none">
+  <div style="background:#fff;border-radius:10px;padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;gap:12px;align-items:end;flex-wrap:wrap">
+    <div class="fg" style="min-width:150px"><label>From Date</label><input type="date" id="rFrom" onchange="renderReports()"></div>
+    <div class="fg" style="min-width:150px"><label>To Date</label><input type="date" id="rTo" onchange="renderReports()"></div>
+    <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:8px 14px" onclick="clearRange()">All Time</button>
+    <div style="flex:1"></div>
+    <button class="b b-s" style="padding:8px 16px" onclick="exportCSV()">📥 Export CSV</button>
+  </div>
+  <div class="stats" style="grid-template-columns:repeat(6,1fr)">
+    <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v" id="rRev">—</div><div class="sc-s" id="rCount">—</div></div>
+    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="rNetRev" style="color:#00838F">—</div><div class="sc-s">Excl. ship &amp; GST</div></div>
+    <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping</div><div class="sc-v" id="rShip" style="color:#7B5EA7">—</div><div class="sc-s">Collected</div></div>
+    <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Total Cost</div><div class="sc-v" id="rCost" style="color:#C0392B">—</div><div class="sc-s">Goods purchased</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Net Profit</div><div class="sc-v" id="rProfit" style="color:#2E7D32">—</div><div class="sc-s">Excl. shipping</div></div>
+    <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Order</div><div class="sc-v" id="rAOV">—</div><div class="sc-s">Per invoice</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px">
+    <div class="dtw" style="flex:none"><div class="dth"><h2>📊 Monthly Performance</h2></div><div id="repChart" style="padding:18px"></div></div>
+    <div class="dtw" style="flex:none"><div class="dth"><h2>🏆 Top Products</h2></div><div id="repTop" style="padding:6px 0"></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="dtw" style="flex:none"><div class="dth"><h2>📍 Sales by Location</h2></div><div id="repLoc" style="padding:6px 0"></div></div>
+    <div class="dtw" style="flex:none"><div class="dth"><h2>⚠️ Low Margin Invoices</h2></div><div id="repLow" style="padding:6px 0"></div></div>
   </div>
 </div>
 
 <!-- ITEM MODAL -->
 <div id="itemModal" class="modal-overlay">
   <div class="mcard">
-    <div class="mhead">
-      <h2 id="itemModalTitle">Add Product</h2>
-      <button class="mx" onclick="closeItemModal()">×</button>
-    </div>
+    <div class="mhead"><h2 id="itemModalTitle">Add Product</h2><button class="mx" onclick="closeItemModal()">×</button></div>
     <div style="display:flex;gap:14px;margin-bottom:14px;align-items:flex-start">
       <div style="flex-shrink:0">
         <label style="font-size:9px;font-weight:700;color:var(--t);opacity:.7;text-transform:uppercase;display:block;margin-bottom:4px">Product Image</label>
         <div id="itemImgBox" onclick="document.getElementById('itemImgF').click()"
-          style="width:92px;height:92px;border:2px dashed #E0D5CF;border-radius:10px;background:#FFFCFA;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;flex-direction:column;gap:3px">
-          <span style="font-size:26px">📷</span>
-          <span style="font-size:8.5px;color:#BBB;font-weight:600">Upload</span>
+          style="width:92px;height:92px;border:2px dashed #E0D5CF;border-radius:10px;background:#FFFCFA;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-direction:column;gap:3px">
+          <span style="font-size:26px">📷</span><span style="font-size:8.5px;color:#BBB;font-weight:600">Upload</span>
         </div>
-        <button type="button" id="itemImgClear" onclick="clearItemImg()" class="hide"
+        <button type="button" id="itemImgClear" onclick="clearItemImg(event)" class="hide"
           style="background:0;border:none;color:#C0392B;font-size:9.5px;font-weight:700;cursor:pointer;margin-top:5px;width:92px;text-decoration:underline">Remove image</button>
       </div>
       <div style="flex:1">
@@ -364,22 +323,22 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
         <div class="row r1" style="margin-bottom:0"><div class="fg"><label>Name *</label><input id="iName" placeholder="Bridal Bangle Set"></div></div>
       </div>
     </div>
-    <div class="row r3">
-      <div class="fg"><label>Color</label><input id="iColor" placeholder="Maroon & Gold"></div>
-      <div class="fg"><label>Size</label><input id="iSize" placeholder="2.6"></div>
-      <div class="fg"><label>Quantity</label><input id="iQty" type="number" min="0" value="0"></div>
-    </div>
     <div class="row r1" style="margin-bottom:10px">
       <div class="fg"><label>Item Type</label>
         <div style="display:flex;gap:8px">
-          <label style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 10px;border:1.5px solid #E0D5CF;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:700;background:#FFFCFA" id="lblSale">
+          <label id="lblSale" style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 10px;border:1.5px solid var(--m);border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:700;background:#FFF5F8">
             <input type="radio" name="itemType" value="sale" id="iTypeSale" checked onchange="togItemType()" style="accent-color:var(--m)">🏷 For Sale
           </label>
-          <label style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 10px;border:1.5px solid #E0D5CF;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:700;background:#FFFCFA" id="lblRent">
+          <label id="lblRent" style="flex:1;display:flex;align-items:center;gap:6px;padding:8px 10px;border:1.5px solid #E0D5CF;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:700;background:#FFFCFA">
             <input type="radio" name="itemType" value="rental" id="iTypeRental" onchange="togItemType()" style="accent-color:#7B5EA7">📅 For Rental
           </label>
         </div>
       </div>
+    </div>
+    <div class="row r3">
+      <div class="fg"><label>Color</label><input id="iColor" placeholder="Maroon &amp; Gold"></div>
+      <div class="fg"><label>Size</label><input id="iSize" placeholder="2.6"></div>
+      <div class="fg"><label>Quantity</label><input id="iQty" type="number" min="0" value="0"></div>
     </div>
     <div class="row r3">
       <div class="fg"><label id="lblPur">Purchase Price</label><input id="iPur" type="number" min="0" step="0.01" placeholder="0.00" oninput="calcItemMath()"></div>
@@ -407,10 +366,7 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 <!-- PICKER MODAL -->
 <div id="pickerModal" class="modal-overlay">
   <div class="mcard" style="max-width:680px">
-    <div class="mhead">
-      <h2>📦 Pick from Inventory</h2>
-      <button class="mx" onclick="closePicker()">×</button>
-    </div>
+    <div class="mhead"><h2>📦 Pick from Inventory</h2><button class="mx" onclick="closePicker()">×</button></div>
     <input class="dsrch" id="pkSearch" style="width:100%;margin-bottom:12px;padding:9px 12px;font-size:12px" placeholder="🔍 Search code, name or color..." oninput="renderPicker()">
     <div id="pickerList" style="max-height:400px;overflow-y:auto;border:1px solid #F0E8E0;border-radius:8px"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
@@ -420,8 +376,31 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   </div>
 </div>
 
+<!-- RETURN MODAL -->
+<div id="returnModal" class="modal-overlay">
+  <div class="mcard" style="max-width:480px">
+    <div class="mhead"><h2>📦 Process Return</h2><button class="mx" onclick="closeReturn()">×</button></div>
+    <div id="returnInfo" style="background:#F5F0FA;border:1px solid #DDD0EA;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px"></div>
+    <div class="row r2">
+      <div class="fg"><label>Actual Return Date</label><input type="date" id="retDate" onchange="calcReturn()"></div>
+      <div class="fg"><label>Damage Charges</label><input type="number" id="retDamage" min="0" step="0.01" value="0" oninput="calcReturn()"></div>
+    </div>
+    <div class="row r1"><div class="fg"><label>Notes (optional)</label><input id="retNotes" placeholder="Condition, remarks..."></div></div>
+    <div style="background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin:12px 0">
+      <div class="pfrow"><span>Deposit Held</span><span id="retDep">₹ 0.00</span></div>
+      <div class="pfrow"><span>Late Fee <span id="retLateDays" style="font-size:9.5px;color:#AAA"></span></span><span id="retLate" style="color:#C0392B">₹ 0.00</span></div>
+      <div class="pfrow"><span>Damage Charges</span><span id="retDmg" style="color:#C0392B">₹ 0.00</span></div>
+      <div class="pfrow big"><span>Refund to Customer</span><b id="retRefund" style="color:#2E7D32">₹ 0.00</b></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeReturn()">Cancel</button>
+      <button class="b b-s" style="padding:9px 20px" id="retSaveBtn" onclick="saveReturn()">✓ Confirm Return</button>
+    </div>
+  </div>
+</div>
+
 <!-- EDITOR -->
-<div id="editorV">
+<div id="editorV" style="display:flex">
   <div class="fp" id="fp"><div class="fi">
     <div class="sec">
       <div class="sec-t">📄 Invoice Details</div>
@@ -541,7 +520,7 @@ Delivered with care. ♡</textarea></div></div>
         <div class="pfrow"><span>Discount Given</span><span id="pfDisc" style="color:#E67E22">₹ 0.00</span></div>
         <div class="pfrow big"><span>Net Profit</span><b id="pfNet" style="color:#2E7D32">₹ 0.00</b></div>
         <div class="pfrow"><span>Margin</span><span id="pfMargin" style="font-weight:700;color:var(--m)">0.0%</span></div>
-        <div style="font-size:9px;color:#BBB;text-align:center;margin-top:7px;padding-top:7px;border-top:1px dashed var(--gl)">Shipping charges excluded from profit</div>
+        <div style="font-size:9px;color:#BBB;text-align:center;margin-top:7px;padding-top:7px;border-top:1px dashed var(--gl)">Shipping &amp; deposits excluded from profit</div>
       </div>
     </div>
 
@@ -551,7 +530,7 @@ Delivered with care. ♡</textarea></div></div>
       <div class="logo-area" onclick="document.getElementById('logoF').click()">
         <img id="logoThumb" class="logo-thumb hide" src="" alt="">
         <div class="logo-ph" id="logoPH">🏪</div>
-        <div class="logo-txt"><strong id="logoLbl">Click to upload your logo</strong>PNG/JPG recommended</div>
+        <div class="logo-txt"><strong id="logoLbl">Click to upload your logo</strong>PNG transparency preserved</div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:10px;color:#999">
         <span>🎨 Theme colors</span>
@@ -562,13 +541,13 @@ Delivered with care. ♡</textarea></div></div>
         <div class="fg"><label>Accent Color</label><input type="color" id="pkAccent" value="#C9A844" onchange="manualTheme()" style="height:32px;padding:2px;cursor:pointer"></div>
       </div>
       <div class="row r1"><div class="fg"><label>Business Name</label><input id="fSN" value="AS Bridal Bangles &amp; Accessories" oninput="rp()"></div></div>
-      <div class="row r1"><div class="fg"><label>Address</label><textarea id="fSA" oninput="rp()">No. 12/1, Lakshmi Nagar, Guduvanchery, Chennai, Tamil Nadu – 603202</textarea></div></div>
+      <div class="row r1"><div class="fg"><label>Address</label><textarea id="fSA" oninput="rp()">No. 413, Block E, Lancor Lumina, Nellikuppam Highway, Guduvanchery - 603202.</textarea></div></div>
       <div class="row r2">
-        <div class="fg"><label>Phone</label><input id="fSPh" value="+91 98765 43210" oninput="rp()"></div>
-        <div class="fg"><label>Instagram</label><input id="fSIG" value="@asbridalbangles" oninput="rp()"></div>
+        <div class="fg"><label>Phone</label><input id="fSPh" value="+91 93423 82918" oninput="rp()"></div>
+        <div class="fg"><label>Instagram</label><input id="fSIG" value="@as_bridal_bangles" oninput="rp()"></div>
       </div>
-      <div class="row r1"><div class="fg"><label>WhatsApp Number</label><input id="fWA" value="+91 98765 43210" oninput="rp()"></div></div>
-      <div class="row r1"><div class="fg"><label>Website (blank to hide)</label><input id="fSW" value="www.asbridalbangles.com" oninput="rp()"></div></div>
+      <div class="row r1"><div class="fg"><label>WhatsApp Number</label><input id="fWA" value="+91 93423 82918" oninput="rp()"></div></div>
+      <div class="row r1"><div class="fg"><label>Website (blank to hide)</label><input id="fSW" value="" oninput="rp()"></div></div>
       <div style="display:flex;gap:7px;margin-top:10px">
         <button class="b b-s" style="flex:1;justify-content:center;padding:9px" onclick="saveSellerProfile()">💾 Save Seller Profile</button>
         <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 12px" onclick="loadSellerProfile(true)">↺</button>
@@ -618,78 +597,67 @@ Delivered with care. ♡</textarea></div></div>
 <input type="file" id="itemImgF" accept="image/*" style="display:none" onchange="onItemImg(event)">
 
 <script>
-/* ========== LOCAL STORAGE ABSTRACTION ==========
-   window.storage exists only inside Claude artifacts.
-   On GitHub Pages / any real host we fall back to localStorage. */
-var HAS_WS=(typeof window.storage!=='undefined'&&window.storage&&typeof window.storage.get==='function');
+/* ========== CONFIG ========== */
+var SB_BASE='https://tgvuoesnzolpjppyrage.supabase.co/rest/v1';
+var SB_URL=SB_BASE+'/invoices';
+var INV_URL=SB_BASE+'/inventory';
+var RENT_URL=SB_BASE+'/rentals';
+var SB_KEYS=[
+ 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRndnVvZXNuem9scGpwcHlyYWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzA4NTEsImV4cCI6MjEwMjMwNjg1MX0.X5xtjuyR17ySI8AqcZ4XI-bImNpuRVoqt92zi2w1P38',
+ 'sb_publishable_JiZ1rL1Z7WKzjZc94P9RSw_G-3fvyox'
+];
+var SB_KEY=SB_KEYS[0];
 
+/* ========== STORAGE (artifact + localStorage) ========== */
+var HAS_WS=(typeof window.storage!=='undefined'&&window.storage&&typeof window.storage.get==='function');
 async function lsGet(key){
- if(HAS_WS){
-  try{var r=await window.storage.get(key);return r?r.value:null;}
-  catch(e){/* key missing or API failed — fall through */}
- }
+ if(HAS_WS){try{var r=await window.storage.get(key);if(r)return r.value;}catch(e){}}
  try{return localStorage.getItem(key);}catch(e){return null;}
 }
 async function lsSet(key,val){
  var ok=false;
- if(HAS_WS){
-  try{await window.storage.set(key,val);ok=true;}catch(e){}
- }
+ if(HAS_WS){try{await window.storage.set(key,val);ok=true;}catch(e){}}
  try{localStorage.setItem(key,val);ok=true;}
- catch(e){
-  if(!ok)throw new Error(/quota/i.test(e.message||'')
-   ?'Storage full — try a smaller logo image'
-   :'Browser storage unavailable');
- }
+ catch(e){if(!ok)throw new Error(/quota/i.test(e.message||'')?'Storage full — use a smaller logo':'Browser storage unavailable');}
  return ok;
 }
 
 /* ========== SUPABASE ========== */
-const SB_BASE='https://tgvuoesnzolpjppyrage.supabase.co/rest/v1';
-const SB_URL=SB_BASE+'/invoices';
-const INV_URL=SB_BASE+'/inventory';
-const SB_KEYS=[
- 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRndnVvZXNuem9scGpwcHlyYWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzA4NTEsImV4cCI6MjEwMjMwNjg1MX0.X5xtjuyR17ySI8AqcZ4XI-bImNpuRVoqt92zi2w1P38',
- 'sb_publishable_JiZ1rL1Z7WKzjZc94P9RSw_G-3fvyox'
-];
-let SB_KEY=SB_KEYS[0];
-
 function sbH(extra){
-  var h={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',
-    'Accept-Profile':'public','Content-Profile':'public',Prefer:'return=representation'};
-  if(extra)for(var k in extra)h[k]=extra[k];
-  return h;
+ var h={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',
+  'Accept-Profile':'public','Content-Profile':'public',Prefer:'return=representation'};
+ if(extra)for(var k in extra)h[k]=extra[k];
+ return h;
 }
 async function sbFetch(url,method,body){
-  const opts={method:method||'GET',headers:sbH()};
-  if(body)opts.body=JSON.stringify(body);
-  const r=await fetch(url,opts);
-  if(!r.ok)throw new Error(await r.text()||('HTTP '+r.status));
-  const t=await r.text();
-  return t?JSON.parse(t):null;
+ var opts={method:method||'GET',headers:sbH()};
+ if(body)opts.body=JSON.stringify(body);
+ var r=await fetch(url,opts);
+ if(!r.ok)throw new Error((await r.text())||('HTTP '+r.status));
+ var t=await r.text();
+ return t?JSON.parse(t):null;
 }
 async function sbDel(url){
-  const r=await fetch(url,{method:'DELETE',headers:sbH({Prefer:''})});
-  if(!r.ok)throw new Error(await r.text());
+ var r=await fetch(url,{method:'DELETE',headers:sbH({Prefer:''})});
+ if(!r.ok)throw new Error(await r.text());
 }
 function setSbStatus(state,txt){
-  document.getElementById('sbDot').className='sb-dot '+state;
-  document.getElementById('sbTxt').textContent=txt;
+ document.getElementById('sbDot').className='sb-dot '+state;
+ document.getElementById('sbTxt').textContent=txt;
 }
 async function sbPing(){
-  let last='';
-  for(let i=0;i<SB_KEYS.length;i++){
-    SB_KEY=SB_KEYS[i];
-    try{await sbFetch(SB_URL+'?select=id&limit=1');setSbStatus('ok','Supabase ✓');return true;}
-    catch(e){last=e.message;}
-  }
-  setSbStatus('err','DB Error');
-  console.error('Supabase:',last);
-  return false;
+ var last='';
+ for(var i=0;i<SB_KEYS.length;i++){
+  SB_KEY=SB_KEYS[i];
+  try{await sbFetch(SB_URL+'?select=id&limit=1');setSbStatus('ok','Supabase ✓');return true;}
+  catch(e){last=e.message;}
+ }
+ setSbStatus('err','DB Error');console.error('Supabase:',last);
+ return false;
 }
 
 /* ========== STATE ========== */
-const CURR=[
+var CURR=[
  {c:'INR',s:'₹',n:'Indian Rupee'},{c:'USD',s:'$',n:'US Dollar'},{c:'EUR',s:'€',n:'Euro'},
  {c:'GBP',s:'£',n:'British Pound'},{c:'AED',s:'د.إ',n:'UAE Dirham'},{c:'SGD',s:'S$',n:'Singapore Dollar'},
  {c:'MYR',s:'RM',n:'Malaysian Ringgit'},{c:'AUD',s:'A$',n:'Australian Dollar'},{c:'CAD',s:'C$',n:'Canadian Dollar'},
@@ -697,23 +665,24 @@ const CURR=[
  {c:'KWD',s:'KD',n:'Kuwaiti Dinar'},{c:'QAR',s:'﷼',n:'Qatari Riyal'},{c:'OMR',s:'﷼',n:'Omani Rial'},
  {c:'BHD',s:'BD',n:'Bahraini Dinar'},{c:'LKR',s:'Rs',n:'Sri Lankan Rupee'},{c:'NPR',s:'₨',n:'Nepalese Rupee'},
  {c:'BDT',s:'৳',n:'Bangladeshi Taka'},{c:'PKR',s:'₨',n:'Pakistani Rupee'},{c:'THB',s:'฿',n:'Thai Baht'},
- {c:'MYR2',s:'RM',n:'Ringgit'},{c:'IDR',s:'Rp',n:'Indonesian Rupiah'},{c:'PHP',s:'₱',n:'Philippine Peso'},
+ {c:'IDR',s:'Rp',n:'Indonesian Rupiah'},{c:'PHP',s:'₱',n:'Philippine Peso'},
  {c:'ZAR',s:'R',n:'South African Rand'},{c:'NZD',s:'NZ$',n:'New Zealand Dollar'}
 ];
-const CARE_ICONS=['💧','🌸','✨','👜','❤️'];
-let prods=[],imgTgt=null,rid=0,isUD=false,curKey=null,logoImg=null;
-let allInvs=[],allItems=[],curItemId=null;
+var CARE_ICONS=['💧','🌸','✨','👜','❤️'];
+var prods=[],imgTgt=null,rid=0,isUD=false,curKey=null,logoImg=null,itemImg='';
+var allInvs=[],allItems=[],allRentals=[],curItemId=null,curRental=null;
 
 /* ========== HELPERS ========== */
 function gv(id){var e=document.getElementById(id);return e?e.value:'';}
 function gc(id){var e=document.getElementById(id);return e?e.checked:false;}
 function eh(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function pad(n,l){return String(n).padStart(l,'0');}
+function todayStr(){return new Date().toISOString().split('T')[0];}
 function fmtD(s){if(!s)return'—';return new Date(s+'T00:00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 function toast(msg,err){
-  var t=document.getElementById('toast');
-  t.textContent=msg;t.style.background=err?'#C0392B':'#2E7D32';
-  t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);
+ var t=document.getElementById('toast');
+ t.textContent=msg;t.style.background=err?'#C0392B':'#2E7D32';
+ t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3200);
 }
 function getSym(){var c=CURR.find(function(x){return x.c===gv('fCurr');});return c?c.s:'₹';}
 function fmt(n,s){return (s||getSym())+' '+(parseFloat(n)||0).toFixed(2);}
@@ -728,7 +697,7 @@ function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;var mx=Math.max(r,g,b),mn=Math.min
  return{h:h,s:s,l:l};}
 function hslToRgb(h,s,l){h=((h%360)+360)%360/360;var r,g,b;
  if(s===0){r=g=b=l;}else{
-  function f(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;}
+  var f=function(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;};
   var q=l<0.5?l*(1+s):l+s-l*s,p=2*l-q;r=f(p,q,h+1/3);g=f(p,q,h);b=f(p,q,h-1/3);}
  return{r:r*255,g:g*255,b:b*255};}
 function lightenHex(hex,pct){var c=hexToRgb(hex),hsl=rgbToHsl(c.r,c.g,c.b);hsl.l=Math.min(.96,hsl.l+pct/100);var o=hslToRgb(hsl.h,hsl.s,hsl.l);return rgbToHex(o.r,o.g,o.b);}
@@ -767,8 +736,8 @@ function extractThemeFromLogo(src){
      buckets[key].count++;buckets[key].r+=r;buckets[key].g+=g;buckets[key].b+=b;
     }
     var arr=Object.keys(buckets).map(function(k){var o=buckets[k];return{count:o.count,r:o.r/o.count,g:o.g/o.count,b:o.b/o.count};});
-    var totalColored=arr.reduce(function(s,c){return s+c.count;},0);
-    if(arr.length&&totalColored>60){
+    var tot=arr.reduce(function(s,c){return s+c.count;},0);
+    if(arr.length&&tot>60){
      arr.sort(function(a,b){return b.count-a.count;});
      var byLight=arr.slice().sort(function(a,b){return rgbToHsl(a.r,a.g,a.b).l-rgbToHsl(b.r,b.g,b.b).l;});
      var primary=byLight[0];
@@ -794,6 +763,34 @@ function extractThemeFromLogo(src){
  });
 }
 
+/* ========== IMAGE COMPRESSION (alpha-aware) ========== */
+function compressImg(dataUrl,maxDim,quality,keepAlpha){
+ maxDim=maxDim||300;quality=quality||0.72;
+ return new Promise(function(resolve){
+  var img=new Image();
+  img.onload=function(){
+   try{
+    var w=img.width,h=img.height;
+    var s=Math.min(maxDim/w,maxDim/h,1);
+    w=Math.round(w*s);h=Math.round(h*s);
+    var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    var ctx=cv.getContext('2d');
+    if(keepAlpha){
+     ctx.clearRect(0,0,w,h);
+     ctx.drawImage(img,0,0,w,h);
+     resolve(cv.toDataURL('image/png'));
+    }else{
+     ctx.fillStyle='#FFF';ctx.fillRect(0,0,w,h);
+     ctx.drawImage(img,0,0,w,h);
+     resolve(cv.toDataURL('image/jpeg',quality));
+    }
+   }catch(e){resolve(dataUrl);}
+  };
+  img.onerror=function(){resolve(dataUrl);};
+  img.src=dataUrl;
+ });}
+function payloadKB(o){return Math.round(new Blob([JSON.stringify(o)]).size/1024);}
+
 /* ========== LOGO ========== */
 function applyLogoPreview(src){
  var t=document.getElementById('logoThumb'),p=document.getElementById('logoPH');
@@ -808,8 +805,7 @@ function onLogoImg(e){
  var f=e.target.files[0];if(!f)return;
  var rd=new FileReader();
  rd.onload=async function(ev){
-  // Compress so it fits in browser storage
-  logoImg=await compressImg(ev.target.result,400,0.85);
+  logoImg=await compressImg(ev.target.result,400,0.9,true);
   applyLogoPreview(logoImg);
   var m=await extractThemeFromLogo(logoImg);rp();
   toast(m==='color'?'✓ Logo & theme matched!':m==='mono'?'✓ Logo added — mono theme':'✓ Logo updated');
@@ -822,25 +818,27 @@ function logoEl(){
  '<circle cx="100" cy="100" r="96" fill="#5C0F28"/><circle cx="100" cy="100" r="92" fill="none" stroke="#C9A844" stroke-width="2.5"/>'+
  '<text x="100" y="130" text-anchor="middle" font-family="Georgia,serif" font-size="78" font-weight="700" fill="#C9A844">AS</text></svg>';}
 
-/* ========== IMAGE COMPRESSION ========== */
-function compressImg(dataUrl,maxDim,quality){
- maxDim=maxDim||300;quality=quality||0.72;
- return new Promise(function(resolve){
-  var img=new Image();
-  img.onload=function(){
-   try{
-    var w=img.width,h=img.height;
-    var s=Math.min(maxDim/w,maxDim/h,1);
-    w=Math.round(w*s);h=Math.round(h*s);
-    var cv=document.createElement('canvas');cv.width=w;cv.height=h;
-    var ctx=cv.getContext('2d');ctx.fillStyle='#FFF';ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);
-    resolve(cv.toDataURL('image/jpeg',quality));
-   }catch(e){resolve(dataUrl);}
-  };
-  img.onerror=function(){resolve(dataUrl);};
-  img.src=dataUrl;
- });}
-function payloadKB(o){return Math.round(new Blob([JSON.stringify(o)]).size/1024);}
+/* ========== ITEM IMAGE ========== */
+function onItemImg(e){
+ var f=e.target.files[0];if(!f)return;
+ var rd=new FileReader();
+ rd.onload=async function(ev){
+  itemImg=await compressImg(ev.target.result,300,0.8,true);
+  setItemImgPreview(itemImg);
+ };
+ rd.readAsDataURL(f);e.target.value='';}
+function setItemImgPreview(src){
+ var box=document.getElementById('itemImgBox'),clr=document.getElementById('itemImgClear');
+ if(src){
+  box.innerHTML='<img src="'+src+'" style="width:100%;height:100%;object-fit:contain">';
+  box.style.borderStyle='solid';box.style.borderColor='var(--g)';
+  clr.classList.remove('hide');
+ }else{
+  box.innerHTML='<span style="font-size:26px">📷</span><span style="font-size:8.5px;color:#BBB;font-weight:600">Upload</span>';
+  box.style.borderStyle='dashed';box.style.borderColor='#E0D5CF';
+  clr.classList.add('hide');
+ }}
+function clearItemImg(ev){if(ev)ev.stopPropagation();itemImg='';setItemImgPreview('');}
 
 /* ========== NAV ========== */
 function switchView(view){
@@ -849,46 +847,40 @@ function switchView(view){
   var tabs={dash:'tabD',inv:'tabI',rent:'tabRent',rep:'tabR',edit:'tabE'};
   Object.keys(views).forEach(function(k){
    var el=document.getElementById(views[k]);
-   if(el){el.style.display=(k===view)?'flex':'none';}
+   if(el)el.style.display=(k===view)?'flex':'none';
    var tb=document.getElementById(tabs[k]);
    if(tb)tb.classList.toggle('act',k===view);
   });
-  var showBtns=(view==='edit');
+  var show=(view==='edit');
   ['bReset','bSave','bPDF','bJPEG','bPNG'].forEach(function(id){
-   var b=document.getElementById(id);
-   if(b)b.style.display=showBtns?'flex':'none';
-  });
- }catch(e){
-  console.error('switchView error:',e);
-  toast('View error: '+e.message,true);
- }
+   var b=document.getElementById(id);if(b)b.style.display=show?'flex':'none';});
+ }catch(e){console.error('switchView:',e);toast('View error: '+e.message,true);}
 }
 function showDash(){switchView('dash');loadDash();}
 function showInv(){switchView('inv');loadInventory();}
 function showEditor(){switchView('edit');}
 async function showReports(){
  switchView('rep');
- if(!allInvs.length){
-  try{allInvs=await sbFetch(SB_URL+'?select=*&order=created_at.desc')||[];}catch(e){}
- }
- renderReports();
-}
+ if(!allInvs.length){try{allInvs=await sbFetch(SB_URL+'?select=*&order=created_at.desc')||[];}catch(e){}}
+ renderReports();}
 
 /* ========== PRODUCTS ========== */
 function addP(){rid++;prods.push({id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:'',type:'sale',from:'',to:'',days:1,dep:0,unit:'day'});renderP();rp();}
 function daysBetween(a,b){
  if(!a||!b)return 1;
  var d=Math.round((new Date(b)-new Date(a))/86400000)+1;
- return d>0?d:1;
-}
+ return d>0?d:1;}
 function lineAmount(p){
  var q=parseFloat(p.q)||0,rate=parseFloat(p.r)||0;
  if(p.type==='rental'){
   var d=(p.unit==='event')?1:(parseInt(p.days)||1);
   return rate*d*q;
  }
- return rate*q;
-}
+ return rate*q;}
+function totalDeposit(){
+ return prods.reduce(function(t,p){
+  return t+(p.type==='rental'?(parseFloat(p.dep)||0)*(parseFloat(p.q)||0):0);},0);}
+
 function renderP(){
  var c=document.getElementById('pR');
  if(!c)return;
@@ -898,88 +890,51 @@ function renderP(){
   var isRent=(p.type==='rental');
   var d=document.createElement('div');
   d.className='pr';
-  var thumb=p.img?`<img src="${p.img}">`:(isRent?'📅':'💍');
+  var thumb=p.img?'<img src="'+p.img+'">':(isRent?'📅':'💍');
   d.innerHTML=
-   `<div class="pth" onclick="openImg(${p.id})" ${isRent?'style="border-color:#7B5EA7"':''}>${thumb}</div>`+
-   `<div class="pnames">`+
-     `<input class="pn" type="text" placeholder="Product name" value="${eh(p.n)}" oninput="up(${p.id},'n',this.value)">`+
-     `<input class="pv" type="text" placeholder="Variant / Color" value="${eh(p.v)}" oninput="up(${p.id},'v',this.value)">`+
-   `</div>`+
-   `<div class="pci"><input type="text" placeholder="Sz" value="${eh(p.sz)}" oninput="up(${p.id},'sz',this.value)"></div>`+
-   `<div class="pci"><input type="number" min="1" value="${p.q}" oninput="up(${p.id},'q',this.value)"></div>`+
-   `<div class="pci"><input type="number" min="0" step="0.01" placeholder="0" value="${p.r}" oninput="up(${p.id},'r',this.value)"></div>`+
-   `<div class="pci"><input type="number" min="0" step="0.01" placeholder="cost" value="${p.c||''}" style="background:#FFF5F5;border-color:#EDD8D8" oninput="up(${p.id},'c',this.value)"></div>`+
-   `<button class="brm" onclick="rmP(${p.id})">×</button>`;
+   '<div class="pth" onclick="openImg('+p.id+')"'+(isRent?' style="border-color:#7B5EA7"':'')+'>'+thumb+'</div>'+
+   '<div class="pnames">'+
+    '<input class="pn" type="text" placeholder="Product name" value="'+eh(p.n)+'" oninput="up('+p.id+",'n',this.value)\">"+
+    '<input class="pv" type="text" placeholder="Variant / Color" value="'+eh(p.v)+'" oninput="up('+p.id+",'v',this.value)\">"+
+   '</div>'+
+   '<div class="pci"><input type="text" placeholder="Sz" value="'+eh(p.sz)+'" oninput="up('+p.id+",'sz',this.value)\"></div>"+
+   '<div class="pci"><input type="number" min="1" value="'+p.q+'" oninput="up('+p.id+",'q',this.value)\"></div>"+
+   '<div class="pci"><input type="number" min="0" step="0.01" placeholder="0" value="'+p.r+'" oninput="up('+p.id+",'r',this.value)\"></div>"+
+   '<div class="pci"><input type="number" min="0" step="0.01" placeholder="cost" value="'+(p.c||'')+'" style="background:#FFF5F5;border-color:#EDD8D8" oninput="up('+p.id+",'c',this.value)\"></div>"+
+   '<button class="brm" onclick="rmP('+p.id+')">×</button>';
   wrap.appendChild(d);
   if(isRent){
    var rr=document.createElement('div');
    rr.style.cssText='background:#F5F0FA;border:1px solid #DDD0EA;border-radius:6px;padding:7px 9px;margin:-3px 0 9px 38px';
    rr.innerHTML=
-    `<div style="font-size:8.5px;font-weight:700;color:#7B5EA7;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">📅 Rental Period`+
-    (p.unit==='event'?' — flat per event':'')+`</div>`+
-    `<div style="display:grid;grid-template-columns:1fr 1fr 42px;gap:5px;align-items:end">`+
-      `<div class="fg"><label style="font-size:8px">From</label><input type="date" value="${p.from||''}" style="padding:5px;font-size:10.5px" oninput="up(${p.id},'from',this.value)"></div>`+
-      `<div class="fg"><label style="font-size:8px">To</label><input type="date" value="${p.to||''}" style="padding:5px;font-size:10.5px" oninput="up(${p.id},'to',this.value)"></div>`+
-      `<div class="fg"><label style="font-size:8px">Days</label><div style="padding:6px 4px;text-align:center;font-weight:800;color:#7B5EA7;font-size:12px">${p.unit==='event'?'flat':(p.days||1)}</div></div>`+
-    `</div>`+
-    `<div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px">`+
-      `<span style="color:#888">Deposit: <b style="color:#7B5EA7">₹${(parseFloat(p.dep)||0).toFixed(2)}</b> × ${p.q}</span>`+
-      `<span style="color:#888">Line: <b style="color:var(--dm)">₹${lineAmount(p).toFixed(2)}</b></span>`+
-    `</div>`;
+    '<div style="font-size:8.5px;font-weight:700;color:#7B5EA7;text-transform:uppercase;margin-bottom:5px">📅 Rental Period'+
+     (p.unit==='event'?' — flat per event':'')+'</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr 42px;gap:5px;align-items:end">'+
+     '<div class="fg"><label style="font-size:8px">From</label><input type="date" value="'+(p.from||'')+'" style="padding:5px;font-size:10.5px" oninput="up('+p.id+",'from',this.value)\"></div>"+
+     '<div class="fg"><label style="font-size:8px">To</label><input type="date" value="'+(p.to||'')+'" style="padding:5px;font-size:10.5px" oninput="up('+p.id+",'to',this.value)\"></div>"+
+     '<div class="fg"><label style="font-size:8px">Days</label><div style="padding:6px 4px;text-align:center;font-weight:800;color:#7B5EA7;font-size:12px">'+(p.unit==='event'?'flat':(p.days||1))+'</div></div>'+
+    '</div>'+
+    '<div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px">'+
+     '<span style="color:#888">Deposit: <b style="color:#7B5EA7">₹'+(parseFloat(p.dep)||0).toFixed(2)+'</b> × '+p.q+'</span>'+
+     '<span style="color:#888">Line: <b style="color:var(--dm)">₹'+lineAmount(p).toFixed(2)+'</b></span>'+
+    '</div>';
    wrap.appendChild(rr);
   }
   c.appendChild(wrap);
- });
-}
+ });}
 function up(id,f,v){
  var p=prods.find(function(x){return x.id===id;});
  if(!p)return;
  p[f]=v;
- if(f==='from'||f==='to'){
-  p.days=daysBetween(p.from,p.to);
-  renderP();
- }
- rp();
-}
-
-/* ===== PROFIT CALCULATION =====
-   Shipping charges are pass-through (paid to courier) and are
-   deliberately EXCLUDED from all profit figures. */
-function calcProfit(){
- var revenue=0,cost=0;
- prods.forEach(function(p){
-  var q=parseFloat(p.q)||0;
-  revenue+=q*(parseFloat(p.r)||0);   // product revenue only — no shipping
-  cost+=q*(parseFloat(p.c)||0);
- });
- var disc=getDisc(revenue);
- var gross=revenue-cost;
- var net=gross-disc;
- var margin=revenue>0?(net/revenue)*100:0;
- return{revenue:revenue,cost:cost,disc:disc,gross:gross,net:net,margin:margin};
-}
-function renderProfit(){
- var p=calcProfit(),s=getSym();
- function set(id,v,color){
-  var e=document.getElementById(id);
-  if(!e)return;
-  e.textContent=v;
-  if(color)e.style.color=color;
- }
- set('pfRev',s+' '+p.revenue.toFixed(2));
- set('pfCost',s+' '+p.cost.toFixed(2));
- set('pfDisc',s+' '+p.disc.toFixed(2));
- set('pfNet',s+' '+p.net.toFixed(2),p.net>=0?'#2E7D32':'#C0392B');
- set('pfMargin',p.margin.toFixed(1)+'%',p.margin>=0?'var(--m)':'#C0392B');
-}
-function up(id,f,v){var p=prods.find(function(x){return x.id===id;});if(p){p[f]=v;rp();}}
+ if(f==='from'||f==='to'){p.days=daysBetween(p.from,p.to);renderP();}
+ rp();}
 function rmP(id){if(prods.length>1){prods=prods.filter(function(p){return p.id!==id;});renderP();rp();}}
 function openImg(id){imgTgt=id;document.getElementById('imgF').click();}
 function onProdImg(e){
  var f=e.target.files[0];if(!f)return;
  var rd=new FileReader();
  rd.onload=async function(ev){
-  var small=await compressImg(ev.target.result,300,0.72);
+  var small=await compressImg(ev.target.result,300,0.8,true);
   var p=prods.find(function(x){return x.id===imgTgt;});
   if(p){p.img=small;renderP();rp();}
  };
@@ -1010,12 +965,26 @@ function getDisc(sub){
 function calcTotal(){
  var s=prods.reduce(function(t,p){return t+lineAmount(p);},0);
  var d=getDisc(s),g=(s-d)*getGST()/100,sh=parseFloat(gv('fShip'))||0;
- var dep=totalDeposit();
- return Math.round(s-d+g+sh+dep);}
-function totalDeposit(){
- return prods.reduce(function(t,p){
-  return t+(p.type==='rental'?(parseFloat(p.dep)||0)*(parseFloat(p.q)||0):0);},0);}
-function hasRental(){return prods.some(function(p){return p.type==='rental';});}
+ return Math.round(s-d+g+sh+totalDeposit());}
+/* Shipping & deposits always excluded from profit */
+function calcProfit(){
+ var revenue=0,cost=0;
+ prods.forEach(function(p){
+  var q=parseFloat(p.q)||0;
+  revenue+=lineAmount(p);
+  cost+=q*(parseFloat(p.c)||0);
+ });
+ var disc=getDisc(revenue);
+ var net=revenue-cost-disc;
+ return{revenue:revenue,cost:cost,disc:disc,net:net,margin:revenue>0?(net/revenue)*100:0};}
+function renderProfit(){
+ var p=calcProfit(),s=getSym();
+ function set(id,v,color){var e=document.getElementById(id);if(!e)return;e.textContent=v;if(color)e.style.color=color;}
+ set('pfRev',s+' '+p.revenue.toFixed(2));
+ set('pfCost',s+' '+p.cost.toFixed(2));
+ set('pfDisc',s+' '+p.disc.toFixed(2));
+ set('pfNet',s+' '+p.net.toFixed(2),p.net>=0?'#2E7D32':'#C0392B');
+ set('pfMargin',p.margin.toFixed(1)+'%',p.margin>=0?'var(--m)':'#C0392B');}
 
 /* ========== BUILD INVOICE ========== */
 function buildHTML(){
@@ -1035,8 +1004,7 @@ function buildHTML(){
    (eh(p.sz)||'—')+'</td><td>'+(q||'—')+'</td><td>'+(r?fmt(r,sym):'—')+
    '</td><td style="font-weight:700;color:var(--dm)">'+(amt?fmt(amt,sym):'—')+'</td></tr>';
  }).join('');
- var gp=getGST(),di=getDisc(sub),sh=parseFloat(gv('fShip'))||0;
- var dep=totalDeposit();
+ var gp=getGST(),di=getDisc(sub),sh=parseFloat(gv('fShip'))||0,dep=totalDeposit();
  var ad=sub-di,ga=ad*gp/100,raw=ad+ga+sh+dep,tot=Math.round(raw),ro=tot-raw;
  var ps=gv('fPS'),pa=parseFloat(gv('fAP'))||0,pm=gv('fPM');
  var ig=gv('fSIG'),wa=gv('fWA'),web=gv('fSW').trim();
@@ -1172,8 +1140,8 @@ async function dlFromDash(id,type){
  type=type||'PDF';var holder=null;
  try{
   toast('⏳ Preparing '+type+'...');
-  var row=await sbFetch(SB_URL+'?select=*&id=eq.'+id);
-  row=row&&row[0];if(!row){toast('Not found',true);return;}
+  var rows=await sbFetch(SB_URL+'?select=*&id=eq.'+id);
+  var row=rows&&rows[0];if(!row){toast('Not found',true);return;}
   loadDataToForm(row.data);
   prods=[];rid=0;(row.data.prods||[]).forEach(function(p){rid++;prods.push(Object.assign({},p,{id:rid}));});
   holder=document.createElement('div');
@@ -1187,12 +1155,6 @@ async function dlFromDash(id,type){
  finally{if(holder)holder.remove();}}
 
 /* ========== INVENTORY ========== */
-function itemProfit(pur,sell,offer){
- var eff=(parseFloat(offer)>0)?parseFloat(offer):(parseFloat(sell)||0);
- var cost=parseFloat(pur)||0;
- var profit=eff-cost;
- var margin=eff>0?(profit/eff)*100:0;
- return{eff:eff,profit:profit,margin:margin};}
 function isRental(){return document.getElementById('iTypeRental').checked;}
 function togItemType(){
  var r=isRental();
@@ -1202,19 +1164,20 @@ function togItemType(){
  document.getElementById('lblSale').style.background=r?'#FFFCFA':'#FFF5F8';
  document.getElementById('lblRent').style.borderColor=r?'#7B5EA7':'#E0D5CF';
  document.getElementById('lblRent').style.background=r?'#F5F0FA':'#FFFCFA';
- calcItemMath();
-}
+ calcItemMath();}
+function itemProfit(pur,sell,offer){
+ var eff=(parseFloat(offer)>0)?parseFloat(offer):(parseFloat(sell)||0);
+ var cost=parseFloat(pur)||0;
+ var profit=eff-cost;
+ return{eff:eff,profit:profit,margin:eff>0?(profit/eff)*100:0};}
 function calcItemMath(){
  var po=document.getElementById('iProfitOut'),mo=document.getElementById('iMarginOut');
  var lbls=document.querySelectorAll('#itemModal .pfLbl');
  if(isRental()){
-  var rate=parseFloat(gv('iRate'))||0;
-  var asset=parseFloat(gv('iPur'))||0;
-  var breakeven=rate>0?Math.ceil(asset/rate):0;
-  po.textContent='₹ '+rate.toFixed(2);
-  po.style.color='#7B5EA7';
-  mo.textContent=breakeven?breakeven+'x':'—';
-  mo.style.color='#7B5EA7';
+  var rate=parseFloat(gv('iRate'))||0,asset=parseFloat(gv('iPur'))||0;
+  var be=rate>0?Math.ceil(asset/rate):0;
+  po.textContent='₹ '+rate.toFixed(2);po.style.color='#7B5EA7';
+  mo.textContent=be?be+'x':'—';mo.style.color='#7B5EA7';
   if(lbls[0])lbls[0].textContent='Rental income / '+(gv('iUnit')==='event'?'event':'day');
   if(lbls[1])lbls[1].textContent='Rentals to break even';
  }else{
@@ -1225,8 +1188,7 @@ function calcItemMath(){
   mo.style.color=r.margin>=0?'var(--m)':'#C0392B';
   if(lbls[0])lbls[0].textContent='Profit / unit';
   if(lbls[1])lbls[1].textContent='Margin';
- }
-}
+ }}
 
 async function loadInventory(){
  document.getElementById('invC').innerHTML='<div class="empty"><div style="font-size:28px">⏳</div><p>Loading inventory...</p></div>';
@@ -1237,14 +1199,12 @@ async function loadInventory(){
   document.getElementById('invC').innerHTML='<div class="empty"><div>⚠️</div>'+
    '<p style="color:#C0392B;margin-bottom:10px;font-size:12px">'+eh(e.message)+'</p>'+
    '<p style="font-size:11px;color:#888">Run the inventory SQL in Supabase to create the table.</p></div>';}}
-
 function filterInv(){
  var q=gv('invSearch').toLowerCase();
  renderInv(allItems.filter(function(i){
   return (i.code||'').toLowerCase().indexOf(q)>-1||
          (i.name||'').toLowerCase().indexOf(q)>-1||
          (i.color||'').toLowerCase().indexOf(q)>-1;}));}
-
 function renderInv(items){
  if(!items.length){
   document.getElementById('iTot').textContent='0';
@@ -1259,7 +1219,7 @@ function renderInv(items){
   var q=parseFloat(i.quantity)||0;
   var r=itemProfit(i.purchase_price,i.selling_price,i.offer_price);
   stockVal+=(parseFloat(i.purchase_price)||0)*q;
-  potProfit+=r.profit*q;
+  if(i.item_type!=='rental')potProfit+=r.profit*q;
   if(q<5)low++;});
  document.getElementById('iTot').textContent=items.length;
  document.getElementById('iVal').textContent='₹'+stockVal.toLocaleString('en-IN',{maximumFractionDigits:0});
@@ -1274,7 +1234,7 @@ function renderInv(items){
   var hasOffer=parseFloat(i.offer_price)>0;
   var rental=(i.item_type==='rental');
   var thumb=i.image
-   ?'<img src="'+i.image+'" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid #E8D8C8">'
+   ?'<img src="'+i.image+'" style="width:36px;height:36px;border-radius:6px;object-fit:contain;border:1px solid #E8D8C8;background:#FAFAFA">'
    :'<div style="width:36px;height:36px;border-radius:6px;background:'+(rental?'#F5F0FA':'#F5EDE8')+';display:flex;align-items:center;justify-content:center;font-size:15px">'+(rental?'📅':'💍')+'</div>';
   var priceCell=rental
    ?'<td style="text-align:right;color:#7B5EA7;font-weight:700">₹'+(parseFloat(i.rental_rate)||0).toFixed(2)+
@@ -1310,38 +1270,9 @@ function renderInv(items){
   '<th style="text-align:right">Purchase</th><th style="text-align:right">Sell / Rate</th><th style="text-align:right">Offer / Deposit</th>'+
   '<th style="text-align:right">Profit / Recover</th><th style="text-align:right">Margin / Asset</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>';}
 
-/* ===== INVENTORY ITEM IMAGE ===== */
-var itemImg='';
-function onItemImg(e){
- var f=e.target.files[0];if(!f)return;
- var rd=new FileReader();
- rd.onload=async function(ev){
-  itemImg=await compressImg(ev.target.result,300,0.72);
-  setItemImgPreview(itemImg);
- };
- rd.readAsDataURL(f);e.target.value='';
-}
-function setItemImgPreview(src){
- var box=document.getElementById('itemImgBox');
- var clr=document.getElementById('itemImgClear');
- if(src){
-  box.innerHTML='<img src="'+src+'" style="width:100%;height:100%;object-fit:cover">';
-  box.style.borderStyle='solid';box.style.borderColor='var(--g)';
-  clr.classList.remove('hide');
- }else{
-  box.innerHTML='<span style="font-size:26px">📷</span><span style="font-size:8.5px;color:#BBB;font-weight:600">Upload</span>';
-  box.style.borderStyle='dashed';box.style.borderColor='#E0D5CF';
-  clr.classList.add('hide');
- }
-}
-function clearItemImg(event){
- if(event)event.stopPropagation();
- itemImg='';setItemImgPreview('');
-}
-
 function openItemModal(id){
  curItemId=id||null;
- function set(f,v){document.getElementById(f).value=(v==null?'':v);}
+ function set(f,v){var e=document.getElementById(f);if(e)e.value=(v==null?'':v);}
  if(id){
   var it=allItems.find(function(x){return x.id===id;});
   if(!it)return;
@@ -1404,8 +1335,7 @@ async function delItem(id){
 function useItem(id){
  var it=allItems.find(function(x){return x.id===id;});
  if(!it)return;
- addItemToInvoice(it);
- showEditor();}
+ addItemToInvoice(it);showEditor();}
 
 function addItemToInvoice(it){
  var rental=(it.item_type==='rental');
@@ -1419,42 +1349,13 @@ function addItemToInvoice(it){
  target.c=rental?0:(it.purchase_price||0);
  target.dep=rental?(parseFloat(it.deposit)||0):0;
  target.unit=it.rental_unit||'day';
- if(rental&&!target.from){
-  var t=new Date().toISOString().split('T')[0];
-  target.from=t;target.to=t;target.days=1;
- }
+ if(rental&&!target.from){var t=todayStr();target.from=t;target.to=t;target.days=1;}
  if(it.image)target.img=it.image;
  renderP();rp();
  if(rental)toast('📅 '+it.name+' added — set rental dates');
  else{
   var pf=itemProfit(it.purchase_price,it.selling_price,it.offer_price);
-  toast('✓ '+it.name+' added (profit ₹'+pf.profit.toFixed(2)+')');
- }}
-
-/* ===== RENTAL AVAILABILITY ===== */
-async function checkAvailability(invId,from,to,excludeInvoice){
- try{
-  var rows=await sbFetch(SB_BASE+'/rentals?select=*&inventory_id=eq.'+invId+'&status=in.(BOOKED,OUT)');
-  var clashes=(rows||[]).filter(function(r){
-   if(excludeInvoice&&r.invoice_id===excludeInvoice)return false;
-   return !(r.to_date<from||r.from_date>to);   // overlap test
-  });
-  return clashes;
- }catch(e){return [];}
-}
-async function validateRentals(){
- var issues=[];
- for(var i=0;i<prods.length;i++){
-  var p=prods[i];
-  if(p.type!=='rental'||!p.inv_id||!p.from||!p.to)continue;
-  var clash=await checkAvailability(p.inv_id,p.from,p.to,curKey);
-  if(clash.length){
-   issues.push(p.n+' is already booked '+fmtD(clash[0].from_date)+' → '+fmtD(clash[0].to_date)+
-    ' ('+(clash[0].customer_name||'another customer')+')');
-  }
- }
- return issues;
-}
+  toast('✓ '+it.name+' added (profit ₹'+pf.profit.toFixed(2)+')');}}
 
 /* ========== PICKER ========== */
 async function openPicker(){
@@ -1480,23 +1381,152 @@ function renderPicker(){
   return;}
  document.getElementById('pickerList').innerHTML=list.map(function(i){
   var q2=parseFloat(i.quantity)||0;
-  var price=(parseFloat(i.offer_price)>0)?i.offer_price:i.selling_price;
+  var rental=(i.item_type==='rental');
+  var price=rental?(parseFloat(i.rental_rate)||0)
+                  :((parseFloat(i.offer_price)>0)?i.offer_price:i.selling_price);
   var cls=q2===0?'pending':(q2<5?'partial':'paid');
   var txt=q2===0?'OUT OF STOCK':(q2<5?q2+' LEFT':q2+' in stock');
   var thumb=i.image
-   ?'<img src="'+i.image+'" style="width:40px;height:40px;border-radius:7px;object-fit:cover;border:1px solid #E8D8C8;flex-shrink:0">'
-   :'<div style="width:40px;height:40px;border-radius:7px;background:#F5EDE8;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">💍</div>';
+   ?'<img src="'+i.image+'" style="width:40px;height:40px;border-radius:7px;object-fit:contain;border:1px solid #E8D8C8;background:#FAFAFA;flex-shrink:0">'
+   :'<div style="width:40px;height:40px;border-radius:7px;background:'+(rental?'#F5F0FA':'#F5EDE8')+';display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">'+(rental?'📅':'💍')+'</div>';
   return '<div class="pkrow" onclick="pickItem(\''+i.id+'\')">'+thumb+
-   '<div style="flex:1;min-width:0"><div style="font-weight:700;color:var(--dm);font-size:12.5px">'+eh(i.name||'—')+'</div>'+
+   '<div style="flex:1;min-width:0"><div style="font-weight:700;color:var(--dm);font-size:12.5px">'+eh(i.name||'—')+
+   (rental?' <span style="font-size:8.5px;background:#F0E8FA;color:#7B5EA7;padding:1px 5px;border-radius:8px">RENTAL</span>':'')+'</div>'+
    '<div style="font-size:10.5px;color:#999;margin-top:2px"><b style="color:var(--m)">'+eh(i.code||'')+'</b>'+
    (i.color?' • '+eh(i.color):'')+(i.size?' • Size '+eh(i.size):'')+'</div></div>'+
    '<span class="bdg '+cls+'" style="font-size:9px">'+txt+'</span>'+
    '<div style="text-align:right;min-width:78px"><div style="font-weight:800;color:var(--dm);font-size:13px">₹'+(parseFloat(price)||0).toFixed(2)+'</div>'+
-   (parseFloat(i.offer_price)>0?'<div style="font-size:9.5px;color:#999;text-decoration:line-through">₹'+(parseFloat(i.selling_price)||0).toFixed(2)+'</div>':'')+
+   (rental?'<div style="font-size:9px;color:#7B5EA7">per '+(i.rental_unit||'day')+'</div>'
+          :(parseFloat(i.offer_price)>0?'<div style="font-size:9.5px;color:#999;text-decoration:line-through">₹'+(parseFloat(i.selling_price)||0).toFixed(2)+'</div>':''))+
    '</div><div style="color:var(--g);font-size:18px;font-weight:700">＋</div></div>';}).join('');}
 function pickItem(id){
  var it=allItems.find(function(x){return x.id===id;});
  if(it)addItemToInvoice(it);}
+
+/* ========== RENTAL AVAILABILITY ========== */
+async function checkAvailability(invId,from,to,excludeInvoice){
+ try{
+  var rows=await sbFetch(RENT_URL+'?select=*&inventory_id=eq.'+invId+'&status=in.(BOOKED,OUT)');
+  return (rows||[]).filter(function(r){
+   if(excludeInvoice&&r.invoice_id===excludeInvoice)return false;
+   return !(r.to_date<from||r.from_date>to);});
+ }catch(e){return [];}}
+async function validateRentals(){
+ var issues=[];
+ for(var i=0;i<prods.length;i++){
+  var p=prods[i];
+  if(p.type!=='rental'||!p.inv_id||!p.from||!p.to)continue;
+  var clash=await checkAvailability(p.inv_id,p.from,p.to,curKey);
+  if(clash.length)issues.push(p.n+' is already booked '+fmtD(clash[0].from_date)+' → '+fmtD(clash[0].to_date)+
+   ' ('+(clash[0].customer_name||'another customer')+')');
+ }
+ return issues;}
+
+/* ========== RENTALS TAB ========== */
+function isOverdue(r){return (r.status==='BOOKED'||r.status==='OUT')&&r.to_date&&r.to_date<todayStr();}
+async function showRentals(){
+ switchView('rent');
+ document.getElementById('rentC').innerHTML='<div class="empty"><div style="font-size:28px">⏳</div><p>Loading bookings...</p></div>';
+ try{
+  allRentals=await sbFetch(RENT_URL+'?select=*&order=from_date.desc')||[];
+  renderRentals();
+ }catch(e){
+  document.getElementById('rentC').innerHTML='<div class="empty"><div>⚠️</div>'+
+   '<p style="color:#C0392B;font-size:12px;margin-bottom:8px">'+eh(e.message)+'</p>'+
+   '<p style="font-size:11px;color:#888">Run the rentals SQL in Supabase to create the table.</p></div>';}}
+function renderRentals(){
+ var f=gv('rentFilter'),q=gv('rentSearch').toLowerCase();
+ var list=allRentals.filter(function(r){
+  if(f==='active'&&!(r.status==='BOOKED'||r.status==='OUT'))return false;
+  if(f==='overdue'&&!isOverdue(r))return false;
+  if(f==='returned'&&r.status!=='RETURNED')return false;
+  if(q&&(r.customer_name||'').toLowerCase().indexOf(q)===-1&&
+        (r.item_name||'').toLowerCase().indexOf(q)===-1)return false;
+  return true;});
+ var active=allRentals.filter(function(r){return r.status==='BOOKED'||r.status==='OUT';});
+ var over=allRentals.filter(isOverdue);
+ var dep=active.reduce(function(s,r){return s+(parseFloat(r.deposit)||0);},0);
+ var inc=allRentals.reduce(function(s,r){
+  return s+(parseFloat(r.rate)||0)*(parseInt(r.days)||1)*(parseInt(r.qty)||1);},0);
+ document.getElementById('ktActive').textContent=active.length;
+ document.getElementById('ktOver').textContent=over.length;
+ document.getElementById('ktDep').textContent='₹'+dep.toLocaleString('en-IN',{maximumFractionDigits:0});
+ document.getElementById('ktInc').textContent='₹'+inc.toLocaleString('en-IN',{maximumFractionDigits:0});
+ if(!list.length){
+  document.getElementById('rentC').innerHTML='<div class="empty"><div>📅</div><p style="font-size:12px">No bookings match this filter.</p></div>';
+  return;}
+ var rows=list.map(function(r){
+  var od=isOverdue(r);
+  var lateDays=od?Math.round((new Date(todayStr())-new Date(r.to_date))/86400000):0;
+  var cls=r.status==='RETURNED'?'paid':(od?'pending':'partial');
+  var txt=r.status==='RETURNED'?'RETURNED':(od?lateDays+'d LATE':r.status);
+  var amt=(parseFloat(r.rate)||0)*(parseInt(r.days)||1)*(parseInt(r.qty)||1);
+  return '<tr'+(od?' style="background:#FFF8F8"':'')+'>'+
+   '<td><b style="color:var(--dm)">'+eh(r.item_name||'—')+'</b>'+
+   '<div style="font-size:10px;color:#AAA">Qty '+(r.qty||1)+' × ₹'+(parseFloat(r.rate)||0).toFixed(0)+'</div></td>'+
+   '<td>'+eh(r.customer_name||'—')+'<div style="font-size:10px;color:#AAA">'+eh(r.customer_phone||'')+'</div></td>'+
+   '<td style="font-size:11.5px">'+fmtD(r.from_date)+'<div style="font-size:10px;color:#AAA">to '+fmtD(r.to_date)+'</div></td>'+
+   '<td style="text-align:center">'+(r.days||1)+'</td>'+
+   '<td style="text-align:right;font-weight:700">₹'+amt.toFixed(2)+'</td>'+
+   '<td style="text-align:right;color:#7B5EA7;font-weight:600">₹'+(parseFloat(r.deposit)||0).toFixed(2)+'</td>'+
+   '<td><span class="bdg '+cls+'">'+txt+'</span></td>'+
+   '<td>'+(r.status==='RETURNED'
+     ?'<div style="font-size:10px;color:#888">'+fmtD(r.actual_return_date)+
+       (r.late_fee>0?'<br><span style="color:#C0392B">Late ₹'+parseFloat(r.late_fee).toFixed(0)+'</span>':'')+
+       (r.damage_fee>0?'<br><span style="color:#C0392B">Dmg ₹'+parseFloat(r.damage_fee).toFixed(0)+'</span>':'')+'</div>'
+     :'<button class="tbtn ic" onclick="openReturn(\''+r.id+'\')">📦 Return</button>')+
+   '</td></tr>';}).join('');
+ document.getElementById('rentC').innerHTML='<table class="itbl" style="min-width:1000px"><thead><tr>'+
+  '<th>Item</th><th>Customer</th><th>Period</th><th style="text-align:center">Days</th>'+
+  '<th style="text-align:right">Rental</th><th style="text-align:right">Deposit</th><th>Status</th><th>Action</th>'+
+  '</tr></thead><tbody>'+rows+'</tbody></table>';}
+
+function openReturn(id){
+ curRental=allRentals.find(function(r){return r.id===id;});
+ if(!curRental)return;
+ var r=curRental;
+ document.getElementById('returnInfo').innerHTML=
+  '<b style="color:var(--dm)">'+eh(r.item_name)+'</b> × '+(r.qty||1)+
+  '<div style="color:#888;margin-top:4px">'+eh(r.customer_name||'')+' • '+fmtD(r.from_date)+' → '+fmtD(r.to_date)+'</div>';
+ document.getElementById('retDate').value=todayStr();
+ document.getElementById('retDamage').value='0';
+ document.getElementById('retNotes').value='';
+ calcReturn();
+ document.getElementById('returnModal').classList.add('show');}
+function closeReturn(){document.getElementById('returnModal').classList.remove('show');curRental=null;}
+function calcReturn(){
+ if(!curRental)return{lateDays:0,lateFee:0,dmg:0,refund:0};
+ var r=curRental;
+ var ret=gv('retDate')||todayStr();
+ var lateDays=Math.max(Math.round((new Date(ret)-new Date(r.to_date))/86400000),0);
+ var rate=parseFloat(r.rate)||0,qty=parseInt(r.qty)||1;
+ var lateFee=lateDays*rate*qty;
+ var dmg=parseFloat(gv('retDamage'))||0;
+ var dep=parseFloat(r.deposit)||0;
+ var refund=dep-lateFee-dmg;
+ document.getElementById('retDep').textContent='₹ '+dep.toFixed(2);
+ document.getElementById('retLate').textContent='₹ '+lateFee.toFixed(2);
+ document.getElementById('retLateDays').textContent=lateDays?'('+lateDays+' day'+(lateDays>1?'s':'')+' late)':'';
+ document.getElementById('retDmg').textContent='₹ '+dmg.toFixed(2);
+ var el=document.getElementById('retRefund');
+ el.style.color=refund>=0?'#2E7D32':'#C0392B';
+ el.textContent=refund>=0?('₹ '+refund.toFixed(2)):('₹ '+Math.abs(refund).toFixed(2)+' DUE');
+ return{lateDays:lateDays,lateFee:lateFee,dmg:dmg,refund:refund};}
+async function saveReturn(){
+ if(!curRental)return;
+ var btn=document.getElementById('retSaveBtn');
+ btn.textContent='⏳ Saving...';btn.disabled=true;
+ try{
+  var c=calcReturn();
+  await sbFetch(RENT_URL+'?id=eq.'+curRental.id,'PATCH',{
+   status:'RETURNED',actual_return_date:gv('retDate')||todayStr(),
+   late_fee:+c.lateFee.toFixed(2),damage_fee:+c.dmg.toFixed(2),
+   notes:gv('retNotes')||null});
+  toast(c.refund>=0?'✓ Returned — refund ₹'+c.refund.toFixed(2)
+                   :'✓ Returned — ₹'+Math.abs(c.refund).toFixed(2)+' still due');
+  closeReturn();showRentals();
+ }catch(e){toast('Return failed: '+e.message,true);}
+ finally{btn.innerHTML='✓ Confirm Return';btn.disabled=false;}}
 
 /* ========== NUMBERING ========== */
 async function nextInvoiceNumbers(){
@@ -1526,7 +1556,6 @@ async function applyNextNumbers(){
 var SELLER_FIELDS=['fSN','fSA','fSPh','fSIG','fWA','fSW','fUID','fIBN','fIBS','fITG',
  'fCTitle','fC1','fC2','fC3','fC4','fC5','fCT','fBN','fBH','fBA','fBI','fBB'];
 async function saveSellerProfile(){
- var btn=event&&event.target?event.target:null;
  try{
   var prof={};
   SELLER_FIELDS.forEach(function(id){prof[id]=gv(id);});
@@ -1536,19 +1565,14 @@ async function saveSellerProfile(){
   prof.logo=logoImg||'';
   var payload=JSON.stringify(prof);
   var kb=Math.round(new Blob([payload]).size/1024);
-  // If the logo makes it too big, shrink the logo and retry
   if(kb>1800&&prof.logo){
-   prof.logo=await compressImg(prof.logo,220,0.7);
+   prof.logo=await compressImg(prof.logo,240,0.9,true);
    payload=JSON.stringify(prof);
    kb=Math.round(new Blob([payload]).size/1024);
   }
   await lsSet('asbr_seller',payload);
   toast('✓ Seller profile saved ('+kb+'KB)');
- }catch(e){
-  console.error('Profile save failed:',e);
-  toast('Could not save: '+e.message,true);
- }}
-
+ }catch(e){console.error(e);toast('Could not save: '+e.message,true);}}
 async function loadSellerProfile(manual){
  try{
   var raw=await lsGet('asbr_seller');
@@ -1582,13 +1606,13 @@ function collectData(){
   bankOn:gc('fBankToggle'),bn:gv('fBN'),bh:gv('fBH'),ba:gv('fBA'),bi:gv('fBI'),bb:gv('fBB'),
   ctitle:gv('fCTitle'),c1:gv('fC1'),c2:gv('fC2'),c3:gv('fC3'),c4:gv('fC4'),c5:gv('fC5'),ct:gv('fCT'),
   prods:prods.map(function(p){return Object.assign({},p);}),
-  total:calcTotal(),sym:getSym()};}
+  deposit:totalDeposit(),total:calcTotal(),sym:getSym()};}
 
 function loadDataToForm(d){
  function sv(id,v){var e=document.getElementById(id);if(e)e.value=(v==null?'':v);}
  sv('fNo',d.no);sv('fDt',d.date);sv('fOrd',d.ord);sv('fCurr',d.curr||'INR');
  sv('fIBN',d.ibn||'AS BRIDAL');sv('fIBS',d.ibs||'BANGLES & ACCESSORIES');sv('fITG',d.itg||'Elegance in Every Bangle');
- sv('fGST',d.gst||'0');sv('fGC',d.gstc);sv('fDisc',d.disc||'0');sv('fDV',d.discv);sv('fShip',d.ship||'100');
+ sv('fGST',d.gst||'0');sv('fGC',d.gstc);sv('fDisc',d.disc||'0');sv('fDV',d.discv);sv('fShip',d.ship||'0');
  sv('fPM',d.pm||'UPI');sv('fPS',d.ps||'PAID');sv('fUID',d.uid);sv('fPO',d.po);sv('fAP',d.ap);
  sv('fCN',d.cn);sv('fCA',d.ca);sv('fCP',d.cp);
  sv('fCDist',d.cdist);sv('fCState',d.cstate);sv('fCCountry',d.ccountry||'India');
@@ -1608,20 +1632,33 @@ function loadDataToForm(d){
  document.getElementById('rPart').classList.toggle('off',d.ps!=='PARTIAL');
  ['rBank1','rBank2','rBank3'].forEach(function(id){document.getElementById(id).classList.toggle('off',!d.bankOn);});}
 
+async function syncRentals(d){
+ if(!curKey)return;
+ try{
+  await sbDel(RENT_URL+'?invoice_id=eq.'+curKey);
+  var rows=prods.filter(function(p){return p.type==='rental';}).map(function(p){
+   return{invoice_id:curKey,inventory_id:p.inv_id||null,
+    customer_name:d.cn||'',customer_phone:d.cp||'',item_name:p.n,
+    from_date:p.from||d.date,to_date:p.to||d.date,
+    qty:parseInt(p.q)||1,rate:parseFloat(p.r)||0,
+    days:(p.unit==='event')?1:(parseInt(p.days)||1),
+    deposit:(parseFloat(p.dep)||0)*(parseInt(p.q)||1),
+    status:'BOOKED'};});
+  if(rows.length)await sbFetch(RENT_URL,'POST',rows);
+ }catch(e){console.warn('Rental sync:',e.message);}}
+
 async function saveInv(){
  var btn=document.getElementById('bSave');
  btn.textContent='💾 Saving...';btn.disabled=true;
  setSbStatus('busy','Saving...');
  try{
-  // Block double-booking
   var issues=await validateRentals();
   if(issues.length){
    toast('⚠ '+issues[0],true);
    alert('Booking conflict:\n\n'+issues.join('\n\n')+'\n\nChange the dates or item, then save again.');
-   return;
-  }
+   return;}
   for(var i=0;i<prods.length;i++){
-   if(prods[i].img&&prods[i].img.length>90000)prods[i].img=await compressImg(prods[i].img,300,0.7);}
+   if(prods[i].img&&prods[i].img.length>120000)prods[i].img=await compressImg(prods[i].img,260,0.75,true);}
   renderP();rp();
   var d=collectData(),kb=payloadKB(d);
   if(kb>1400){toast('Payload too large ('+kb+'KB). Reduce images.',true);setSbStatus('err','Too large');return;}
@@ -1643,24 +1680,31 @@ async function saveInv(){
   setSbStatus('err','Save Error');console.error(e);
  }finally{btn.innerHTML='💾 Save';btn.disabled=false;}}
 
-/* Write rental bookings tied to this invoice */
-async function syncRentals(d){
- if(!curKey)return;
- try{
-  await sbDel(SB_BASE+'/rentals?invoice_id=eq.'+curKey);
-  var rows=prods.filter(function(p){return p.type==='rental';}).map(function(p){
-   return{invoice_id:curKey,inventory_id:p.inv_id||null,
-    customer_name:d.cn||'',customer_phone:d.cp||'',
-    item_name:p.n,from_date:p.from||d.date,to_date:p.to||d.date,
-    qty:parseInt(p.q)||1,rate:parseFloat(p.r)||0,
-    days:(p.unit==='event')?1:(parseInt(p.days)||1),
-    deposit:(parseFloat(p.dep)||0)*(parseInt(p.q)||1),
-    status:'BOOKED'};});
-  if(rows.length)await sbFetch(SB_BASE+'/rentals','POST',rows);
- }catch(e){console.warn('Rental sync:',e.message);}
-}
-
 /* ========== DASHBOARD ========== */
+function invNetSales(inv){
+ var d=inv.data||{},sub=0;
+ (d.prods||[]).forEach(function(p){
+  var q=parseFloat(p.q)||0,rate=parseFloat(p.r)||0;
+  if(p.type==='rental'){var dy=(p.unit==='event')?1:(parseInt(p.days)||1);sub+=rate*dy*q;}
+  else sub+=rate*q;});
+ if(!sub)return Math.max((parseFloat(inv.total)||0)-(parseFloat(d.ship)||0)-(parseFloat(d.deposit)||0),0);
+ var disc=0,dv=parseFloat(d.discv)||0;
+ if(d.disc==='fl')disc=dv;
+ else if(d.disc==='pc')disc=sub*dv/100;
+ else if(d.disc&&d.disc!=='0')disc=sub*(parseFloat(String(d.disc).replace('p',''))||0)/100;
+ return sub-disc;}
+function invProfit(inv){
+ if(inv.gross_profit!==undefined&&inv.gross_profit!==null&&inv.total_cost)
+  return{cost:parseFloat(inv.total_cost)||0,net:parseFloat(inv.gross_profit)||0,margin:parseFloat(inv.margin)||0};
+ var d=inv.data||{},cost=0,rev=0;
+ (d.prods||[]).forEach(function(p){
+  var q=parseFloat(p.q)||0,rate=parseFloat(p.r)||0;
+  if(p.type==='rental'){var dy=(p.unit==='event')?1:(parseInt(p.days)||1);rev+=rate*dy*q;}
+  else rev+=rate*q;
+  cost+=q*(parseFloat(p.c)||0);});
+ var net=rev-cost;
+ return{cost:cost,net:cost>0?net:0,margin:(cost>0&&rev>0)?(net/rev)*100:0};}
+
 async function loadDash(){
  document.getElementById('dashC').innerHTML='<div class="empty"><div style="font-size:28px">⏳</div><p>Loading...</p></div>';
  setSbStatus('busy','Loading...');
@@ -1678,68 +1722,41 @@ function filterDash(){
   return (i.invoice_no||'').toLowerCase().indexOf(q)>-1||
          (i.customer_name||'').toLowerCase().indexOf(q)>-1||
          loc.indexOf(q)>-1;}));}
-/* Net product sales = subtotal after discount, excluding shipping & GST */
-function invNetSales(inv){
- var d=inv.data||{},sub=0;
- (d.prods||[]).forEach(function(p){
-  sub+=(parseFloat(p.q)||0)*(parseFloat(p.r)||0);});
- if(!sub){
-  // fallback for older invoices: strip shipping from stored total
-  return Math.max((parseFloat(inv.total)||0)-(parseFloat(d.ship)||0),0);}
- var disc=0,dv=parseFloat(d.discv)||0;
- if(d.disc==='fl')disc=dv;
- else if(d.disc==='pc')disc=sub*dv/100;
- else if(d.disc&&d.disc!=='0')disc=sub*(parseFloat(String(d.disc).replace('p',''))||0)/100;
- return sub-disc;
-}
-function invProfit(inv){
- // Shipping is excluded from all profit figures
- if(inv.gross_profit!==undefined&&inv.gross_profit!==null&&inv.total_cost)
-  return{cost:parseFloat(inv.total_cost)||0,net:parseFloat(inv.gross_profit)||0,margin:parseFloat(inv.margin)||0};
- var d=inv.data||{},cost=0,rev=0;
- (d.prods||[]).forEach(function(p){
-  var q=parseFloat(p.q)||0;
-  rev+=q*(parseFloat(p.r)||0);
-  cost+=q*(parseFloat(p.c)||0);});
- var net=rev-cost;
- return{cost:cost,net:cost>0?net:0,margin:(cost>0&&rev>0)?(net/rev)*100:0};
-}
 function renderDash(invs){
  if(!invs.length){
   ['dTot','dPend'].forEach(function(id){document.getElementById(id).textContent='0';});
-  document.getElementById('dRev').textContent='₹0';
-  document.getElementById('dNetRev').textContent='₹0';
-  document.getElementById('dShip').textContent='₹0';
-  document.getElementById('dProfit').textContent='₹0';
+  ['dRev','dNetRev','dShip','dProfit'].forEach(function(id){document.getElementById(id).textContent='₹0';});
   document.getElementById('dMargin').textContent='0%';
   document.getElementById('dashC').innerHTML='<div class="empty"><div>📄</div><p style="margin-bottom:14px">No invoices yet.</p>'+
    '<button class="b b-g" onclick="newInv()" style="margin:0 auto;font-size:11px;padding:7px 16px">＋ New Invoice</button></div>';
   return;}
- var rev=0,ship=0,netRev=0,profit=0,marginSum=0,marginCount=0;
+ var rev=0,ship=0,netRev=0,profit=0,mSum=0,mCount=0;
  invs.forEach(function(i){
   rev+=parseFloat(i.total)||0;
   ship+=parseFloat((i.data||{}).ship)||0;
   netRev+=invNetSales(i);
   var p=invProfit(i);
   profit+=p.net;
-  if(p.cost>0){marginSum+=p.margin;marginCount++;}});
+  if(p.cost>0){mSum+=p.margin;mCount++;}});
  var paid=invs.filter(function(i){return i.status==='PAID';}).length;
  document.getElementById('dTot').textContent=invs.length;
  document.getElementById('dRev').textContent='₹'+rev.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('dNetRev').textContent='₹'+netRev.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('dShip').textContent='₹'+ship.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('dProfit').textContent='₹'+profit.toLocaleString('en-IN',{maximumFractionDigits:0});
- document.getElementById('dMargin').textContent=(marginCount?(marginSum/marginCount).toFixed(1):'0')+'%';
+ document.getElementById('dMargin').textContent=(mCount?(mSum/mCount).toFixed(1):'0')+'%';
  document.getElementById('dPend').textContent=invs.length-paid;
  var rows=invs.map(function(inv){
   var d=inv.data||{};
   var loc=[d.cdist,d.cstate,d.ccountry].map(function(s){return (s||'').trim();}).filter(Boolean).join(', ')||'—';
   var p=invProfit(inv);
   var sym=d.sym||'₹';
+  var hasRent=(d.prods||[]).some(function(x){return x.type==='rental';});
   var pCell=p.cost>0
    ?'<b style="color:'+(p.net>=0?'#2E7D32':'#C0392B')+'">'+sym+' '+p.net.toFixed(2)+'</b><div style="font-size:9.5px;color:#AAA">'+p.margin.toFixed(1)+'%</div>'
    :'<span style="color:#DDD">—</span>';
-  return '<tr><td><b style="color:var(--m)">'+eh(inv.invoice_no||'—')+'</b></td>'+
+  return '<tr><td><b style="color:var(--m)">'+eh(inv.invoice_no||'—')+'</b>'+
+   (hasRent?' <span style="font-size:8px;background:#F0E8FA;color:#7B5EA7;padding:1px 5px;border-radius:8px">RENT</span>':'')+'</td>'+
    '<td>'+eh(inv.customer_name||'—')+'</td>'+
    '<td style="font-size:11px;color:#666">'+eh(loc)+'</td>'+
    '<td>'+fmtD(inv.invoice_date)+'</td>'+
@@ -1753,7 +1770,7 @@ function renderDash(invs){
    '<button class="tbtn ed" onclick="editInv(\''+inv.id+'\')">✏️</button>'+
    '<button class="tbtn del" onclick="delInv(\''+inv.id+'\')">🗑</button>'+
    '</div></td></tr>';}).join('');
- document.getElementById('dashC').innerHTML='<table class="itbl"><thead><tr>'+
+ document.getElementById('dashC').innerHTML='<table class="itbl" style="min-width:1100px"><thead><tr>'+
   '<th>Invoice No.</th><th>Customer</th><th>Location</th><th>Date</th><th>Amount</th><th>Cost</th>'+
   '<th style="text-align:right">Profit</th><th>Status</th><th>Actions</th>'+
   '</tr></thead><tbody>'+rows+'</tbody></table>';}
@@ -1769,7 +1786,6 @@ async function viewInv(id){
   document.getElementById('viewModal').classList.add('show');
  }catch(e){toast('Failed to load',true);}}
 function closeViewModal(){document.getElementById('viewModal').classList.remove('show');}
-
 async function editInv(id){
  try{
   var rows=await sbFetch(SB_URL+'?select=*&id=eq.'+id);
@@ -1780,7 +1796,6 @@ async function editInv(id){
   document.getElementById('tabE').textContent='✏️ '+row.invoice_no;
   toast('Loaded for editing');
  }catch(e){toast('Failed to load',true);}}
-
 async function delInv(id){
  if(!confirm('Delete this invoice permanently?'))return;
  try{
@@ -1789,22 +1804,20 @@ async function delInv(id){
   allInvs=allInvs.filter(function(i){return i.id!==id;});
   toast('Invoice deleted');renderDash(allInvs);
  }catch(e){toast('Delete failed',true);}}
-
 async function newInv(){
  curKey=null;resetAll(true);
  await loadSellerProfile();
  showEditor();
  await applyNextNumbers();}
-
 function resetAll(silent){
  if(!silent&&!confirm('Reset all fields?'))return;
  ['fCN','fCA','fCP','fCDist','fCState','fDV','fGC','fAP'].forEach(function(id){document.getElementById(id).value='';});
  document.getElementById('fCCountry').value='India';
  document.getElementById('fGST').value='0';
  document.getElementById('fDisc').value='0';
- document.getElementById('fShip').value='100';
+ document.getElementById('fShip').value='0';
  document.getElementById('fPS').value='PAID';
- var td=new Date().toISOString().split('T')[0];
+ var td=todayStr();
  document.getElementById('fDt').value=td;
  document.getElementById('fPO').value=td;
  ['rGC','rDV','rPart'].forEach(function(id){document.getElementById(id).classList.add('off');});
@@ -1822,7 +1835,6 @@ function repFiltered(){
   if(f&&d<f)return false;
   if(t&&d>t)return false;
   return true;});}
-
 function renderReports(){
  var list=repFiltered();
  var rev=0,cost=0,profit=0,ship=0,netRev=0;
@@ -1839,16 +1851,14 @@ function renderReports(){
  document.getElementById('rProfit').textContent='₹'+profit.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('rAOV').textContent='₹'+(list.length?Math.round(rev/list.length).toLocaleString('en-IN'):'0');
  renderMonthly(list);renderTopProducts(list);renderByLocation(list);renderLowMargin(list);}
-
 function renderMonthly(list){
  var months={};
  list.forEach(function(i){
   var d=i.invoice_date;if(!d)return;
   var key=d.slice(0,7);
-  if(!months[key])months[key]={rev:0,profit:0,count:0};
+  if(!months[key])months[key]={rev:0,profit:0};
   months[key].rev+=parseFloat(i.total)||0;
-  months[key].profit+=invProfit(i).net;
-  months[key].count++;});
+  months[key].profit+=invProfit(i).net;});
  var keys=Object.keys(months).sort().slice(-8);
  if(!keys.length){document.getElementById('repChart').innerHTML='<div style="text-align:center;color:#CCC;padding:30px">No data in range</div>';return;}
  var max=Math.max.apply(null,keys.map(function(k){return months[k].rev;}))||1;
@@ -1861,22 +1871,20 @@ function renderMonthly(list){
   html+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">'+
    '<div style="font-size:9px;color:#888;font-weight:700">₹'+Math.round(m.rev/1000)+'k</div>'+
    '<div style="display:flex;gap:3px;align-items:flex-end;height:150px">'+
-   '<div style="width:16px;height:'+rh+'px;background:var(--dm);border-radius:3px 3px 0 0" title="Revenue ₹'+m.rev.toFixed(0)+'"></div>'+
-   '<div style="width:16px;height:'+ph+'px;background:#2E7D32;border-radius:3px 3px 0 0" title="Profit ₹'+m.profit.toFixed(0)+'"></div>'+
-   '</div>'+
-   '<div style="font-size:9.5px;color:#666;font-weight:600">'+label+'</div></div>';});
+   '<div style="width:16px;height:'+rh+'px;background:var(--dm);border-radius:3px 3px 0 0"></div>'+
+   '<div style="width:16px;height:'+ph+'px;background:#2E7D32;border-radius:3px 3px 0 0"></div>'+
+   '</div><div style="font-size:9.5px;color:#666;font-weight:600">'+label+'</div></div>';});
  html+='</div><div style="display:flex;gap:16px;justify-content:center;margin-top:14px;font-size:10px;color:#888">'+
   '<span><span style="display:inline-block;width:10px;height:10px;background:var(--dm);border-radius:2px;margin-right:4px"></span>Revenue</span>'+
   '<span><span style="display:inline-block;width:10px;height:10px;background:#2E7D32;border-radius:2px;margin-right:4px"></span>Profit</span></div>';
  document.getElementById('repChart').innerHTML=html;}
-
 function renderTopProducts(list){
  var map={};
  list.forEach(function(i){
   ((i.data||{}).prods||[]).forEach(function(p){
    var n=(p.n||'').trim();if(!n)return;
-   var q=parseFloat(p.q)||0;
-   var rev=q*(parseFloat(p.r)||0);
+   var q=parseFloat(p.q)||0,rate=parseFloat(p.r)||0;
+   var rev=(p.type==='rental')?rate*((p.unit==='event')?1:(parseInt(p.days)||1))*q:rate*q;
    var prof=rev-q*(parseFloat(p.c)||0);
    if(!map[n])map[n]={qty:0,rev:0,profit:0};
    map[n].qty+=q;map[n].rev+=rev;map[n].profit+=prof;});});
@@ -1890,7 +1898,6 @@ function renderTopProducts(list){
    '<div style="font-size:9.5px;color:#AAA">'+p.qty+' sold</div></div>'+
    '<div style="text-align:right"><div style="font-weight:700;font-size:12px">₹'+p.rev.toFixed(0)+'</div>'+
    '<div style="font-size:9.5px;color:'+(p.profit>0?'#2E7D32':'#CCC')+'">'+(p.profit>0?'+₹'+p.profit.toFixed(0):'—')+'</div></div></div>';}).join('');}
-
 function renderByLocation(list){
  var map={};
  list.forEach(function(i){
@@ -1910,7 +1917,6 @@ function renderByLocation(list){
    '<span style="color:#888">₹'+l.rev.toFixed(0)+' <span style="font-size:9.5px;color:#CCC">('+l.count+')</span></span></div>'+
    '<div style="height:5px;background:#F5EDE8;border-radius:3px;overflow:hidden">'+
    '<div style="height:100%;width:'+((l.rev/max)*100)+'%;background:linear-gradient(90deg,var(--dm),var(--g))"></div></div></div>';}).join('');}
-
 function renderLowMargin(list){
  var arr=list.map(function(i){
   var p=invProfit(i);
@@ -1922,153 +1928,30 @@ function renderLowMargin(list){
    'No cost data yet.<br><span style="font-size:10.5px">Add cost prices to products to track margins.</span></div>';
   return;}
  document.getElementById('repLow').innerHTML=arr.map(function(x){
-  var col=x.margin<15?'#C0392B':x.margin<30?'#E67E22':'#2E7D32';
+  var col=x.margin<15?'#C0392B':(x.margin<30?'#E67E22':'#2E7D32');
   return '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid #FAF4F0">'+
    '<div><div style="font-weight:700;color:var(--m);font-size:11.5px">'+eh(x.no||'—')+'</div>'+
    '<div style="font-size:10px;color:#AAA">'+eh(x.cust||'—')+'</div></div>'+
    '<div style="text-align:right"><div style="font-weight:800;color:'+col+';font-size:13px">'+x.margin.toFixed(1)+'%</div>'+
    '<div style="font-size:9.5px;color:#AAA">₹'+x.net.toFixed(0)+'</div></div></div>';}).join('');}
-
 function exportCSV(){
  var list=repFiltered();
  if(!list.length){toast('No data to export',true);return;}
- var rows=[['Invoice No','Date','Customer','District','State','Country','Amount','Cost','Profit','Margin %','Status']];
+ var rows=[['Invoice No','Date','Customer','District','State','Country','Amount','Shipping','Cost','Profit','Margin %','Status']];
  list.forEach(function(i){
   var d=i.data||{},p=invProfit(i);
   rows.push([i.invoice_no||'',i.invoice_date||'',i.customer_name||'',
    d.cdist||'',d.cstate||'',d.ccountry||'',
-   (parseFloat(i.total)||0).toFixed(2),p.cost.toFixed(2),p.net.toFixed(2),
-   p.margin.toFixed(2),i.status||'']);});
+   (parseFloat(i.total)||0).toFixed(2),(parseFloat(d.ship)||0).toFixed(2),
+   p.cost.toFixed(2),p.net.toFixed(2),p.margin.toFixed(2),i.status||'']);});
  var csv=rows.map(function(r){
   return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
  var a=document.createElement('a');
  a.href=URL.createObjectURL(blob);
- a.download='AS-Invoice-Report-'+new Date().toISOString().slice(0,10)+'.csv';
+ a.download='AS-Invoice-Report-'+todayStr()+'.csv';
  a.click();
  toast('✓ CSV exported ('+list.length+' invoices)');}
-
-/* ========== RENTALS TAB ========== */
-var allRentals=[],curRental=null;
-var RENT_URL=SB_BASE+'/rentals';
-
-function todayStr(){return new Date().toISOString().split('T')[0];}
-function isOverdue(r){
- return (r.status==='BOOKED'||r.status==='OUT')&&r.to_date&&r.to_date<todayStr();}
-
-async function showRentals(){
- switchView('rent');
- document.getElementById('rentC').innerHTML='<div class="empty"><div style="font-size:28px">⏳</div><p>Loading bookings...</p></div>';
- try{
-  allRentals=await sbFetch(RENT_URL+'?select=*&order=from_date.desc')||[];
-  renderRentals();
- }catch(e){
-  document.getElementById('rentC').innerHTML='<div class="empty"><div>⚠️</div>'+
-   '<p style="color:#C0392B;font-size:12px;margin-bottom:8px">'+eh(e.message)+'</p>'+
-   '<p style="font-size:11px;color:#888">Run the rentals SQL in Supabase to create the table.</p></div>';}}
-
-function renderRentals(){
- var f=gv('rentFilter'),q=gv('rentSearch').toLowerCase();
- var list=allRentals.filter(function(r){
-  if(f==='active'&&!(r.status==='BOOKED'||r.status==='OUT'))return false;
-  if(f==='overdue'&&!isOverdue(r))return false;
-  if(f==='returned'&&r.status!=='RETURNED')return false;
-  if(q&&(r.customer_name||'').toLowerCase().indexOf(q)===-1&&
-        (r.item_name||'').toLowerCase().indexOf(q)===-1)return false;
-  return true;});
-
- var active=allRentals.filter(function(r){return r.status==='BOOKED'||r.status==='OUT';});
- var over=allRentals.filter(isOverdue);
- var dep=active.reduce(function(s,r){return s+(parseFloat(r.deposit)||0);},0);
- var inc=allRentals.reduce(function(s,r){
-  return s+(parseFloat(r.rate)||0)*(parseInt(r.days)||1)*(parseInt(r.qty)||1);},0);
- document.getElementById('ktActive').textContent=active.length;
- document.getElementById('ktOver').textContent=over.length;
- document.getElementById('ktDep').textContent='₹'+dep.toLocaleString('en-IN',{maximumFractionDigits:0});
- document.getElementById('ktInc').textContent='₹'+inc.toLocaleString('en-IN',{maximumFractionDigits:0});
-
- if(!list.length){
-  document.getElementById('rentC').innerHTML='<div class="empty"><div>📅</div><p style="font-size:12px">No bookings match this filter.</p></div>';
-  return;}
-
- var rows=list.map(function(r){
-  var od=isOverdue(r);
-  var lateDays=od?Math.round((new Date(todayStr())-new Date(r.to_date))/86400000):0;
-  var cls=r.status==='RETURNED'?'paid':(od?'pending':'partial');
-  var txt=r.status==='RETURNED'?'RETURNED':(od?lateDays+'d LATE':r.status);
-  var amt=(parseFloat(r.rate)||0)*(parseInt(r.days)||1)*(parseInt(r.qty)||1);
-  return '<tr'+(od?' style="background:#FFF8F8"':'')+'>'+
-   '<td><b style="color:var(--dm)">'+eh(r.item_name||'—')+'</b>'+
-   '<div style="font-size:10px;color:#AAA">Qty '+(r.qty||1)+' × ₹'+(parseFloat(r.rate)||0).toFixed(0)+'</div></td>'+
-   '<td>'+eh(r.customer_name||'—')+'<div style="font-size:10px;color:#AAA">'+eh(r.customer_phone||'')+'</div></td>'+
-   '<td style="font-size:11.5px">'+fmtD(r.from_date)+'<div style="font-size:10px;color:#AAA">to '+fmtD(r.to_date)+'</div></td>'+
-   '<td style="text-align:center">'+(r.days||1)+'</td>'+
-   '<td style="text-align:right;font-weight:700">₹'+amt.toFixed(2)+'</td>'+
-   '<td style="text-align:right;color:#7B5EA7;font-weight:600">₹'+(parseFloat(r.deposit)||0).toFixed(2)+'</td>'+
-   '<td><span class="bdg '+cls+'">'+txt+'</span></td>'+
-   '<td>'+(r.status==='RETURNED'
-     ?'<div style="font-size:10px;color:#888">'+fmtD(r.actual_return_date)+
-       (r.late_fee>0?'<br><span style="color:#C0392B">Late ₹'+parseFloat(r.late_fee).toFixed(0)+'</span>':'')+
-       (r.damage_fee>0?'<br><span style="color:#C0392B">Dmg ₹'+parseFloat(r.damage_fee).toFixed(0)+'</span>':'')+'</div>'
-     :'<button class="tbtn ic" onclick="openReturn(\''+r.id+'\')">📦 Return</button>')+
-   '</td></tr>';}).join('');
- document.getElementById('rentC').innerHTML='<table class="itbl" style="min-width:1000px"><thead><tr>'+
-  '<th>Item</th><th>Customer</th><th>Period</th><th style="text-align:center">Days</th>'+
-  '<th style="text-align:right">Rental</th><th style="text-align:right">Deposit</th><th>Status</th><th>Action</th>'+
-  '</tr></thead><tbody>'+rows+'</tbody></table>';}
-
-function openReturn(id){
- curRental=allRentals.find(function(r){return r.id===id;});
- if(!curRental)return;
- var r=curRental;
- document.getElementById('returnInfo').innerHTML=
-  '<b style="color:var(--dm)">'+eh(r.item_name)+'</b> × '+(r.qty||1)+
-  '<div style="color:#888;margin-top:4px">'+eh(r.customer_name||'')+' • '+
-  fmtD(r.from_date)+' → '+fmtD(r.to_date)+'</div>';
- document.getElementById('retDate').value=todayStr();
- document.getElementById('retDamage').value='0';
- document.getElementById('retNotes').value='';
- calcReturn();
- document.getElementById('returnModal').classList.add('show');}
-function closeReturn(){document.getElementById('returnModal').classList.remove('show');curRental=null;}
-
-function calcReturn(){
- if(!curRental)return;
- var r=curRental;
- var ret=gv('retDate')||todayStr();
- var lateDays=Math.max(Math.round((new Date(ret)-new Date(r.to_date))/86400000),0);
- var rate=parseFloat(r.rate)||0,qty=parseInt(r.qty)||1;
- var lateFee=lateDays*rate*qty;              // automatic: rate × qty per late day
- var dmg=parseFloat(gv('retDamage'))||0;
- var dep=parseFloat(r.deposit)||0;
- var refund=dep-lateFee-dmg;
- document.getElementById('retDep').textContent='₹ '+dep.toFixed(2);
- document.getElementById('retLate').textContent='₹ '+lateFee.toFixed(2);
- document.getElementById('retLateDays').textContent=lateDays?'('+lateDays+' day'+(lateDays>1?'s':'')+' late)':'';
- document.getElementById('retDmg').textContent='₹ '+dmg.toFixed(2);
- var el=document.getElementById('retRefund');
- el.textContent='₹ '+refund.toFixed(2);
- el.style.color=refund>=0?'#2E7D32':'#C0392B';
- if(refund<0)el.textContent='₹ '+Math.abs(refund).toFixed(2)+' DUE';
- return{lateDays:lateDays,lateFee:lateFee,dmg:dmg,refund:refund};}
-
-async function saveReturn(){
- if(!curRental)return;
- var btn=document.getElementById('retSaveBtn');
- btn.textContent='⏳ Saving...';btn.disabled=true;
- try{
-  var c=calcReturn();
-  await sbFetch(RENT_URL+'?id=eq.'+curRental.id,'PATCH',{
-   status:'RETURNED',
-   actual_return_date:gv('retDate')||todayStr(),
-   late_fee:+c.lateFee.toFixed(2),
-   damage_fee:+c.dmg.toFixed(2),
-   notes:gv('retNotes')||null});
-  toast(c.refund>=0?'✓ Returned — refund ₹'+c.refund.toFixed(2)
-                   :'✓ Returned — ₹'+Math.abs(c.refund).toFixed(2)+' still due');
-  closeReturn();showRentals();
- }catch(e){toast('Return failed: '+e.message,true);}
- finally{btn.innerHTML='✓ Confirm Return';btn.disabled=false;}}
 
 /* ========== INIT ========== */
 async function init(){
@@ -2079,25 +1962,22 @@ async function init(){
    o.value=c.c;o.textContent=c.s+' '+c.c+' — '+c.n;
    if(c.c==='INR')o.selected=true;
    sel.appendChild(o);});
-  var td=new Date().toISOString().split('T')[0];
+  var td=todayStr();
   document.getElementById('fDt').value=td;
   document.getElementById('fPO').value=td;
- }catch(e){console.error('Setup error:',e);}
+ }catch(e){console.error('Setup:',e);}
 
- // Always render the invoice first so preview never stays blank
- try{addP();addP();rp();showEditor();}
- catch(e){console.error('Render error:',e);}
+ try{addP();addP();rp();showEditor();}catch(e){console.error('Render:',e);}
 
  setSbStatus('busy','Connecting...');
- try{await loadSavedLogo();}catch(e){console.warn('Logo load:',e);}
- try{await loadSellerProfile();}catch(e){console.warn('Profile load:',e);}
- try{rp();}catch(e){console.error('Re-render:',e);}
+ try{await loadSavedLogo();}catch(e){}
+ try{await loadSellerProfile();}catch(e){}
+ try{rp();}catch(e){}
 
  var ok=false;
  try{ok=await sbPing();}catch(e){setSbStatus('err','DB Error');}
- if(ok){try{await applyNextNumbers();}catch(e){console.warn('Numbering:',e);}}
+ if(ok){try{await applyNextNumbers();}catch(e){}}
 }
-
 window.addEventListener('load',init);
 </script>
 </body>
