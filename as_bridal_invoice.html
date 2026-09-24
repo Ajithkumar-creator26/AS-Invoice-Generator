@@ -138,12 +138,13 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .itable td{padding:10px;text-align:center;font-size:11px}
 .itable td:nth-child(2){text-align:left}
 .itable td:first-child{color:var(--m);font-weight:700;font-size:13px}
-.ipc{display:flex;align-items:center;gap:9px}
-.ipi{width:46px;height:46px;border-radius:6px;border:1px solid #E8D8C8;background:#F5EDE8;display:flex;align-items:center;justify-content:center;font-size:17px;overflow:hidden;flex-shrink:0}
+.itable td:nth-child(2){max-width:320px}
+.ipc{display:flex;align-items:flex-start;gap:9px}
+.ipi{width:46px;height:46px;border-radius:6px;border:1px solid #E8D8C8;background:#F5EDE8;display:flex;align-items:center;justify-content:center;font-size:17px;overflow:hidden;flex-shrink:0;margin-top:1px}
 .ipi img{width:100%;height:100%;object-fit:cover}
-.ipn{font-weight:700;color:var(--dm);font-size:12px}
-.ipv{font-size:9.5px;color:#888;margin-top:2px}
-.ipd{color:var(--g);font-size:10px}
+.ipn{font-weight:700;color:var(--dm);font-size:12px;line-height:1.35}
+.ipv{font-size:9.5px;color:#888;margin-top:3px;line-height:1.55;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+.ipd{color:var(--g);font-size:10px;margin-top:2px}
 .ittw{display:flex;justify-content:flex-end;padding:8px 16px 13px}
 .itot{width:280px}
 .itr2{display:flex;justify-content:space-between;padding:5px 10px;font-size:11px;color:#555;border-bottom:1px solid #EDE0D4}
@@ -214,9 +215,9 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   <div class="stats" style="grid-template-columns:repeat(7,1fr)">
     <div class="sc"><div class="sc-l">Total Invoices</div><div class="sc-v" id="dTot">—</div><div class="sc-s">All time</div></div>
     <div class="sc" style="border-left-color:var(--g)"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">Incl. ship &amp; GST</div></div>
-    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="dNetRev" style="color:#00838F">—</div><div class="sc-s">Excl. ship &amp; GST</div></div>
+    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="dNetRev" style="color:#00838F">—</div><div class="sc-s">Received only</div></div>
     <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping</div><div class="sc-v" id="dShip" style="color:#7B5EA7">—</div><div class="sc-s">Collected</div></div>
-    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Total Profit</div><div class="sc-v" id="dProfit" style="color:#2E7D32">—</div><div class="sc-s">Products only</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Total Profit</div><div class="sc-v" id="dProfit" style="color:#2E7D32">—</div><div class="sc-s">Realised only</div></div>
     <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Margin</div><div class="sc-v" id="dMargin">—</div><div class="sc-s">Across invoices</div></div>
     <div class="sc" style="border-left-color:#E67E22"><div class="sc-l">Pending</div><div class="sc-v" id="dPend">—</div><div class="sc-s">Outstanding</div></div>
   </div>
@@ -288,10 +289,10 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   </div>
   <div class="stats" style="grid-template-columns:repeat(6,1fr)">
     <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v" id="rRev">—</div><div class="sc-s" id="rCount">—</div></div>
-    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="rNetRev" style="color:#00838F">—</div><div class="sc-s">Excl. ship &amp; GST</div></div>
+    <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="rNetRev" style="color:#00838F">—</div><div class="sc-s">Received only</div></div>
     <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping</div><div class="sc-v" id="rShip" style="color:#7B5EA7">—</div><div class="sc-s">Collected</div></div>
     <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Total Cost</div><div class="sc-v" id="rCost" style="color:#C0392B">—</div><div class="sc-s">Goods purchased</div></div>
-    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Net Profit</div><div class="sc-v" id="rProfit" style="color:#2E7D32">—</div><div class="sc-s">Excl. shipping</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Net Profit</div><div class="sc-v" id="rProfit" style="color:#2E7D32">—</div><div class="sc-s">Realised only</div></div>
     <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Order</div><div class="sc-v" id="rAOV">—</div><div class="sc-s">Per invoice</div></div>
   </div>
   <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px">
@@ -335,8 +336,14 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
         </div>
       </div>
     </div>
+    <div class="row r1">
+      <div class="fg"><label>Category</label>
+        <input id="iCat" list="catList" placeholder="e.g. Raindrop Bangles">
+        <datalist id="catList"></datalist>
+      </div>
+    </div>
     <div class="row r3">
-      <div class="fg"><label>Color</label><input id="iColor" placeholder="Maroon &amp; Gold"></div>
+      <div class="fg"><label>Color / Variant</label><input id="iColor" placeholder="Rani Pink"></div>
       <div class="fg"><label>Size</label><input id="iSize" placeholder="2.6"></div>
       <div class="fg"><label>Quantity</label><input id="iQty" type="number" min="0" value="0"></div>
     </div>
@@ -865,7 +872,7 @@ async function showReports(){
  renderReports();}
 
 /* ========== PRODUCTS ========== */
-function addP(){rid++;prods.push({id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:'',type:'sale',from:'',to:'',days:1,dep:0,unit:'day'});renderP();rp();}
+function addP(){rid++;prods.push({id:rid,img:'',n:'',v:'',cat:'',sz:'',q:1,r:'',c:'',inv_id:'',type:'sale',from:'',to:'',days:1,dep:0,unit:'day'});renderP();rp();}
 function daysBetween(a,b){
  if(!a||!b)return 1;
  var d=Math.round((new Date(b)-new Date(a))/86400000)+1;
@@ -989,20 +996,43 @@ function renderProfit(){
 /* ========== BUILD INVOICE ========== */
 function buildHTML(){
  var sym=getSym(),sub=0;
- var ph=prods.map(function(p,i){
-  var q=parseFloat(p.q)||0,r=parseFloat(p.r)||0,amt=lineAmount(p);sub+=amt;
-  var isRent=(p.type==='rental');
+ /* Merge rows that share the same category (or name), size and rate */
+ var groups=[],gmap={};
+ prods.forEach(function(p){
+  var key=[(p.cat||p.n||'').trim().toLowerCase(),
+           String(p.sz||'').trim().toLowerCase(),
+           String(p.r||''),
+           p.type||'sale',
+           p.from||'',p.to||''].join('|');
+  if(gmap[key]!==undefined){
+   var g=groups[gmap[key]];
+   g.q+=parseFloat(p.q)||0;
+   g.amt+=lineAmount(p);
+   if(p.v&&g.vars.indexOf(p.v)===-1)g.vars.push(p.v);
+   if(!g.img&&p.img)g.img=p.img;
+  }else{
+   gmap[key]=groups.length;
+   groups.push({title:(p.cat||p.n||'').trim()||'—',
+    vars:p.v?[p.v]:[],img:p.img,sz:p.sz,q:parseFloat(p.q)||0,
+    r:parseFloat(p.r)||0,amt:lineAmount(p),type:p.type,
+    unit:p.unit,days:p.days,from:p.from,to:p.to});
+  }
+ });
+ var ph=groups.map(function(g,i){
+  sub+=g.amt;
+  var isRent=(g.type==='rental');
   var extra='';
   if(isRent){
-   var per=(p.unit==='event')?'per event':'× '+(p.days||1)+' day'+((p.days||1)>1?'s':'');
-   extra='<div style="font-size:9px;color:#7B5EA7;font-weight:700;margin-top:2px">📅 RENTAL '+per+
-    (p.from?'<br><span style="font-weight:400;color:#999">'+fmtD(p.from)+' → '+fmtD(p.to)+'</span>':'')+'</div>';
+   var per=(g.unit==='event')?'per event':'× '+(g.days||1)+' day'+((g.days||1)>1?'s':'');
+   extra='<div style="font-size:9px;color:#7B5EA7;font-weight:700;margin-top:3px">📅 RENTAL '+per+
+    (g.from?'<br><span style="font-weight:400;color:#999">'+fmtD(g.from)+' → '+fmtD(g.to)+'</span>':'')+'</div>';
   }
+  var varLine=g.vars.length?'<div class="ipv">'+eh(g.vars.join(', '))+'</div>':'';
   return '<tr><td>'+(i+1)+'</td><td><div class="ipc"><div class="ipi">'+
-   (p.img?'<img src="'+p.img+'">':(isRent?'📅':'💍'))+'</div><div><div class="ipn">'+(eh(p.n)||'—')+
-   '</div><div class="ipv">'+eh(p.v)+'</div>'+(extra||'<div class="ipd">• • •</div>')+'</div></div></td><td>'+
-   (eh(p.sz)||'—')+'</td><td>'+(q||'—')+'</td><td>'+(r?fmt(r,sym):'—')+
-   '</td><td style="font-weight:700;color:var(--dm)">'+(amt?fmt(amt,sym):'—')+'</td></tr>';
+   (g.img?'<img src="'+g.img+'">':(isRent?'📅':'💍'))+'</div><div style="min-width:0"><div class="ipn">'+(eh(g.title))+
+   '</div>'+varLine+(extra||'<div class="ipd">• • •</div>')+'</div></div></td><td>'+
+   (eh(g.sz)||'—')+'</td><td>'+(g.q||'—')+'</td><td>'+(g.r?fmt(g.r,sym):'—')+
+   '</td><td style="font-weight:700;color:var(--dm)">'+(g.amt?fmt(g.amt,sym):'—')+'</td></tr>';
  }).join('');
  var gp=getGST(),di=getDisc(sub),sh=parseFloat(gv('fShip'))||0,dep=totalDeposit();
  var ad=sub-di,ga=ad*gp/100,raw=ad+ga+sh+dep,tot=Math.round(raw),ro=tot-raw;
@@ -1204,6 +1234,7 @@ function filterInv(){
  renderInv(allItems.filter(function(i){
   return (i.code||'').toLowerCase().indexOf(q)>-1||
          (i.name||'').toLowerCase().indexOf(q)>-1||
+         (i.category||'').toLowerCase().indexOf(q)>-1||
          (i.color||'').toLowerCase().indexOf(q)>-1;}));}
 function renderInv(items){
  if(!items.length){
@@ -1254,7 +1285,8 @@ function renderInv(items){
   return '<tr><td style="width:46px">'+thumb+'</td>'+
    '<td><b style="color:var(--m)">'+eh(i.code||'—')+'</b>'+
    '<div><span class="bdg" style="font-size:8px;padding:1px 6px;background:'+(rental?'#F0E8FA':'#FFF3E0')+';color:'+(rental?'#7B5EA7':'#E67E22')+'">'+(rental?'RENTAL':'SALE')+'</span></div></td>'+
-   '<td>'+eh(i.name||'—')+'</td>'+
+   '<td>'+eh(i.name||'—')+
+   (i.category?'<div style="font-size:9.5px;color:#7B5EA7;font-weight:600">'+eh(i.category)+'</div>':'')+'</td>'+
    '<td style="color:#666">'+eh(i.color||'—')+'</td>'+
    '<td style="text-align:center">'+eh(i.size||'—')+'</td>'+
    '<td style="text-align:center"><b>'+q+'</b> <span class="bdg '+cls+'" style="font-size:8px;padding:2px 6px">'+txt+'</span></td>'+
@@ -1266,7 +1298,7 @@ function renderInv(items){
    '<button class="tbtn del" onclick="delItem(\''+i.id+'\')">🗑</button>'+
    '</div></td></tr>';}).join('');
  document.getElementById('invC').innerHTML='<table class="itbl" style="min-width:1220px"><thead><tr>'+
-  '<th></th><th>Code / Type</th><th>Name</th><th>Color</th><th style="text-align:center">Size</th><th style="text-align:center">Qty</th>'+
+  '<th></th><th>Code / Type</th><th>Name / Category</th><th>Color</th><th style="text-align:center">Size</th><th style="text-align:center">Qty</th>'+
   '<th style="text-align:right">Purchase</th><th style="text-align:right">Sell / Rate</th><th style="text-align:right">Offer / Deposit</th>'+
   '<th style="text-align:right">Profit / Recover</th><th style="text-align:right">Margin / Asset</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table>';}
 
@@ -1277,7 +1309,7 @@ function openItemModal(id){
   var it=allItems.find(function(x){return x.id===id;});
   if(!it)return;
   document.getElementById('itemModalTitle').textContent='Edit Product';
-  set('iCode',it.code);set('iName',it.name);set('iColor',it.color);set('iSize',it.size);
+  set('iCode',it.code);set('iName',it.name);set('iCat',it.category);set('iColor',it.color);set('iSize',it.size);
   set('iQty',it.quantity);set('iPur',it.purchase_price);set('iSell',it.selling_price);set('iOffer',it.offer_price);
   set('iRate',it.rental_rate);set('iDep',it.deposit);set('iUnit',it.rental_unit||'day');
   document.getElementById('iTypeRental').checked=(it.item_type==='rental');
@@ -1285,7 +1317,7 @@ function openItemModal(id){
   itemImg=it.image||'';
  }else{
   document.getElementById('itemModalTitle').textContent='Add Product';
-  ['iCode','iName','iColor','iSize','iPur','iSell','iOffer','iRate','iDep'].forEach(function(f){set(f,'');});
+  ['iCode','iName','iCat','iColor','iSize','iPur','iSell','iOffer','iRate','iDep'].forEach(function(f){set(f,'');});
   set('iQty','0');set('iUnit','day');
   document.getElementById('iTypeSale').checked=true;
   document.getElementById('iTypeRental').checked=false;
@@ -1293,6 +1325,10 @@ function openItemModal(id){
  }
  setItemImgPreview(itemImg);
  togItemType();
+ // Populate category suggestions from existing inventory
+ var cats={};allItems.forEach(function(x){if(x.category)cats[x.category]=1;});
+ document.getElementById('catList').innerHTML=Object.keys(cats).sort()
+  .map(function(c){return '<option value="'+eh(c)+'">';}).join('');
  document.getElementById('itemModal').classList.add('show');}
 function closeItemModal(){document.getElementById('itemModal').classList.remove('show');curItemId=null;}
 
@@ -1304,7 +1340,7 @@ async function saveItem(){
  try{
   var r=itemProfit(gv('iPur'),gv('iSell'),gv('iOffer'));
   var rental=isRental();
-  var row={code:code,name:name,color:gv('iColor').trim(),size:gv('iSize').trim(),
+  var row={code:code,name:name,category:gv('iCat').trim(),color:gv('iColor').trim(),size:gv('iSize').trim(),
    quantity:parseInt(gv('iQty'))||0,
    purchase_price:parseFloat(gv('iPur'))||0,
    selling_price:parseFloat(gv('iSell'))||0,
@@ -1342,8 +1378,9 @@ function addItemToInvoice(it){
  var price=rental?(parseFloat(it.rental_rate)||0)
                  :((parseFloat(it.offer_price)>0)?it.offer_price:it.selling_price);
  var target=prods.find(function(p){return !String(p.n).trim()&&!String(p.r).trim();});
- if(!target){rid++;target={id:rid,img:'',n:'',v:'',sz:'',q:1,r:'',c:'',inv_id:'',type:'sale',from:'',to:'',days:1,dep:0,unit:'day'};prods.push(target);}
+ if(!target){rid++;target={id:rid,img:'',n:'',v:'',cat:'',sz:'',q:1,r:'',c:'',inv_id:'',type:'sale',from:'',to:'',days:1,dep:0,unit:'day'};prods.push(target);}
  target.n=it.name;target.v=it.color||'';target.sz=it.size||'';
+ target.cat=it.category||'';
  target.r=price;target.inv_id=it.id;target.q=1;
  target.type=rental?'rental':'sale';
  target.c=rental?0:(it.purchase_price||0);
@@ -1681,7 +1718,20 @@ async function saveInv(){
  }finally{btn.innerHTML='💾 Save';btn.disabled=false;}}
 
 /* ========== DASHBOARD ========== */
-function invNetSales(inv){
+/* Realisation ratio — only money actually received counts toward
+   Product Sales and Profit.
+   PAID = 1 (full) • PENDING = 0 (nothing) • PARTIAL = paid ÷ total  */
+function paidRatio(inv){
+ var st=(inv.status||'PAID').toUpperCase();
+ if(st==='PENDING')return 0;
+ if(st==='PARTIAL'){
+  var d=inv.data||{};
+  var paid=parseFloat(d.ap)||0,tot=parseFloat(inv.total)||0;
+  if(tot<=0)return 0;
+  return Math.max(Math.min(paid/tot,1),0);
+ }
+ return 1;}
+function invGrossSales(inv){
  var d=inv.data||{},sub=0;
  (d.prods||[]).forEach(function(p){
   var q=parseFloat(p.q)||0,rate=parseFloat(p.r)||0;
@@ -1693,17 +1743,27 @@ function invNetSales(inv){
  else if(d.disc==='pc')disc=sub*dv/100;
  else if(d.disc&&d.disc!=='0')disc=sub*(parseFloat(String(d.disc).replace('p',''))||0)/100;
  return sub-disc;}
+/* Realised product sales (what you've actually been paid for goods) */
+function invNetSales(inv){return invGrossSales(inv)*paidRatio(inv);}
 function invProfit(inv){
- if(inv.gross_profit!==undefined&&inv.gross_profit!==null&&inv.total_cost)
-  return{cost:parseFloat(inv.total_cost)||0,net:parseFloat(inv.gross_profit)||0,margin:parseFloat(inv.margin)||0};
- var d=inv.data||{},cost=0,rev=0;
- (d.prods||[]).forEach(function(p){
-  var q=parseFloat(p.q)||0,rate=parseFloat(p.r)||0;
-  if(p.type==='rental'){var dy=(p.unit==='event')?1:(parseInt(p.days)||1);rev+=rate*dy*q;}
-  else rev+=rate*q;
-  cost+=q*(parseFloat(p.c)||0);});
- var net=rev-cost;
- return{cost:cost,net:cost>0?net:0,margin:(cost>0&&rev>0)?(net/rev)*100:0};}
+ var ratio=paidRatio(inv);
+ var cost,net,margin;
+ if(inv.gross_profit!==undefined&&inv.gross_profit!==null&&inv.total_cost){
+  cost=parseFloat(inv.total_cost)||0;
+  net=parseFloat(inv.gross_profit)||0;
+  margin=parseFloat(inv.margin)||0;
+ }else{
+  var d=inv.data||{},rev=0;cost=0;
+  (d.prods||[]).forEach(function(p){
+   var q=parseFloat(p.q)||0,rate=parseFloat(p.r)||0;
+   if(p.type==='rental'){var dy=(p.unit==='event')?1:(parseInt(p.days)||1);rev+=rate*dy*q;}
+   else rev+=rate*q;
+   cost+=q*(parseFloat(p.c)||0);});
+  net=cost>0?(rev-cost):0;
+  margin=(cost>0&&rev>0)?(net/rev)*100:0;
+ }
+ return{cost:cost*ratio,net:net*ratio,margin:margin,ratio:ratio,
+        fullCost:cost,fullNet:net};}
 
 async function loadDash(){
  document.getElementById('dashC').innerHTML='<div class="empty"><div style="font-size:28px">⏳</div><p>Loading...</p></div>';
@@ -1737,7 +1797,7 @@ function renderDash(invs){
   netRev+=invNetSales(i);
   var p=invProfit(i);
   profit+=p.net;
-  if(p.cost>0){mSum+=p.margin;mCount++;}});
+  if(p.fullCost>0&&p.ratio>0){mSum+=p.margin;mCount++;}});
  var paid=invs.filter(function(i){return i.status==='PAID';}).length;
  document.getElementById('dTot').textContent=invs.length;
  document.getElementById('dRev').textContent='₹'+rev.toLocaleString('en-IN',{maximumFractionDigits:0});
@@ -1752,16 +1812,24 @@ function renderDash(invs){
   var p=invProfit(inv);
   var sym=d.sym||'₹';
   var hasRent=(d.prods||[]).some(function(x){return x.type==='rental';});
-  var pCell=p.cost>0
-   ?'<b style="color:'+(p.net>=0?'#2E7D32':'#C0392B')+'">'+sym+' '+p.net.toFixed(2)+'</b><div style="font-size:9.5px;color:#AAA">'+p.margin.toFixed(1)+'%</div>'
-   :'<span style="color:#DDD">—</span>';
+  var pCell;
+  if(p.fullCost>0){
+   if(p.ratio===0){
+    pCell='<span style="color:#C0392B;font-size:11px">unrealised</span>'+
+     '<div style="font-size:9.5px;color:#CCC">'+sym+' '+p.fullNet.toFixed(2)+' pending</div>';
+   }else{
+    pCell='<b style="color:'+(p.net>=0?'#2E7D32':'#C0392B')+'">'+sym+' '+p.net.toFixed(2)+'</b>'+
+     '<div style="font-size:9.5px;color:#AAA">'+p.margin.toFixed(1)+'%'+
+     (p.ratio<1?' • '+Math.round(p.ratio*100)+'% recd':'')+'</div>';
+   }
+  }else pCell='<span style="color:#DDD">—</span>';
   return '<tr><td><b style="color:var(--m)">'+eh(inv.invoice_no||'—')+'</b>'+
    (hasRent?' <span style="font-size:8px;background:#F0E8FA;color:#7B5EA7;padding:1px 5px;border-radius:8px">RENT</span>':'')+'</td>'+
    '<td>'+eh(inv.customer_name||'—')+'</td>'+
    '<td style="font-size:11px;color:#666">'+eh(loc)+'</td>'+
    '<td>'+fmtD(inv.invoice_date)+'</td>'+
    '<td style="font-weight:700">'+sym+' '+(parseFloat(inv.total)||0).toFixed(2)+'</td>'+
-   '<td style="color:#C0392B;font-size:11px">'+(p.cost>0?sym+' '+p.cost.toFixed(2):'—')+'</td>'+
+   '<td style="color:#C0392B;font-size:11px">'+(p.fullCost>0?sym+' '+p.fullCost.toFixed(2):'—')+'</td>'+
    '<td style="text-align:right">'+pCell+'</td>'+
    '<td><span class="bdg '+(inv.status||'paid').toLowerCase()+'">'+(inv.status||'PAID')+'</span></td>'+
    '<td><div class="tact">'+
@@ -1881,13 +1949,15 @@ function renderMonthly(list){
 function renderTopProducts(list){
  var map={};
  list.forEach(function(i){
+  var ratio=paidRatio(i);
+  if(ratio<=0)return;
   ((i.data||{}).prods||[]).forEach(function(p){
-   var n=(p.n||'').trim();if(!n)return;
+   var n=((p.cat||'').trim()||(p.n||'').trim());if(!n)return;
    var q=parseFloat(p.q)||0,rate=parseFloat(p.r)||0;
    var rev=(p.type==='rental')?rate*((p.unit==='event')?1:(parseInt(p.days)||1))*q:rate*q;
    var prof=rev-q*(parseFloat(p.c)||0);
    if(!map[n])map[n]={qty:0,rev:0,profit:0};
-   map[n].qty+=q;map[n].rev+=rev;map[n].profit+=prof;});});
+   map[n].qty+=q;map[n].rev+=rev*ratio;map[n].profit+=prof*ratio;});});
  var arr=Object.keys(map).map(function(k){return Object.assign({name:k},map[k]);})
   .sort(function(a,b){return b.rev-a.rev;}).slice(0,8);
  if(!arr.length){document.getElementById('repTop').innerHTML='<div style="text-align:center;color:#CCC;padding:30px">No product data</div>';return;}
@@ -1920,8 +1990,8 @@ function renderByLocation(list){
 function renderLowMargin(list){
  var arr=list.map(function(i){
   var p=invProfit(i);
-  return{no:i.invoice_no,cust:i.customer_name,margin:p.margin,net:p.net,cost:p.cost};})
-  .filter(function(x){return x.cost>0;})
+  return{no:i.invoice_no,cust:i.customer_name,margin:p.margin,net:p.net,cost:p.fullCost,ratio:p.ratio};})
+  .filter(function(x){return x.cost>0&&x.ratio>0;})
   .sort(function(a,b){return a.margin-b.margin;}).slice(0,7);
  if(!arr.length){
   document.getElementById('repLow').innerHTML='<div style="text-align:center;color:#CCC;padding:30px;font-size:12px">'+
@@ -1937,13 +2007,14 @@ function renderLowMargin(list){
 function exportCSV(){
  var list=repFiltered();
  if(!list.length){toast('No data to export',true);return;}
- var rows=[['Invoice No','Date','Customer','District','State','Country','Amount','Shipping','Cost','Profit','Margin %','Status']];
+ var rows=[['Invoice No','Date','Customer','District','State','Country','Amount','Shipping','Cost','Realised Profit','Full Profit','Margin %','Received %','Status']];
  list.forEach(function(i){
   var d=i.data||{},p=invProfit(i);
   rows.push([i.invoice_no||'',i.invoice_date||'',i.customer_name||'',
    d.cdist||'',d.cstate||'',d.ccountry||'',
    (parseFloat(i.total)||0).toFixed(2),(parseFloat(d.ship)||0).toFixed(2),
-   p.cost.toFixed(2),p.net.toFixed(2),p.margin.toFixed(2),i.status||'']);});
+   p.fullCost.toFixed(2),p.net.toFixed(2),p.fullNet.toFixed(2),
+   p.margin.toFixed(2),Math.round(p.ratio*100),i.status||'']);});
  var csv=rows.map(function(r){
   return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
