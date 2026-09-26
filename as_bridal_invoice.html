@@ -187,9 +187,71 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .mx{background:0;border:none;font-size:22px;color:#999;cursor:pointer;line-height:1}
 .pkrow{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid #F5EDE8;cursor:pointer}
 .pkrow:hover{background:#FFFAF6}
+/* ===== AUTH ===== */
+#authGate{position:fixed;inset:0;z-index:5000;background:linear-gradient(140deg,#4A0C20,#7A1535 55%,#3A0818);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+#authGate.hide{display:none!important}
+.authcard{width:100%;max-width:420px;background:#fff;border-radius:16px;padding:32px 30px;box-shadow:0 20px 70px rgba(0,0,0,.45)}
+.authlogo{text-align:center;margin-bottom:22px}
+.authlogo h1{font-family:'Poppins',sans-serif;font-weight:800;font-size:22px;color:#5C0F28;letter-spacing:.3px}
+.authlogo p{font-size:11px;color:#AAA;margin-top:4px;letter-spacing:.5px}
+.authtabs{display:flex;gap:6px;background:#F7F1EC;padding:4px;border-radius:9px;margin-bottom:20px}
+.authtab{flex:1;padding:9px;border:none;border-radius:6px;background:0;font-size:12.5px;font-weight:700;color:#999;cursor:pointer;font-family:'Open Sans',sans-serif;transition:all .2s}
+.authtab.act{background:#fff;color:#5C0F28;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.authfield{margin-bottom:13px}
+.authfield label{display:block;font-size:10px;font-weight:700;color:#2C1810;opacity:.7;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.authfield input{width:100%;padding:11px 12px;border:1.5px solid #E0D5CF;border-radius:8px;font-size:13.5px;font-family:'Open Sans',sans-serif;color:#2C1810;background:#FFFCFA;outline:none;transition:border-color .2s}
+.authfield input:focus{border-color:#7A1535;background:#fff}
+.authbtn{width:100%;padding:12px;border:none;border-radius:8px;background:#5C0F28;color:#C9A844;font-size:13.5px;font-weight:800;cursor:pointer;font-family:'Open Sans',sans-serif;margin-top:6px;transition:background .2s}
+.authbtn:hover{background:#7A1535}
+.authbtn:disabled{opacity:.6;cursor:default}
+.autherr{background:#FFEBEE;border:1px solid #F5C6CB;color:#C0392B;padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:13px;line-height:1.5}
+.authok{background:#E8F5E9;border:1px solid #C8E6C9;color:#2E7D32;padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:13px;line-height:1.5}
+.authfoot{text-align:center;font-size:10.5px;color:#BBB;margin-top:18px;line-height:1.6}
+.usermenu{display:flex;align-items:center;gap:7px;padding:0 4px;flex-shrink:0}
+.uavatar{width:26px;height:26px;border-radius:50%;background:var(--g);color:var(--dm);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.uinfo{font-size:9.5px;line-height:1.35;max-width:130px}
+.uinfo b{display:block;color:#fff;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uinfo span{color:rgba(255,255,255,.55);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.planbadge{padding:2px 8px;border-radius:10px;font-size:8.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
+.planbadge.free{background:rgba(255,255,255,.15);color:rgba(255,255,255,.8)}
+.planbadge.starter{background:#C9A844;color:#5C0F28}
+.planbadge.business{background:#2E7D32;color:#fff}
+.planbadge.enterprise{background:#7B5EA7;color:#fff}
 </style>
 </head>
 <body>
+
+<!-- AUTH GATE -->
+<div id="authGate">
+  <div class="authcard">
+    <div class="authlogo">
+      <h1>AS Invoice Generator</h1>
+      <p>INVOICING • INVENTORY • RENTALS</p>
+    </div>
+    <div class="authtabs">
+      <button class="authtab act" id="atLogin" onclick="authMode('login')">Sign In</button>
+      <button class="authtab" id="atSignup" onclick="authMode('signup')">Create Account</button>
+    </div>
+    <div id="authMsg"></div>
+    <div class="authfield off" id="afBiz">
+      <label>Business Name</label>
+      <input id="auBiz" placeholder="e.g. AS Bridal Bangles" autocomplete="organization">
+    </div>
+    <div class="authfield">
+      <label>Email</label>
+      <input id="auEmail" type="email" placeholder="you@business.com" autocomplete="email">
+    </div>
+    <div class="authfield">
+      <label>Password</label>
+      <input id="auPw" type="password" placeholder="At least 8 characters" autocomplete="current-password">
+    </div>
+    <button class="authbtn" id="auBtn" onclick="doAuth()">Sign In</button>
+    <div class="authfoot" id="auFoot">
+      New here? <b style="color:#7A1535;cursor:pointer" onclick="authMode('signup')">Create a free account</b><br>
+      Free plan includes 5 invoices per month.
+    </div>
+  </div>
+</div>
 
 <div class="bar">
   <div class="brand"><h1>AS Invoice Generator</h1></div>
@@ -199,6 +261,12 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
     <button class="ntab" id="tabRent" onclick="showRentals()">📅 Rentals</button>
     <button class="ntab" id="tabR" onclick="showReports()">📈 Reports</button>
     <button class="ntab act" id="tabE" onclick="showEditor()">📝 New Invoice</button>
+  </div>
+  <div class="usermenu" id="userMenu" style="display:none">
+    <div class="uavatar" id="uAvatar">?</div>
+    <div class="uinfo"><b id="uBiz">—</b><span id="uMail">—</span></div>
+    <span class="planbadge free" id="uPlan">FREE</span>
+    <button class="b b-o" style="padding:5px 9px;font-size:10px" onclick="signOut()" title="Sign out">⏻</button>
   </div>
   <div class="sb-status"><div class="sb-dot" id="sbDot"></div><span id="sbTxt">Connecting...</span></div>
   <div class="topbtns">
@@ -532,7 +600,7 @@ Delivered with care. ♡</textarea></div></div>
     </div>
 
     <div class="sec">
-      <div class="sec-t">🏪 Seller Details</div>
+      <div class="sec-t">🏪 Business Profile</div>
       <div style="font-size:9px;font-weight:700;color:var(--t);opacity:.7;text-transform:uppercase;margin-bottom:5px">LOGO</div>
       <div class="logo-area" onclick="document.getElementById('logoF').click()">
         <img id="logoThumb" class="logo-thumb hide" src="" alt="">
@@ -556,10 +624,10 @@ Delivered with care. ♡</textarea></div></div>
       <div class="row r1"><div class="fg"><label>WhatsApp Number</label><input id="fWA" value="+91 93423 82918" oninput="rp()"></div></div>
       <div class="row r1"><div class="fg"><label>Website (blank to hide)</label><input id="fSW" value="" oninput="rp()"></div></div>
       <div style="display:flex;gap:7px;margin-top:10px">
-        <button class="b b-s" style="flex:1;justify-content:center;padding:9px" onclick="saveSellerProfile()">💾 Save Seller Profile</button>
+        <button class="b b-s" style="flex:1;justify-content:center;padding:9px" onclick="saveSellerProfile()">💾 Save Business Profile</button>
         <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 12px" onclick="loadSellerProfile(true)">↺</button>
       </div>
-      <div style="font-size:9.5px;color:#AAA;margin-top:6px">Saved profile auto-loads on every new invoice.</div>
+      <div style="font-size:9.5px;color:#AAA;margin-top:6px">Saved to your account — loads on every device and every new invoice.</div>
     </div>
   </div></div>
 
@@ -572,7 +640,7 @@ Delivered with care. ♡</textarea></div></div>
   </div>
 </div>
 
-<div class="appfooter">Powered by &nbsp;<b>AS Bridal Bangles &amp; Accessories</b></div>
+<div class="appfooter">Powered by &nbsp;<b>AS Invoice Generator</b></div>
 
 <div id="udModal" class="modal-overlay">
   <div class="mbar">
@@ -605,15 +673,143 @@ Delivered with care. ♡</textarea></div></div>
 
 <script>
 /* ========== CONFIG ========== */
-var SB_BASE='https://tgvuoesnzolpjppyrage.supabase.co/rest/v1';
+var SB_HOST='https://tgvuoesnzolpjppyrage.supabase.co';
+var SB_BASE=SB_HOST+'/rest/v1';
+var AUTH_URL=SB_HOST+'/auth/v1';
 var SB_URL=SB_BASE+'/invoices';
 var INV_URL=SB_BASE+'/inventory';
 var RENT_URL=SB_BASE+'/rentals';
-var SB_KEYS=[
- 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRndnVvZXNuem9scGpwcHlyYWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzA4NTEsImV4cCI6MjEwMjMwNjg1MX0.X5xtjuyR17ySI8AqcZ4XI-bImNpuRVoqt92zi2w1P38',
- 'sb_publishable_JiZ1rL1Z7WKzjZc94P9RSw_G-3fvyox'
-];
-var SB_KEY=SB_KEYS[0];
+var BIZ_URL=SB_BASE+'/businesses';
+var SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRndnVvZXNuem9scGpwcHlyYWdlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzA4NTEsImV4cCI6MjEwMjMwNjg1MX0.X5xtjuyR17ySI8AqcZ4XI-bImNpuRVoqt92zi2w1P38';
+var SB_KEY=SB_ANON;
+
+/* ========== AUTH ========== */
+var session=null, myBiz=null, authBusy=false;
+var PLAN_LIMITS={free:5,starter:100,business:-1,enterprise:-1};
+var PLAN_NAMES={free:'Free',starter:'Starter',business:'Business',enterprise:'Enterprise'};
+
+function saveSession(x){session=x;try{localStorage.setItem('asig_session',JSON.stringify(x));}catch(e){}}
+function loadSessionLS(){try{var r=localStorage.getItem('asig_session');if(r)session=JSON.parse(r);}catch(e){}return session;}
+function clearSession(){session=null;myBiz=null;try{localStorage.removeItem('asig_session');}catch(e){}}
+
+async function authFetch(path,body,method){
+ var r=await fetch(AUTH_URL+path,{
+  method:method||'POST',
+  headers:{'apikey':SB_ANON,'Content-Type':'application/json'},
+  body:body?JSON.stringify(body):undefined});
+ var t=await r.text();
+ var j=null;try{j=t?JSON.parse(t):null;}catch(e){}
+ if(!r.ok){
+  var m=(j&&(j.msg||j.error_description||j.message||j.error))||('Request failed ('+r.status+')');
+  throw new Error(m);}
+ return j;}
+
+async function signIn(email,pw){
+ var j=await authFetch('/token?grant_type=password',{email:email,password:pw});
+ j.expires_at=Date.now()+((j.expires_in||3600)*1000);
+ saveSession(j);return j;}
+
+async function signUp(email,pw,biz){
+ var j=await authFetch('/signup',{email:email,password:pw,data:{business_name:biz}});
+ if(j&&j.access_token){j.expires_at=Date.now()+((j.expires_in||3600)*1000);saveSession(j);}
+ return j;}
+
+async function refreshSession(){
+ if(!session||!session.refresh_token)return false;
+ try{
+  var j=await authFetch('/token?grant_type=refresh_token',{refresh_token:session.refresh_token});
+  j.expires_at=Date.now()+((j.expires_in||3600)*1000);
+  saveSession(j);return true;
+ }catch(e){clearSession();return false;}}
+
+async function ensureToken(){
+ if(!session||!session.access_token)return false;
+ if(session.expires_at&&Date.now()>(session.expires_at-60000))return await refreshSession();
+ return true;}
+
+async function signOut(){
+ if(session&&session.access_token){
+  try{await fetch(AUTH_URL+'/logout',{method:'POST',
+   headers:{'apikey':SB_ANON,'Authorization':'Bearer '+session.access_token}});}catch(e){}}
+ clearSession();location.reload();}
+
+/* --- Auth screen --- */
+var authIsSignup=false;
+function authMode(m){
+ authIsSignup=(m==='signup');
+ document.getElementById('atLogin').classList.toggle('act',!authIsSignup);
+ document.getElementById('atSignup').classList.toggle('act',authIsSignup);
+ document.getElementById('afBiz').classList.toggle('off',!authIsSignup);
+ document.getElementById('auBtn').textContent=authIsSignup?'Create Account':'Sign In';
+ document.getElementById('auPw').setAttribute('autocomplete',authIsSignup?'new-password':'current-password');
+ document.getElementById('auFoot').innerHTML=authIsSignup
+  ? 'Already registered? <b style="color:#7A1535;cursor:pointer" onclick="authMode(\'login\')">Sign in instead</b><br>Free plan includes 5 invoices per month.'
+  : 'New here? <b style="color:#7A1535;cursor:pointer" onclick="authMode(\'signup\')">Create a free account</b><br>Free plan includes 5 invoices per month.';
+ authMsg('');}
+function authMsg(html,ok){
+ document.getElementById('authMsg').innerHTML=html
+  ? '<div class="'+(ok?'authok':'autherr')+'">'+html+'</div>' : '';}
+
+async function doAuth(){
+ if(authBusy)return;
+ var email=gv('auEmail').trim(),pw=gv('auPw'),biz=gv('auBiz').trim();
+ if(!email||!pw){authMsg('Enter your email and password.');return;}
+ if(authIsSignup&&!biz){authMsg('Enter your business name.');return;}
+ if(authIsSignup&&pw.length<8){authMsg('Password must be at least 8 characters.');return;}
+ var btn=document.getElementById('auBtn');
+ authBusy=true;btn.disabled=true;btn.textContent='Please wait...';
+ authMsg('');
+ try{
+  if(authIsSignup){
+   var r=await signUp(email,pw,biz);
+   if(!r||!r.access_token){
+    authMsg('Account created. Check <b>'+eh(email)+'</b> for a confirmation link, then sign in.',true);
+    authMode('login');return;}
+  }else{
+   await signIn(email,pw);
+  }
+  await afterLogin();
+ }catch(e){
+  var m=e.message||'Sign-in failed';
+  if(/invalid login/i.test(m))m='Wrong email or password.';
+  if(/already regist/i.test(m))m='That email already has an account — sign in instead.';
+  authMsg(m);
+ }finally{
+  authBusy=false;btn.disabled=false;
+  btn.textContent=authIsSignup?'Create Account':'Sign In';}}
+
+async function loadMyBusiness(){
+ var rows=await sbFetch(BIZ_URL+'?select=*&limit=1');
+ myBiz=(rows&&rows[0])?rows[0]:null;
+ return myBiz;}
+
+function renderUserChip(){
+ if(!session||!myBiz)return;
+ var mail=(session.user&&session.user.email)||'';
+ var name=myBiz.name||'My Business';
+ document.getElementById('userMenu').style.display='flex';
+ document.getElementById('uAvatar').textContent=(name[0]||'?').toUpperCase();
+ document.getElementById('uBiz').textContent=name;
+ document.getElementById('uMail').textContent=mail;
+ var plan=(myBiz.plan||'free').toLowerCase();
+ var badge=document.getElementById('uPlan');
+ badge.className='planbadge '+plan;
+ var lim=PLAN_LIMITS[plan];
+ badge.textContent=(lim===-1)
+  ? PLAN_NAMES[plan]
+  : PLAN_NAMES[plan]+' '+(myBiz.invoices_used||0)+'/'+lim;
+ badge.title=(lim===-1)?'Unlimited invoices':
+  ((myBiz.invoices_used||0)+' of '+lim+' invoices used this period');}
+
+async function afterLogin(){
+ document.getElementById('authGate').classList.add('hide');
+ await loadMyBusiness();
+ if(!myBiz){
+  authMsg('Your account has no business record yet. Run the Phase 1 SQL in Supabase, then reload.');
+  document.getElementById('authGate').classList.remove('hide');
+  return;}
+ renderUserChip();
+ await bootApp();}
 
 /* ========== STORAGE (artifact + localStorage) ========== */
 var HAS_WS=(typeof window.storage!=='undefined'&&window.storage&&typeof window.storage.get==='function');
@@ -631,36 +827,46 @@ async function lsSet(key,val){
 
 /* ========== SUPABASE ========== */
 function sbH(extra){
- var h={apikey:SB_KEY,Authorization:'Bearer '+SB_KEY,'Content-Type':'application/json',
+ var tok=(session&&session.access_token)?session.access_token:SB_ANON;
+ var h={apikey:SB_ANON,Authorization:'Bearer '+tok,'Content-Type':'application/json',
   'Accept-Profile':'public','Content-Profile':'public',Prefer:'return=representation'};
  if(extra)for(var k in extra)h[k]=extra[k];
  return h;
 }
+function sbErr(txt,status){
+ var m=txt;
+ try{var j=JSON.parse(txt);m=j.message||j.msg||j.hint||txt;}catch(e){}
+ if(/quota|limit reached|QUOTA/i.test(m))return new Error(m);
+ if(status===401||status===403)return new Error('Session expired — please sign in again.');
+ return new Error(m||('HTTP '+status));
+}
 async function sbFetch(url,method,body){
+ await ensureToken();
  var opts={method:method||'GET',headers:sbH()};
  if(body)opts.body=JSON.stringify(body);
  var r=await fetch(url,opts);
- if(!r.ok)throw new Error((await r.text())||('HTTP '+r.status));
+ if(r.status===401&&session){
+  if(await refreshSession()){
+   opts.headers=sbH();
+   r=await fetch(url,opts);
+  }else{clearSession();location.reload();return null;}
+ }
+ if(!r.ok)throw sbErr(await r.text(),r.status);
  var t=await r.text();
  return t?JSON.parse(t):null;
 }
 async function sbDel(url){
+ await ensureToken();
  var r=await fetch(url,{method:'DELETE',headers:sbH({Prefer:''})});
- if(!r.ok)throw new Error(await r.text());
+ if(!r.ok)throw sbErr(await r.text(),r.status);
 }
 function setSbStatus(state,txt){
  document.getElementById('sbDot').className='sb-dot '+state;
  document.getElementById('sbTxt').textContent=txt;
 }
 async function sbPing(){
- var last='';
- for(var i=0;i<SB_KEYS.length;i++){
-  SB_KEY=SB_KEYS[i];
-  try{await sbFetch(SB_URL+'?select=id&limit=1');setSbStatus('ok','Supabase ✓');return true;}
-  catch(e){last=e.message;}
- }
- setSbStatus('err','DB Error');console.error('Supabase:',last);
- return false;
+ try{await sbFetch(SB_URL+'?select=id&limit=1');setSbStatus('ok','Connected');return true;}
+ catch(e){setSbStatus('err','DB Error');console.error('Supabase:',e.message);return false;}
 }
 
 /* ========== STATE ========== */
@@ -1349,7 +1555,7 @@ async function saveItem(){
    rental_rate:parseFloat(gv('iRate'))||0,
    rental_unit:gv('iUnit')||'day',
    deposit:parseFloat(gv('iDep'))||0,
-   image:itemImg||'',
+   image:itemImg||'',business_id:myBiz&&myBiz.id,
    profit:rental?0:+r.profit.toFixed(2),
    margin:rental?0:+r.margin.toFixed(2)};
   if(curItemId)await sbFetch(INV_URL+'?id=eq.'+curItemId,'PATCH',row);
@@ -1593,43 +1799,90 @@ async function applyNextNumbers(){
 var SELLER_FIELDS=['fSN','fSA','fSPh','fSIG','fWA','fSW','fUID','fIBN','fIBS','fITG',
  'fCTitle','fC1','fC2','fC3','fC4','fC5','fCT','fBN','fBH','fBA','fBI','fBB'];
 async function saveSellerProfile(){
+ if(!myBiz){toast('Not signed in',true);return;}
+ var btn=event&&event.target?event.target:null;
+ if(btn){btn.disabled=true;btn.textContent='Saving...';}
  try{
-  var prof={};
-  SELLER_FIELDS.forEach(function(id){prof[id]=gv(id);});
-  prof.bankOn=gc('fBankToggle');
-  prof.primary=getVar('--dm')||'#5C0F28';
-  prof.accent=getVar('--g')||'#C9A844';
-  prof.logo=logoImg||'';
-  var payload=JSON.stringify(prof);
-  var kb=Math.round(new Blob([payload]).size/1024);
-  if(kb>1800&&prof.logo){
-   prof.logo=await compressImg(prof.logo,240,0.9,true);
-   payload=JSON.stringify(prof);
-   kb=Math.round(new Blob([payload]).size/1024);
+  var logo=logoImg||'';
+  if(logo){
+   var kb=Math.round(new Blob([logo]).size/1024);
+   if(kb>1200)logo=await compressImg(logo,300,0.9,true);
   }
-  await lsSet('asbr_seller',payload);
-  toast('✓ Seller profile saved ('+kb+'KB)');
- }catch(e){console.error(e);toast('Could not save: '+e.message,true);}}
+  var row={
+   name:gv('fSN')||myBiz.name,
+   address:gv('fSA'),phone:gv('fSPh'),instagram:gv('fSIG'),
+   whatsapp:gv('fWA'),website:gv('fSW'),upi_id:gv('fUID'),
+   brand_title:gv('fIBN'),brand_subtitle:gv('fIBS'),brand_tagline:gv('fITG'),
+   care_title:gv('fCTitle'),care_1:gv('fC1'),care_2:gv('fC2'),care_3:gv('fC3'),
+   care_4:gv('fC4'),care_5:gv('fC5'),care_tagline:gv('fCT'),
+   bank_on:gc('fBankToggle'),bank_name:gv('fBN'),bank_holder:gv('fBH'),
+   bank_account:gv('fBA'),bank_ifsc:gv('fBI'),bank_branch:gv('fBB'),
+   logo:logo,
+   primary_color:getVar('--dm')||'#5C0F28',
+   accent_color:getVar('--g')||'#C9A844'};
+  var res=await sbFetch(BIZ_URL+'?id=eq.'+myBiz.id,'PATCH',row);
+  if(res&&res[0])myBiz=res[0];
+  renderUserChip();
+  toast('✓ Business profile saved');
+ }catch(e){console.error(e);toast('Could not save: '+e.message,true);}
+ finally{if(btn){btn.disabled=false;btn.innerHTML='💾 Save Business Profile';}}}
+
+function applyBizToForm(bz){
+ if(!bz)return;
+ function sv(id,v){var e=document.getElementById(id);if(e&&v!=null&&v!=='')e.value=v;}
+ sv('fSN',bz.name);sv('fSA',bz.address);sv('fSPh',bz.phone);
+ sv('fSIG',bz.instagram);sv('fWA',bz.whatsapp);sv('fUID',bz.upi_id);
+ var w=document.getElementById('fSW');if(w)w.value=bz.website||'';
+ sv('fIBN',bz.brand_title);sv('fIBS',bz.brand_subtitle);sv('fITG',bz.brand_tagline);
+ sv('fCTitle',bz.care_title);
+ ['1','2','3','4','5'].forEach(function(n){
+  var e=document.getElementById('fC'+n);
+  if(e&&bz['care_'+n]!==undefined&&bz['care_'+n]!==null)e.value=bz['care_'+n];});
+ var ct=document.getElementById('fCT');
+ if(ct&&bz.care_tagline!==undefined&&bz.care_tagline!==null)ct.value=bz.care_tagline;
+ sv('fBN',bz.bank_name);sv('fBH',bz.bank_holder);sv('fBA',bz.bank_account);
+ sv('fBI',bz.bank_ifsc);sv('fBB',bz.bank_branch);
+ var bt=document.getElementById('fBankToggle');
+ if(bt){bt.checked=!!bz.bank_on;
+  ['rBank1','rBank2','rBank3'].forEach(function(id){
+   document.getElementById(id).classList.toggle('off',!bz.bank_on);});}
+ if(bz.primary_color&&bz.accent_color){
+  applyTheme(lightenHex(bz.primary_color,12),bz.primary_color,bz.accent_color,
+   lightenHex(bz.accent_color,35),darkenHex(bz.accent_color,15));
+  syncPickers();}
+ if(bz.logo){logoImg=bz.logo;applyLogoPreview(bz.logo);}
+ rp();}
+
 async function loadSellerProfile(manual){
  try{
-  var raw=await lsGet('asbr_seller');
-  if(!raw){if(manual)toast('No saved profile yet',true);return false;}
-  var prof=JSON.parse(raw);
-  SELLER_FIELDS.forEach(function(id){
-   var e=document.getElementById(id);
-   if(e&&prof[id]!==undefined)e.value=prof[id];});
-  var bt=document.getElementById('fBankToggle');
-  if(bt&&prof.bankOn!==undefined){
-   bt.checked=prof.bankOn;
-   ['rBank1','rBank2','rBank3'].forEach(function(id){document.getElementById(id).classList.toggle('off',!prof.bankOn);});}
-  if(prof.primary&&prof.accent){
-   applyTheme(lightenHex(prof.primary,12),prof.primary,prof.accent,lightenHex(prof.accent,35),darkenHex(prof.accent,15));
-   syncPickers();}
-  if(prof.logo){logoImg=prof.logo;applyLogoPreview(prof.logo);}
-  rp();
+  if(manual){await loadMyBusiness();renderUserChip();}
+  if(!myBiz)return false;
+  applyBizToForm(myBiz);
   if(manual)toast('✓ Profile restored');
   return true;
  }catch(e){if(manual)toast('Could not load profile',true);return false;}}
+
+/* One-time import of the old localStorage profile */
+async function importLegacyProfile(){
+ try{
+  var raw=await lsGet('asbr_seller');
+  if(!raw)return false;
+  var pr=JSON.parse(raw);
+  var map={fSN:'fSN',fSA:'fSA',fSPh:'fSPh',fSIG:'fSIG',fWA:'fWA',fSW:'fSW',fUID:'fUID',
+   fIBN:'fIBN',fIBS:'fIBS',fITG:'fITG',fCTitle:'fCTitle',fC1:'fC1',fC2:'fC2',
+   fC3:'fC3',fC4:'fC4',fC5:'fC5',fCT:'fCT',fBN:'fBN',fBH:'fBH',fBA:'fBA',fBI:'fBI',fBB:'fBB'};
+  Object.keys(map).forEach(function(k){
+   var e=document.getElementById(k);
+   if(e&&pr[k]!==undefined&&pr[k]!=='')e.value=pr[k];});
+  var bt=document.getElementById('fBankToggle');
+  if(bt&&pr.bankOn!==undefined)bt.checked=pr.bankOn;
+  if(pr.primary&&pr.accent){
+   applyTheme(lightenHex(pr.primary,12),pr.primary,pr.accent,
+    lightenHex(pr.accent,35),darkenHex(pr.accent,15));syncPickers();}
+  if(pr.logo){logoImg=pr.logo;applyLogoPreview(pr.logo);}
+  rp();
+  return true;
+ }catch(e){return false;}}
 
 /* ========== INVOICE DATA ========== */
 function collectData(){
@@ -1674,7 +1927,7 @@ async function syncRentals(d){
  try{
   await sbDel(RENT_URL+'?invoice_id=eq.'+curKey);
   var rows=prods.filter(function(p){return p.type==='rental';}).map(function(p){
-   return{invoice_id:curKey,inventory_id:p.inv_id||null,
+   return{invoice_id:curKey,inventory_id:p.inv_id||null,business_id:myBiz&&myBiz.id,
     customer_name:d.cn||'',customer_phone:d.cp||'',item_name:p.n,
     from_date:p.from||d.date,to_date:p.to||d.date,
     qty:parseInt(p.q)||1,rate:parseFloat(p.r)||0,
@@ -1701,20 +1954,27 @@ async function saveInv(){
   if(kb>1400){toast('Payload too large ('+kb+'KB). Reduce images.',true);setSbStatus('err','Too large');return;}
   var pf=calcProfit();
   var row={invoice_no:d.no,customer_name:d.cn||'—',status:d.ps,total:d.total,
-   currency:d.curr,invoice_date:d.date,data:d,
+   currency:d.curr,invoice_date:d.date,data:d,business_id:myBiz&&myBiz.id,
    total_cost:+pf.cost.toFixed(2),gross_profit:+pf.net.toFixed(2),margin:+pf.margin.toFixed(2)};
   if(curKey){await sbFetch(SB_URL+'?id=eq.'+curKey,'PATCH',row);toast('✓ Updated! ('+kb+'KB)');}
   else{
    var res=await sbFetch(SB_URL,'POST',row);
    curKey=(res&&res[0])?res[0].id:(res?res.id:null);
-   toast('✓ Saved! ('+kb+'KB)');}
+   toast('✓ Saved! ('+kb+'KB)');
+   try{await loadMyBusiness();renderUserChip();}catch(e){}}
   await syncRentals(d);
   document.getElementById('tabE').textContent=(curKey?'✏️ ':'📝 ')+d.no;
   setSbStatus('ok','Supabase ✓');
  }catch(e){
-  var t=/57014|timeout/i.test(e.message);
-  toast(t?'Timed out — payload too large':'Save failed: '+e.message,true);
-  setSbStatus('err','Save Error');console.error(e);
+  var msg=e.message||'';
+  if(/quota|limit reached/i.test(msg)){
+   showQuotaModal(msg);
+   setSbStatus('err','Quota reached');
+  }else{
+   var t=/57014|timeout/i.test(msg);
+   toast(t?'Timed out — payload too large':'Save failed: '+msg,true);
+   setSbStatus('err','Save Error');}
+  console.error(e);
  }finally{btn.innerHTML='💾 Save';btn.disabled=false;}}
 
 /* ========== DASHBOARD ========== */
@@ -1874,7 +2134,7 @@ async function delInv(id){
  }catch(e){toast('Delete failed',true);}}
 async function newInv(){
  curKey=null;resetAll(true);
- await loadSellerProfile();
+ applyBizToForm(myBiz);
  showEditor();
  await applyNextNumbers();}
 function resetAll(silent){
@@ -2024,31 +2284,94 @@ function exportCSV(){
  a.click();
  toast('✓ CSV exported ('+list.length+' invoices)');}
 
+/* ========== QUOTA MODAL ========== */
+function showQuotaModal(msg){
+ var plan=(myBiz&&myBiz.plan||'free').toLowerCase();
+ var lim=PLAN_LIMITS[plan];
+ var m=document.getElementById('quotaModal');
+ if(!m){
+  m=document.createElement('div');m.id='quotaModal';m.className='modal-overlay';
+  document.body.appendChild(m);}
+ m.innerHTML='<div class="mcard" style="max-width:460px;text-align:center">'+
+  '<div style="font-size:44px;margin-bottom:10px">📊</div>'+
+  '<h2 style="font-family:\'Playfair Display\',serif;font-size:19px;color:var(--dm);margin-bottom:8px">Invoice limit reached</h2>'+
+  '<p style="font-size:12.5px;color:#777;line-height:1.7;margin-bottom:16px">You have used all <b>'+
+   (lim===-1?'':lim)+'</b> invoices on the <b>'+(PLAN_NAMES[plan]||'Free')+'</b> plan for this billing period.<br>'+
+   'Upgrade your plan or add invoice credits to continue.</p>'+
+  '<div style="background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:14px;margin-bottom:16px;text-align:left">'+
+   '<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #F0E4D4">'+
+    '<span><b>Starter</b> — 100 invoices/mo</span><span style="font-weight:800;color:var(--dm)">₹299/mo</span></div>'+
+   '<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #F0E4D4">'+
+    '<span><b>Business</b> — Unlimited</span><span style="font-weight:800;color:var(--dm)">₹799/mo</span></div>'+
+   '<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0">'+
+    '<span><b>Credit pack</b> — 25 invoices</span><span style="font-weight:800;color:var(--dm)">₹149</span></div>'+
+  '</div>'+
+  '<div style="display:flex;gap:8px;justify-content:center">'+
+   '<button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:10px 18px" onclick="document.getElementById(\'quotaModal\').classList.remove(\'show\')">Close</button>'+
+   '<button class="b b-g" style="padding:10px 22px" onclick="contactUpgrade()">Upgrade</button>'+
+  '</div>'+
+  '<div style="font-size:10px;color:#BBB;margin-top:12px">Self-service payment arrives in Phase 3. For now upgrades are activated manually.</div>'+
+ '</div>';
+ m.classList.add('show');}
+function contactUpgrade(){
+ var mail=(session&&session.user&&session.user.email)||'';
+ window.open('https://wa.me/919342382918?text='+encodeURIComponent(
+  'Hi, I would like to upgrade my AS Invoice Generator plan. Account: '+mail),'_blank');}
+
 /* ========== INIT ========== */
-async function init(){
+async function bootApp(){
  try{
   var sel=document.getElementById('fCurr');
-  CURR.forEach(function(c){
-   var o=document.createElement('option');
-   o.value=c.c;o.textContent=c.s+' '+c.c+' — '+c.n;
-   if(c.c==='INR')o.selected=true;
-   sel.appendChild(o);});
+  if(sel&&!sel.options.length){
+   CURR.forEach(function(c){
+    var o=document.createElement('option');
+    o.value=c.c;o.textContent=c.s+' '+c.c+' — '+c.n;
+    if(c.c==='INR')o.selected=true;
+    sel.appendChild(o);});}
   var td=todayStr();
   document.getElementById('fDt').value=td;
   document.getElementById('fPO').value=td;
  }catch(e){console.error('Setup:',e);}
 
- try{addP();addP();rp();showEditor();}catch(e){console.error('Render:',e);}
+ try{if(!prods.length){addP();addP();}rp();showEditor();}catch(e){console.error('Render:',e);}
 
- setSbStatus('busy','Connecting...');
- try{await loadSavedLogo();}catch(e){}
- try{await loadSellerProfile();}catch(e){}
+ setSbStatus('busy','Loading...');
+ try{
+  var hasProfile=await loadSellerProfile();
+  var blank=!myBiz||(!myBiz.address&&!myBiz.phone&&!myBiz.logo);
+  if(blank){
+   var imported=await importLegacyProfile();
+   if(imported)toast('Imported your saved profile — click Save Business Profile to keep it');}
+ }catch(e){console.warn('Profile:',e);}
  try{rp();}catch(e){}
 
  var ok=false;
  try{ok=await sbPing();}catch(e){setSbStatus('err','DB Error');}
  if(ok){try{await applyNextNumbers();}catch(e){}}
 }
+
+async function init(){
+ loadSessionLS();
+ authMode('login');
+ if(session&&session.access_token){
+  var alive=await ensureToken();
+  if(alive){
+   try{await afterLogin();return;}
+   catch(e){console.warn('Auto-login failed:',e.message);clearSession();}
+  }else clearSession();
+ }
+ document.getElementById('authGate').classList.remove('hide');
+ var em=document.getElementById('auEmail');
+ if(em)em.focus();
+}
+
+document.addEventListener('keydown',function(e){
+ if(e.key==='Enter'&&!document.getElementById('authGate').classList.contains('hide')){
+  var t=e.target&&e.target.id;
+  if(t==='auEmail'||t==='auPw'||t==='auBiz'){e.preventDefault();doAuth();}
+ }
+});
+
 window.addEventListener('load',init);
 </script>
 </body>
