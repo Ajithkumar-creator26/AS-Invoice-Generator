@@ -11,29 +11,100 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--m:#7A1535;--dm:#5C0F28;--g:#C9A844;--gl:#E8D5A3;--gd:#9A7218;--bg:#FFFBF5;--t:#2C1810}
 body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
-.bar{background:var(--dm);padding:9px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.4)}
-.brand h1{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--g)}
-.navtabs{display:flex;gap:4px;flex:1}
-.ntab{padding:6px 13px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;background:rgba(255,255,255,.1);color:rgba(255,255,255,.65);transition:all .2s;white-space:nowrap}
-.ntab:hover{background:rgba(255,255,255,.18);color:#fff}.ntab.act{background:var(--g);color:var(--dm)}
-.topbtns{display:flex;gap:5px;flex-shrink:0}
-.b{padding:6px 12px;border:none;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;display:flex;align-items:center;gap:4px;transition:all .2s;white-space:nowrap}
-.b-o{background:0;border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8)}.b-o:hover{background:rgba(255,255,255,.1)}
+/* ===== SHELL ===== */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:216px;min-width:216px;background:var(--dm);display:flex;flex-direction:column;
+ position:fixed;top:0;bottom:0;left:0;z-index:100;box-shadow:2px 0 14px rgba(0,0,0,.28);transition:width .22s,min-width .22s}
+.main{flex:1;margin-left:216px;display:flex;flex-direction:column;min-width:0;transition:margin-left .22s}
+.viewport{flex:1;min-width:0}
+body.sbmin .sidebar{width:62px;min-width:62px}
+body.sbmin .main{margin-left:62px}
+body.sbmin .snav-lbl,body.sbmin .sb-name,body.sbmin .uinfo,
+body.sbmin .sb-powered,body.sbmin .sb-out,body.sbmin .planbadge{display:none}
+body.sbmin .sb-brand{justify-content:center;padding:16px 0}
+body.sbmin .snav{justify-content:center;padding:11px 0}
+body.sbmin .sb-user{justify-content:center}
+body.sbmin .sb-planrow{justify-content:center}
+
+/* brand */
+.sb-brand{display:flex;align-items:center;gap:10px;padding:18px 16px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-mark{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--g);
+ letter-spacing:.5px;flex-shrink:0;display:none}
+body.sbmin .sb-mark{display:block}
+.sb-name h1{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--g);line-height:1.2;white-space:nowrap}
+.sb-name p{font-size:8px;letter-spacing:2.2px;color:rgba(255,255,255,.4);margin-top:2px;white-space:nowrap}
+
+/* nav */
+.sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:3px;overflow-y:auto}
+.snav{display:flex;align-items:center;gap:11px;width:100%;padding:10px 12px;border:none;border-radius:8px;
+ background:0;color:rgba(255,255,255,.66);font-size:12.5px;font-weight:600;font-family:'Open Sans',sans-serif;
+ cursor:pointer;text-align:left;transition:all .16s;white-space:nowrap;overflow:hidden}
+.snav:hover{background:rgba(255,255,255,.08);color:#fff}
+.snav.act{background:var(--g);color:var(--dm);font-weight:800}
+.snav-ico{font-size:14px;width:18px;text-align:center;flex-shrink:0;opacity:.9}
+.snav.act .snav-ico{opacity:1}
+.snav-lbl{overflow:hidden;text-overflow:ellipsis}
+.sb-sep{height:1px;background:rgba(255,255,255,.1);margin:9px 6px}
+.snav-new{border:1px dashed rgba(201,168,68,.45);color:var(--g)}
+.snav-new:hover{background:rgba(201,168,68,.14);color:var(--g)}
+
+/* sidebar footer */
+.sb-foot{padding:12px 12px 14px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-user{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.uavatar{width:30px;height:30px;border-radius:50%;background:var(--g);color:var(--dm);
+ display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.uinfo{min-width:0;line-height:1.35}
+.uinfo b{display:block;color:#fff;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uinfo span{color:rgba(255,255,255,.45);font-size:9.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.sb-planrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+.planbadge{padding:3px 9px;border-radius:10px;font-size:8.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+.planbadge.free{background:rgba(255,255,255,.14);color:rgba(255,255,255,.85)}
+.planbadge.starter{background:var(--g);color:var(--dm)}
+.sb-out{background:0;border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.7);
+ padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;white-space:nowrap}
+.sb-out:hover{background:rgba(255,255,255,.12);color:#fff}
+.sb-powered{font-size:8.5px;color:rgba(255,255,255,.3);text-align:center;letter-spacing:.3px}
+.sb-powered b{color:rgba(201,168,68,.65);font-weight:700}
+
+/* topbar */
+.topbar{height:54px;background:#fff;border-bottom:1px solid #E5DAD2;display:flex;align-items:center;
+ gap:12px;padding:0 18px;position:sticky;top:0;z-index:80;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.sb-toggle{background:0;border:none;font-size:19px;color:#A08878;cursor:pointer;padding:2px 6px;line-height:1;border-radius:5px}
+.sb-toggle:hover{background:#F5EDE8;color:var(--m)}
+.pagetitle{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--dm);flex:1;white-space:nowrap}
+.sb-status{display:flex;align-items:center;gap:6px;font-size:10px;color:#A08878;flex-shrink:0}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:#CCC}
+.sb-dot.ok{background:#4CAF50}.sb-dot.err{background:#f44336}.sb-dot.busy{background:#FFC107;animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.topbtns{display:flex;gap:6px;flex-shrink:0}
+.b{padding:7px 13px;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;
+ font-family:'Open Sans',sans-serif;display:flex;align-items:center;gap:4px;transition:all .18s;white-space:nowrap}
+.b-o{background:0;border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8)}
+.b-o:hover{background:rgba(255,255,255,.1)}
+.b-o2{background:#F7F1EC;border:1.5px solid #E0D5CF;color:var(--m)}
+.b-o2:hover{background:#F0E6DE}
 .b-g{background:var(--g);color:var(--dm);font-weight:800}.b-g:hover{background:#D4B54E}
 .b-s{background:#2E7D32;color:#fff}.b-s:hover{background:#388E3C}
 .b-img{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);color:#fff}
+.b-img2{background:#F7F1EC;border:1.5px solid #E0D5CF;color:#8A6A5A;font-size:10.5px}
+.b-img2:hover{background:#F0E6DE;color:var(--m)}
 .b:disabled{opacity:.5;cursor:default}
 .hide{display:none!important}
-.sb-status{display:flex;align-items:center;gap:5px;font-size:9.5px;color:rgba(255,255,255,.7);padding:0 6px}
-.sb-dot{width:7px;height:7px;border-radius:50%;background:#888}
-.sb-dot.ok{background:#4CAF50}.sb-dot.err{background:#f44336}.sb-dot.busy{background:#FFC107;animation:pulse .8s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(90px);padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;z-index:9999;transition:transform .3s;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.3);max-width:80vw;text-align:center}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(90px);padding:11px 24px;
+ border-radius:9px;font-size:13px;font-weight:700;z-index:9999;transition:transform .3s;color:#fff;
+ box-shadow:0 6px 22px rgba(0,0,0,.32);max-width:80vw;text-align:center}
 .toast.show{transform:translateX(-50%) translateY(0)}
-.appfooter{position:fixed;bottom:0;left:0;right:0;height:26px;background:var(--dm);display:flex;align-items:center;justify-content:center;font-size:9.5px;color:rgba(255,255,255,.75);z-index:90}
-.appfooter b{color:var(--g)}
-#dashV,#invV,#rentV,#repV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 72px)}
-#editorV{flex-direction:row;height:calc(100vh - 72px)}
+@media(max-width:1000px){
+ .sidebar{width:62px;min-width:62px}
+ .main{margin-left:62px}
+ .snav-lbl,.sb-name,.uinfo,.sb-powered,.sb-out,.planbadge{display:none}
+ .sb-mark{display:block}
+ .sb-brand{justify-content:center;padding:16px 0}
+ .snav{justify-content:center;padding:11px 0}
+ .sb-user,.sb-planrow{justify-content:center}
+}
+#dashV,#invV,#rentV,#repV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 54px)}
+#editorV{flex-direction:row;height:calc(100vh - 54px)}
 .stats{display:grid;gap:12px}
 .sc{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid var(--m)}
 .sc-l{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:5px}
@@ -207,14 +278,6 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
 .autherr{background:#FFEBEE;border:1px solid #F5C6CB;color:#C0392B;padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:13px;line-height:1.5}
 .authok{background:#E8F5E9;border:1px solid #C8E6C9;color:#2E7D32;padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:13px;line-height:1.5}
 .authfoot{text-align:center;font-size:10.5px;color:#BBB;margin-top:18px;line-height:1.6}
-.usermenu{display:flex;align-items:center;gap:7px;padding:0 4px;flex-shrink:0}
-.uavatar{width:26px;height:26px;border-radius:50%;background:var(--g);color:var(--dm);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
-.uinfo{font-size:9.5px;line-height:1.35;max-width:130px}
-.uinfo b{display:block;color:#fff;font-size:10.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.uinfo span{color:rgba(255,255,255,.55);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
-.planbadge{padding:2px 8px;border-radius:10px;font-size:8.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase}
-.planbadge.free{background:rgba(255,255,255,.15);color:rgba(255,255,255,.8)}
-.planbadge.starter{background:#C9A844;color:#5C0F28}
 .planbadge.business{background:#2E7D32;color:#fff}
 .planbadge.enterprise{background:#7B5EA7;color:#fff}
 </style>
@@ -253,30 +316,56 @@ body{font-family:'Open Sans',sans-serif;background:#DDD5CC;min-height:100vh}
   </div>
 </div>
 
-<div class="bar">
-  <div class="brand"><h1>AS Invoice Generator</h1></div>
-  <div class="navtabs">
-    <button class="ntab" id="tabD" onclick="showDash()">📊 Dashboard</button>
-    <button class="ntab" id="tabI" onclick="showInv()">📦 Inventory</button>
-    <button class="ntab" id="tabRent" onclick="showRentals()">📅 Rentals</button>
-    <button class="ntab" id="tabR" onclick="showReports()">📈 Reports</button>
-    <button class="ntab act" id="tabE" onclick="showEditor()">📝 New Invoice</button>
+<div class="shell">
+<aside class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-mark">AS</div>
+    <div class="sb-name"><h1>AS Invoice Generator</h1><p>BILLING &amp; INVENTORY</p></div>
   </div>
-  <div class="usermenu" id="userMenu" style="display:none">
-    <div class="uavatar" id="uAvatar">?</div>
-    <div class="uinfo"><b id="uBiz">—</b><span id="uMail">—</span></div>
-    <span class="planbadge free" id="uPlan">FREE</span>
-    <button class="b b-o" style="padding:5px 9px;font-size:10px" onclick="signOut()" title="Sign out">⏻</button>
+
+  <nav class="sb-nav">
+    <button class="snav" id="tabD" onclick="showDash()">
+      <span class="snav-ico">▤</span><span class="snav-lbl">Dashboard</span></button>
+    <button class="snav" id="tabI" onclick="showInv()">
+      <span class="snav-ico">◫</span><span class="snav-lbl">Inventory</span></button>
+    <button class="snav" id="tabRent" onclick="showRentals()">
+      <span class="snav-ico">◴</span><span class="snav-lbl">Rentals</span></button>
+    <button class="snav" id="tabR" onclick="showReports()">
+      <span class="snav-ico">◥</span><span class="snav-lbl">Reports</span></button>
+    <div class="sb-sep"></div>
+    <button class="snav act" id="tabE" onclick="showEditor()">
+      <span class="snav-ico">✎</span><span class="snav-lbl" id="tabELbl">New Invoice</span></button>
+    <button class="snav snav-new" onclick="newInv()">
+      <span class="snav-ico">+</span><span class="snav-lbl">Create New</span></button>
+  </nav>
+
+  <div class="sb-foot" id="userMenu" style="display:none">
+    <div class="sb-user">
+      <div class="uavatar" id="uAvatar">?</div>
+      <div class="uinfo"><b id="uBiz">—</b><span id="uMail">—</span></div>
+    </div>
+    <div class="sb-planrow">
+      <span class="planbadge free" id="uPlan">FREE</span>
+      <button class="sb-out" onclick="signOut()">Sign out</button>
+    </div>
+    <div class="sb-powered">Powered by <b>AS Invoice Generator</b></div>
   </div>
-  <div class="sb-status"><div class="sb-dot" id="sbDot"></div><span id="sbTxt">Connecting...</span></div>
-  <div class="topbtns">
-    <button class="b b-o" id="bReset" onclick="resetAll()">↺ Reset</button>
-    <button class="b b-s" id="bSave" onclick="saveInv()">💾 Save</button>
-    <button class="b b-g" id="bPDF" onclick="dlImage('PDF')">⬇ PDF</button>
-    <button class="b b-img" id="bJPEG" onclick="dlImage('JPEG')">🖼 JPEG</button>
-    <button class="b b-img" id="bPNG" onclick="dlImage('PNG')">🖼 PNG</button>
-  </div>
-</div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <button class="sb-toggle" onclick="toggleSidebar()" title="Collapse menu">≡</button>
+    <div class="pagetitle" id="pageTitle">Dashboard</div>
+    <div class="sb-status"><div class="sb-dot" id="sbDot"></div><span id="sbTxt">Connecting...</span></div>
+    <div class="topbtns">
+      <button class="b b-o2" id="bReset" onclick="resetAll()">↺ Reset</button>
+      <button class="b b-s" id="bSave" onclick="saveInv()">💾 Save</button>
+      <button class="b b-g" id="bPDF" onclick="dlImage('PDF')">⬇ PDF</button>
+      <button class="b b-img2" id="bJPEG" onclick="dlImage('JPEG')">JPEG</button>
+      <button class="b b-img2" id="bPNG" onclick="dlImage('PNG')">PNG</button>
+    </div>
+  </header>
+  <div class="viewport">
 
 <!-- DASHBOARD -->
 <div id="dashV" style="display:none">
@@ -640,7 +729,9 @@ Delivered with care. ♡</textarea></div></div>
   </div>
 </div>
 
-<div class="appfooter">Powered by &nbsp;<b>AS Invoice Generator</b></div>
+  </div>
+</div>
+</div>
 
 <div id="udModal" class="modal-overlay">
   <div class="mbar">
@@ -787,7 +878,7 @@ function renderUserChip(){
  if(!session||!myBiz)return;
  var mail=(session.user&&session.user.email)||'';
  var name=myBiz.name||'My Business';
- document.getElementById('userMenu').style.display='flex';
+ document.getElementById('userMenu').style.display='block';
  document.getElementById('uAvatar').textContent=(name[0]||'?').toUpperCase();
  document.getElementById('uBiz').textContent=name;
  document.getElementById('uMail').textContent=mail;
@@ -799,7 +890,8 @@ function renderUserChip(){
   ? PLAN_NAMES[plan]
   : PLAN_NAMES[plan]+' '+(myBiz.invoices_used||0)+'/'+lim;
  badge.title=(lim===-1)?'Unlimited invoices':
-  ((myBiz.invoices_used||0)+' of '+lim+' invoices used this period');}
+  ((myBiz.invoices_used||0)+' of '+lim+' invoices used this period');
+ try{if(localStorage.getItem('asig_sbmin')==='1')document.body.classList.add('sbmin');}catch(e){}}
 
 async function afterLogin(){
  document.getElementById('authGate').classList.add('hide');
@@ -1054,6 +1146,7 @@ function setItemImgPreview(src){
 function clearItemImg(ev){if(ev)ev.stopPropagation();itemImg='';setItemImgPreview('');}
 
 /* ========== NAV ========== */
+var PAGE_TITLES={dash:'Dashboard',inv:'Inventory',rent:'Rentals',rep:'Reports',edit:'Invoice Editor'};
 function switchView(view){
  try{
   var views={dash:'dashV',inv:'invV',rent:'rentV',rep:'repV',edit:'editorV'};
@@ -1064,10 +1157,20 @@ function switchView(view){
    var tb=document.getElementById(tabs[k]);
    if(tb)tb.classList.toggle('act',k===view);
   });
+  var pt=document.getElementById('pageTitle');
+  if(pt)pt.textContent=PAGE_TITLES[view]||'Dashboard';
   var show=(view==='edit');
   ['bReset','bSave','bPDF','bJPEG','bPNG'].forEach(function(id){
    var b=document.getElementById(id);if(b)b.style.display=show?'flex':'none';});
  }catch(e){console.error('switchView:',e);toast('View error: '+e.message,true);}
+}
+function toggleSidebar(){
+ document.body.classList.toggle('sbmin');
+ try{localStorage.setItem('asig_sbmin',document.body.classList.contains('sbmin')?'1':'0');}catch(e){}
+}
+function setEditorTab(txt){
+ var e=document.getElementById('tabELbl');
+ if(e)e.textContent=txt;
 }
 function showDash(){switchView('dash');loadDash();}
 function showInv(){switchView('inv');loadInventory();}
@@ -1790,7 +1893,7 @@ async function applyNextNumbers(){
   document.getElementById('fNo').value=r.invoiceNo;
   document.getElementById('fOrd').value=r.orderId;
   curKey=null;
-  document.getElementById('tabE').textContent='📝 New Invoice';
+  setEditorTab('New Invoice');
   rp();toast('✓ Next: '+r.invoiceNo+' (found '+r.found+' existing)');
  }catch(e){toast('Could not fetch number: '+e.message,true);}
  finally{if(btn){btn.innerHTML='🔄 Get Next Invoice Number';btn.disabled=false;}}}
@@ -1963,7 +2066,7 @@ async function saveInv(){
    toast('✓ Saved! ('+kb+'KB)');
    try{await loadMyBusiness();renderUserChip();}catch(e){}}
   await syncRentals(d);
-  document.getElementById('tabE').textContent=(curKey?'✏️ ':'📝 ')+d.no;
+  setEditorTab(d.no);
   setSbStatus('ok','Supabase ✓');
  }catch(e){
   var msg=e.message||'';
@@ -2121,7 +2224,7 @@ async function editInv(id){
   loadDataToForm(row.data);curKey=id;
   prods=[];rid=0;(row.data.prods||[]).forEach(function(p){rid++;prods.push(Object.assign({},p,{id:rid}));});
   renderP();rp();showEditor();
-  document.getElementById('tabE').textContent='✏️ '+row.invoice_no;
+  setEditorTab(row.invoice_no);
   toast('Loaded for editing');
  }catch(e){toast('Failed to load',true);}}
 async function delInv(id){
