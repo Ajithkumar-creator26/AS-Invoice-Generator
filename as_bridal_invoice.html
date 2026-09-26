@@ -103,7 +103,7 @@ body.sbmin .sb-mark{display:block}
  .snav{justify-content:center;padding:11px 0}
  .sb-user,.sb-planrow{justify-content:center}
 }
-#dashV,#invV,#rentV,#repV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 54px)}
+#dashV,#invV,#rentV,#repV,#billV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 54px)}
 #editorV{flex-direction:row;height:calc(100vh - 54px)}
 .stats{display:grid;gap:12px}
 .sc{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid var(--m)}
@@ -112,6 +112,61 @@ body.sbmin .sb-mark{display:block}
 .sc-s{font-size:9.5px;color:#BBB;margin-top:2px}
 .dtw{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);overflow:hidden;flex:1}
 .dth{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #f0e8e0;flex-wrap:wrap;gap:10px}
+
+/* ===== BILLING ===== */
+.sb-meter{margin-bottom:9px}
+.sb-mrow{display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.5);margin-bottom:4px}
+.sb-mbar{height:4px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}
+.sb-mfill{height:100%;background:var(--g);border-radius:3px;transition:width .3s}
+.sb-mfill.warn{background:#E8A33D}.sb-mfill.over{background:#C0392B}
+body.sbmin .sb-meter{display:none}
+
+.upanel{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:18px 20px}
+.uhead{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.uhead h2{font-family:'Playfair Display',serif;font-size:16px;color:var(--dm)}
+.uhead p{font-size:10.5px;color:#A08878;margin-top:3px}
+.ubar{height:12px;border-radius:7px;background:#F0E7E0;overflow:hidden;display:flex}
+.ufill{height:100%;background:linear-gradient(90deg,#8E2547,var(--m));transition:width .35s}
+.ufill.warn{background:linear-gradient(90deg,#E8A33D,#D98C1C)}
+.ufill.over{background:linear-gradient(90deg,#C0392B,#96281B)}
+.uover{height:100%;background:repeating-linear-gradient(45deg,#C0392B,#C0392B 4px,#96281B 4px,#96281B 8px)}
+.uticks{display:flex;justify-content:space-between;font-size:10px;color:#A08878;margin-top:7px}
+.unote{margin-top:12px;padding:10px 13px;border-radius:8px;font-size:11.5px;line-height:1.6}
+.unote.ok{background:#F1F8F2;border:1px solid #CFE6D2;color:#2E7D32}
+.unote.warn{background:#FFF8EC;border:1px solid #F0DFBF;color:#96660F}
+.unote.bad{background:#FDF1F0;border:1px solid #F0CFCB;color:#96281B}
+
+.plangrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.plancard{background:#fff;border-radius:10px;border:1.5px solid #EADFD7;padding:18px 16px;display:flex;flex-direction:column;
+ box-shadow:0 2px 8px rgba(0,0,0,.06);position:relative;transition:transform .15s,box-shadow .15s}
+.plancard:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.1)}
+.plancard.cur{border-color:var(--g);box-shadow:0 0 0 3px rgba(201,168,68,.16)}
+.pc-tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--g);color:var(--dm);
+ font-size:8.5px;font-weight:800;letter-spacing:.6px;padding:3px 10px;border-radius:9px;text-transform:uppercase;white-space:nowrap}
+.pc-n{font-family:'Playfair Display',serif;font-size:17px;color:var(--dm);font-weight:700}
+.pc-b{font-size:10.5px;color:#A08878;margin:4px 0 12px;line-height:1.5;min-height:31px}
+.pc-p{font-family:'Playfair Display',serif;font-size:27px;font-weight:800;color:var(--m);line-height:1}
+.pc-p small{font-size:11px;color:#A08878;font-weight:600;font-family:'Open Sans',sans-serif}
+.pc-lim{font-size:10.5px;color:#777;margin:6px 0 12px;padding-bottom:12px;border-bottom:1px dashed #EADFD7}
+.pc-f{list-style:none;flex:1;margin-bottom:14px}
+.pc-f li{font-size:11px;color:#5A4A42;padding:4px 0 4px 17px;position:relative;line-height:1.45}
+.pc-f li:before{content:'\2713';position:absolute;left:0;color:#2E7D32;font-weight:800;font-size:10px}
+.pc-btn{width:100%;padding:10px;border:none;border-radius:7px;font-size:11.5px;font-weight:800;cursor:pointer;font-family:'Open Sans',sans-serif}
+.pc-btn.up{background:var(--g);color:var(--dm)}.pc-btn.up:hover{background:#D4B54E}
+.pc-btn.cur{background:#F5EDE8;color:#A08878;cursor:default}
+.pc-btn.down{background:#fff;color:var(--m);border:1.5px solid #E0D5CF}.pc-btn.down:hover{background:#F9F3EF}
+
+.packrow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.packc{background:#FFFCF6;border:1.5px solid var(--gl);border-radius:9px;padding:14px 16px;display:flex;
+ align-items:center;justify-content:space-between;gap:10px}
+.packc b{display:block;font-size:13px;color:var(--dm)}
+.packc span{font-size:10px;color:#A08878}
+.packc .pk-p{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--m);white-space:nowrap}
+.spill{display:inline-block;padding:2px 9px;border-radius:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.spill.pending{background:#FFF3E0;color:#B07000}
+.spill.approved{background:#E8F5E9;color:#2E7D32}
+.spill.rejected,.spill.cancelled{background:#FDECEA;color:#C0392B}
+@media(max-width:1100px){.plangrid{grid-template-columns:repeat(2,1fr)}.packrow{grid-template-columns:1fr}}
 .dth h2{font-family:'Playfair Display',serif;font-size:15px;color:var(--dm)}
 .dth-right{display:flex;gap:8px;align-items:center}
 .dsrch{padding:6px 10px;border:1.5px solid #E0D5CF;border-radius:5px;font-size:11px;font-family:'Open Sans',sans-serif;outline:none;width:200px}
@@ -332,6 +387,8 @@ body.sbmin .sb-mark{display:block}
       <span class="snav-ico">◴</span><span class="snav-lbl">Rentals</span></button>
     <button class="snav" id="tabR" onclick="showReports()">
       <span class="snav-ico">◥</span><span class="snav-lbl">Reports</span></button>
+    <button class="snav" id="tabB" onclick="showBilling()">
+      <span class="snav-ico">◈</span><span class="snav-lbl">Billing</span></button>
     <div class="sb-sep"></div>
     <button class="snav act" id="tabE" onclick="showEditor()">
       <span class="snav-ico">✎</span><span class="snav-lbl" id="tabELbl">New Invoice</span></button>
@@ -343,6 +400,10 @@ body.sbmin .sb-mark{display:block}
     <div class="sb-user">
       <div class="uavatar" id="uAvatar">?</div>
       <div class="uinfo"><b id="uBiz">—</b><span id="uMail">—</span></div>
+    </div>
+    <div class="sb-meter" id="sbMeter" style="display:none">
+      <div class="sb-mrow"><span id="sbMlbl">0 / 5 invoices</span><span id="sbMdays"></span></div>
+      <div class="sb-mbar"><div class="sb-mfill" id="sbMfill" style="width:0%"></div></div>
     </div>
     <div class="sb-planrow">
       <span class="planbadge free" id="uPlan">FREE</span>
@@ -459,6 +520,96 @@ body.sbmin .sb-mark{display:block}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
     <div class="dtw" style="flex:none"><div class="dth"><h2>📍 Sales by Location</h2></div><div id="repLoc" style="padding:6px 0"></div></div>
     <div class="dtw" style="flex:none"><div class="dth"><h2>⚠️ Low Margin Invoices</h2></div><div id="repLow" style="padding:6px 0"></div></div>
+  </div>
+</div>
+
+<!-- BILLING -->
+<div id="billV" style="display:none">
+  <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+    <div class="sc" style="border-left-color:var(--g)">
+      <div class="sc-l">Current Plan</div>
+      <div class="sc-v" id="bPlanName">&mdash;</div>
+      <div class="sc-s" id="bPlanStatus">&mdash;</div></div>
+    <div class="sc" style="border-left-color:#1565C0">
+      <div class="sc-l">Invoices This Period</div>
+      <div class="sc-v" id="bUsed" style="color:#1565C0">&mdash;</div>
+      <div class="sc-s" id="bUsedSub">&mdash;</div></div>
+    <div class="sc" style="border-left-color:#C0392B">
+      <div class="sc-l">Extra Invoices</div>
+      <div class="sc-v" id="bOver" style="color:#C0392B">&mdash;</div>
+      <div class="sc-s" id="bOverSub">Beyond the included allowance</div></div>
+    <div class="sc" style="border-left-color:#2E7D32">
+      <div class="sc-l">Estimated This Period</div>
+      <div class="sc-v" id="bEst" style="color:#2E7D32">&mdash;</div>
+      <div class="sc-s" id="bEstSub">Plan + extras</div></div>
+  </div>
+
+  <div class="upanel">
+    <div class="uhead">
+      <div>
+        <h2 id="bMeterTitle">Invoice usage</h2>
+        <p id="bPeriod">&mdash;</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:10px;color:#A08878;text-transform:uppercase;letter-spacing:.8px;font-weight:700">Credits in hand</div>
+        <div style="font-family:'Playfair Display',serif;font-size:21px;font-weight:800;color:var(--m)" id="bCredits">0</div>
+      </div>
+    </div>
+    <div class="ubar"><div class="ufill" id="bFill" style="width:0%"></div><div class="uover" id="bFillOver" style="width:0%"></div></div>
+    <div class="uticks"><span id="bTickL">0 used</span><span id="bTickR">&mdash;</span></div>
+    <div class="unote ok" id="bNote">Loading usage&hellip;</div>
+  </div>
+
+  <div>
+    <div class="dth" style="padding:0 2px 12px;border:none">
+      <h2 style="font-family:'Playfair Display',serif;font-size:16px;color:var(--dm)">Plans</h2>
+      <span style="font-size:10.5px;color:#A08878">Prices in INR, billed monthly</span>
+    </div>
+    <div class="plangrid" id="bPlans"></div>
+  </div>
+
+  <div>
+    <div class="dth" style="padding:0 2px 12px;border:none">
+      <h2 style="font-family:'Playfair Display',serif;font-size:16px;color:var(--dm)">Invoice credit packs</h2>
+      <span style="font-size:10.5px;color:#A08878">One-time top-ups &mdash; never expire, used before extras are charged</span>
+    </div>
+    <div class="packrow" id="bPacks"></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="dtw" style="flex:none">
+      <div class="dth"><h2>&#128221; Upgrade Requests</h2>
+        <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:6px 12px;font-size:11px" onclick="loadBilling(true)">&#8635; Refresh</button></div>
+      <div id="bReqs" style="padding:6px 0"></div>
+    </div>
+    <div class="dtw" style="flex:none">
+      <div class="dth"><h2>&#128196; Billing History</h2>
+        <span style="font-size:10px;color:#BBB">Closed periods</span></div>
+      <div id="bHist" style="padding:6px 0"></div>
+    </div>
+  </div>
+</div>
+
+<!-- UPGRADE MODAL -->
+<div id="upModal" class="modal-overlay">
+  <div class="mcard" style="max-width:440px">
+    <div class="mhead"><h2 id="upTitle">Request upgrade</h2><button class="mx" onclick="closeUpgrade()">&times;</button></div>
+    <div id="upSummary" style="background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:13px 15px;margin-bottom:14px;font-size:12px;line-height:1.7;color:#5A4A42"></div>
+    <div class="fg" style="margin-bottom:12px">
+      <label>Contact number for this request</label>
+      <input id="upContact" placeholder="WhatsApp or phone number">
+    </div>
+    <div class="fg" style="margin-bottom:14px">
+      <label>Anything we should know? (optional)</label>
+      <textarea id="upNote" rows="2" placeholder="Billing name, GSTIN, preferred start date..."></textarea>
+    </div>
+    <div style="font-size:10.5px;color:#A08878;line-height:1.6;margin-bottom:14px">
+      Card and UPI checkout arrives in Phase&nbsp;3. For now this raises a request against your account and we activate it manually, usually the same day.
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeUpgrade()">Cancel</button>
+      <button class="b b-g" style="padding:9px 20px" id="upSendBtn" onclick="sendUpgrade()">Send Request</button>
+    </div>
   </div>
 </div>
 
@@ -885,12 +1036,12 @@ function renderUserChip(){
  var plan=(myBiz.plan||'free').toLowerCase();
  var badge=document.getElementById('uPlan');
  badge.className='planbadge '+plan;
- var lim=PLAN_LIMITS[plan];
- badge.textContent=(lim===-1)
-  ? PLAN_NAMES[plan]
-  : PLAN_NAMES[plan]+' '+(myBiz.invoices_used||0)+'/'+lim;
- badge.title=(lim===-1)?'Unlimited invoices':
+ var pd=(typeof planByCode==='function')?planByCode(plan):null;
+ var lim=pd?pd.invoice_limit:PLAN_LIMITS[plan];
+ badge.textContent=(pd&&pd.name)||PLAN_NAMES[plan]||'Free';
+ badge.title=(lim<0)?'Unlimited invoices':
   ((myBiz.invoices_used||0)+' of '+lim+' invoices used this period');
+ try{renderSbMeter();}catch(e){}
  try{if(localStorage.getItem('asig_sbmin')==='1')document.body.classList.add('sbmin');}catch(e){}}
 
 async function afterLogin(){
@@ -901,6 +1052,7 @@ async function afterLogin(){
   document.getElementById('authGate').classList.remove('hide');
   return;}
  renderUserChip();
+ try{await loadCatalog();await loadUsage();renderUserChip();}catch(e){console.error('Usage:',e);}
  await bootApp();}
 
 /* ========== STORAGE (artifact + localStorage) ========== */
@@ -1146,11 +1298,11 @@ function setItemImgPreview(src){
 function clearItemImg(ev){if(ev)ev.stopPropagation();itemImg='';setItemImgPreview('');}
 
 /* ========== NAV ========== */
-var PAGE_TITLES={dash:'Dashboard',inv:'Inventory',rent:'Rentals',rep:'Reports',edit:'Invoice Editor'};
+var PAGE_TITLES={dash:'Dashboard',inv:'Inventory',rent:'Rentals',rep:'Reports',bill:'Billing & Plan',edit:'Invoice Editor'};
 function switchView(view){
  try{
-  var views={dash:'dashV',inv:'invV',rent:'rentV',rep:'repV',edit:'editorV'};
-  var tabs={dash:'tabD',inv:'tabI',rent:'tabRent',rep:'tabR',edit:'tabE'};
+  var views={dash:'dashV',inv:'invV',rent:'rentV',rep:'repV',bill:'billV',edit:'editorV'};
+  var tabs={dash:'tabD',inv:'tabI',rent:'tabRent',rep:'tabR',bill:'tabB',edit:'tabE'};
   Object.keys(views).forEach(function(k){
    var el=document.getElementById(views[k]);
    if(el)el.style.display=(k===view)?'flex':'none';
@@ -1175,6 +1327,7 @@ function setEditorTab(txt){
 function showDash(){switchView('dash');loadDash();}
 function showInv(){switchView('inv');loadInventory();}
 function showEditor(){switchView('edit');}
+function showBilling(){switchView('bill');loadBilling();}
 async function showReports(){
  switchView('rep');
  if(!allInvs.length){try{allInvs=await sbFetch(SB_URL+'?select=*&order=created_at.desc')||[];}catch(e){}}
@@ -2064,7 +2217,8 @@ async function saveInv(){
    var res=await sbFetch(SB_URL,'POST',row);
    curKey=(res&&res[0])?res[0].id:(res?res.id:null);
    toast('✓ Saved! ('+kb+'KB)');
-   try{await loadMyBusiness();renderUserChip();}catch(e){}}
+   try{await loadMyBusiness();await loadUsage();renderUserChip();
+       billLoaded=false;checkQuotaWarning();}catch(e){}}
   await syncRentals(d);
   setEditorTab(d.no);
   setSbStatus('ok','Supabase ✓');
@@ -2236,6 +2390,11 @@ async function delInv(id){
   toast('Invoice deleted');renderDash(allInvs);
  }catch(e){toast('Delete failed',true);}}
 async function newInv(){
+ try{
+  if(quotaBlocked()){
+   showQuotaModal('QUOTA: limit reached');
+   return;}
+ }catch(e){}
  curKey=null;resetAll(true);
  applyBizToForm(myBiz);
  showEditor();
@@ -2389,37 +2548,379 @@ function exportCSV(){
 
 /* ========== QUOTA MODAL ========== */
 function showQuotaModal(msg){
- var plan=(myBiz&&myBiz.plan||'free').toLowerCase();
- var lim=PLAN_LIMITS[plan];
+ var u=(typeof USAGE!=='undefined'&&USAGE)?USAGE:usageFromBiz();
+ var p=planByCode(u.plan||'free');
+ var over=/extra|overage/i.test(msg||'');
  var m=document.getElementById('quotaModal');
  if(!m){
   m=document.createElement('div');m.id='quotaModal';m.className='modal-overlay';
   document.body.appendChild(m);}
- m.innerHTML='<div class="mcard" style="max-width:460px;text-align:center">'+
-  '<div style="font-size:44px;margin-bottom:10px">📊</div>'+
-  '<h2 style="font-family:\'Playfair Display\',serif;font-size:19px;color:var(--dm);margin-bottom:8px">Invoice limit reached</h2>'+
-  '<p style="font-size:12.5px;color:#777;line-height:1.7;margin-bottom:16px">You have used all <b>'+
-   (lim===-1?'':lim)+'</b> invoices on the <b>'+(PLAN_NAMES[plan]||'Free')+'</b> plan for this billing period.<br>'+
-   'Upgrade your plan or add invoice credits to continue.</p>'+
-  '<div style="background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:14px;margin-bottom:16px;text-align:left">'+
-   '<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #F0E4D4">'+
-    '<span><b>Starter</b> — 100 invoices/mo</span><span style="font-weight:800;color:var(--dm)">₹299/mo</span></div>'+
-   '<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid #F0E4D4">'+
-    '<span><b>Business</b> — Unlimited</span><span style="font-weight:800;color:var(--dm)">₹799/mo</span></div>'+
-   '<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0">'+
-    '<span><b>Credit pack</b> — 25 invoices</span><span style="font-weight:800;color:var(--dm)">₹149</span></div>'+
-  '</div>'+
+
+ var offers=(PLANS||DEFAULT_PLANS).filter(function(x){
+   return (x.sort_order||0)>(p.sort_order||0)&&!x.is_contact_only;})
+  .map(function(x){
+   return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:7px 0;border-bottom:1px solid #F0E4D4">'+
+    '<span><b>'+eh(x.name)+'</b> &mdash; '+((x.invoice_limit<0)?'Unlimited':(x.invoice_limit+' invoices/mo'))+'</span>'+
+    '<button class="pc-btn up" style="width:auto;padding:6px 13px;font-size:11px" onclick="closeQuota();showBilling();">'+
+     (x.price_month>0?rs(x.price_month)+'/mo':'Free')+'</button></div>';}).join('');
+ var packs=(PACKS||DEFAULT_PACKS).slice(0,1).map(function(k){
+   return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:7px 0">'+
+    '<span><b>Credit pack</b> &mdash; '+k.credits+' invoices</span>'+
+    '<button class="pc-btn up" style="width:auto;padding:6px 13px;font-size:11px" onclick="closeQuota();showBilling();">'+
+     rs(k.price)+'</button></div>';}).join('');
+
+ m.innerHTML='<div class="mcard" style="max-width:470px;text-align:center">'+
+  '<div style="font-size:42px;margin-bottom:10px">'+(over?'\u26A0\uFE0F':'\uD83D\uDCCA')+'</div>'+
+  '<h2 style="font-family:\'Playfair Display\',serif;font-size:19px;color:var(--dm);margin-bottom:8px">'+
+   (over?'Extra invoice charges apply':'Invoice limit reached')+'</h2>'+
+  '<p style="font-size:12.5px;color:#777;line-height:1.7;margin-bottom:16px">'+
+   (over
+    ? ('You have used all <b>'+u.invoice_limit+'</b> included invoices on the <b>'+eh(p.name)+
+       '</b> plan. Further invoices are billed at <b>'+rs(p.overage_rate)+'</b> each.')
+    : ('You have used all <b>'+u.invoice_limit+'</b> invoices on the <b>'+eh(p.name)+
+       '</b> plan for this billing period.<br>Upgrade, or add credits, to keep billing.'))+
+  '</p>'+
+  '<div style="background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:6px 14px 10px;margin-bottom:16px;text-align:left">'+
+   offers+packs+'</div>'+
   '<div style="display:flex;gap:8px;justify-content:center">'+
-   '<button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:10px 18px" onclick="document.getElementById(\'quotaModal\').classList.remove(\'show\')">Close</button>'+
-   '<button class="b b-g" style="padding:10px 22px" onclick="contactUpgrade()">Upgrade</button>'+
+   '<button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:10px 18px" onclick="closeQuota()">Close</button>'+
+   '<button class="b b-g" style="padding:10px 22px" onclick="closeQuota();showBilling();">See plans</button>'+
   '</div>'+
-  '<div style="font-size:10px;color:#BBB;margin-top:12px">Self-service payment arrives in Phase 3. For now upgrades are activated manually.</div>'+
+  '<div style="font-size:10px;color:#BBB;margin-top:12px">Card and UPI checkout arrives in Phase 3 \u2014 upgrades are activated manually for now.</div>'+
  '</div>';
  m.classList.add('show');}
+function closeQuota(){
+ var m=document.getElementById('quotaModal');
+ if(m)m.classList.remove('show');}
 function contactUpgrade(){
  var mail=(session&&session.user&&session.user.email)||'';
  window.open('https://wa.me/919342382918?text='+encodeURIComponent(
   'Hi, I would like to upgrade my AS Invoice Generator plan. Account: '+mail),'_blank');}
+
+/* ========== BILLING / SUBSCRIPTION (Phase 2) ========== */
+var PLANS=null, PACKS=null, USAGE=null, UPREQS=[], BILLHIST=[], billLoaded=false, upTarget=null;
+
+/* Fallbacks so the page still works before phase2_billing.sql is run */
+var DEFAULT_PLANS=[
+ {code:'free',name:'Free',price_month:0,invoice_limit:5,overage_rate:0,allow_overage:false,sort_order:1,
+  blurb:'Try the tool with a handful of invoices each month.',
+  features:['5 invoices per month','Inventory management','Rental bookings','PDF / JPEG / PNG export','Single user']},
+ {code:'starter',name:'Starter',price_month:299,invoice_limit:100,overage_rate:10,allow_overage:true,sort_order:2,
+  blurb:'For a growing shop billing every week.',
+  features:['100 invoices per month','Extra invoices at ₹10 each','Inventory + rentals','Profit and margin reports','Custom branding and logo','Single user']},
+ {code:'business',name:'Business',price_month:799,invoice_limit:-1,overage_rate:0,allow_overage:true,sort_order:3,
+  blurb:'Unlimited billing with the full reporting suite.',
+  features:['Unlimited invoices','Inventory + rentals','Full profit and margin reports','Custom branding and logo','CSV export','Priority support']},
+ {code:'enterprise',name:'Enterprise',price_month:0,invoice_limit:-1,overage_rate:0,allow_overage:true,sort_order:4,
+  is_contact_only:true,blurb:'Multi-outlet setups, custom terms. Talk to us.',
+  features:['Unlimited invoices','Multiple users and outlets','Custom onboarding','Dedicated support','Custom invoice templates']}];
+var DEFAULT_PACKS=[
+ {code:'pack25',name:'25 invoice credits',credits:25,price:149},
+ {code:'pack60',name:'60 invoice credits',credits:60,price:299},
+ {code:'pack150',name:'150 invoice credits',credits:150,price:649}];
+
+function rs(n){
+ var v=Math.round((parseFloat(n)||0)*100)/100;
+ return '₹'+v.toLocaleString('en-IN',{minimumFractionDigits:(v%1?2:0),maximumFractionDigits:2});}
+
+async function sbRpc(fn,args){
+ await ensureToken();
+ var r=await fetch(SB_HOST+'/rest/v1/rpc/'+fn,{method:'POST',headers:sbH(),body:JSON.stringify(args||{})});
+ if(!r.ok)throw sbErr(await r.text(),r.status);
+ var t=await r.text();
+ return t?JSON.parse(t):null;}
+
+function planByCode(code){
+ var list=PLANS||DEFAULT_PLANS;
+ for(var i=0;i<list.length;i++)if(list[i].code===code)return list[i];
+ return list[0];}
+
+/* Derive a usage snapshot from the business row when my_usage() is absent */
+function usageFromBiz(){
+ var b=myBiz||{};
+ var plan=(b.plan||'free').toLowerCase(), p=planByCode(plan);
+ var lim=p.invoice_limit, used=parseInt(b.invoices_used)||0, over=parseInt(b.overage_used)||0;
+ return {business_id:b.id,plan:plan,plan_name:p.name,plan_status:b.plan_status||'active',
+  price_month:p.price_month||0,invoice_limit:lim,invoices_used:used,
+  remaining:(lim<0?-1:Math.max(lim-used,0)),
+  overage_used:over,overage_rate:p.overage_rate||0,
+  overage_amount:over*(p.overage_rate||0),
+  credits_remaining:parseInt(b.credits_remaining)||0,
+  estimated_total:(p.price_month||0)+over*(p.overage_rate||0),
+  period_start:b.period_start,period_end:b.period_end,
+  days_left:b.period_end?Math.max(Math.ceil((new Date(b.period_end)-new Date())/86400000),0):null,
+  grace_until:b.grace_until||null,_fallback:true};}
+
+async function loadUsage(){
+ try{
+  var r=await sbRpc('my_usage');
+  USAGE=(r&&r.length)?r[0]:usageFromBiz();
+ }catch(e){USAGE=usageFromBiz();}
+ return USAGE;}
+
+async function loadCatalog(){
+ if(PLANS&&PACKS)return;
+ try{
+  var pl=await sbFetch(SB_BASE+'/plans?select=*&is_active=eq.true&order=sort_order.asc');
+  PLANS=(pl&&pl.length)?pl.map(function(x){
+   var f=x.features;
+   if(typeof f==='string'){try{f=JSON.parse(f);}catch(e){f=[];}}
+   x.features=f||[];return x;}):DEFAULT_PLANS;
+ }catch(e){PLANS=DEFAULT_PLANS;}
+ try{
+  var pk=await sbFetch(SB_BASE+'/credit_packs?select=*&is_active=eq.true&order=sort_order.asc');
+  PACKS=(pk&&pk.length)?pk:DEFAULT_PACKS;
+ }catch(e){PACKS=DEFAULT_PACKS;}}
+
+async function loadBilling(force){
+ if(billLoaded&&!force){renderBilling();return;}
+ try{
+  setSbStatus('busy','Loading...');
+  await loadCatalog();
+  await loadMyBusiness();
+  await loadUsage();
+  try{UPREQS=await sbFetch(SB_BASE+'/upgrade_requests?select=*&order=created_at.desc&limit=20')||[];}
+  catch(e){UPREQS=[];}
+  try{BILLHIST=await sbFetch(SB_BASE+'/billing_periods?select=*&order=period_start.desc&limit=12')||[];}
+  catch(e){BILLHIST=[];}
+  billLoaded=true;
+  renderBilling();renderUserChip();
+  setSbStatus('ok','Connected');
+ }catch(e){
+  console.error('Billing:',e);
+  toast('Could not load billing: '+(e.message||''),true);
+  setSbStatus('err','DB Error');
+  USAGE=USAGE||usageFromBiz();renderBilling();}}
+
+function renderBilling(){
+ var u=USAGE||usageFromBiz();
+ var unl=(u.invoice_limit<0);
+ var lim=u.invoice_limit, used=u.invoices_used||0, over=u.overage_used||0;
+
+ setTxt('bPlanName',u.plan_name||'Free');
+ var st=(u.plan_status||'active').toLowerCase();
+ setTxt('bPlanStatus',st==='active'
+  ? (u.price_month>0? rs(u.price_month)+' / month' : 'No charge')
+  : (st==='past_due'?'Payment overdue':st==='cancelled'?'Cancelled':st));
+ setTxt('bUsed',unl?String(used):used+' / '+lim);
+ setTxt('bUsedSub',unl?'Unlimited plan':(u.remaining+' still included'));
+ setTxt('bOver',String(over));
+ setTxt('bOverSub',(u.overage_rate>0)
+  ? rs(u.overage_rate)+' each — '+rs(u.overage_amount||0)+' so far'
+  : 'Not charged on this plan');
+ setTxt('bEst',rs(u.estimated_total||0));
+ setTxt('bEstSub',u.overage_amount>0?(rs(u.price_month||0)+' plan + '+rs(u.overage_amount)+' extras'):'Plan charge only');
+ setTxt('bCredits',String(u.credits_remaining||0));
+
+ setTxt('bMeterTitle',unl?'Invoices this period':'Included allowance');
+ setTxt('bPeriod',(u.period_start&&u.period_end)
+  ? (fmtD(u.period_start)+' — '+fmtD(u.period_end)+(u.days_left!=null?('  ·  '+u.days_left+' day'+(u.days_left===1?'':'s')+' left'):''))
+  : 'Billing period not set');
+
+ var pct=unl?100:Math.min(Math.round((used/Math.max(lim,1))*100),100);
+ var overPct=(!unl&&over>0)?Math.min(Math.round((over/Math.max(lim,1))*100),40):0;
+ var fill=document.getElementById('bFill');
+ if(fill){
+  fill.style.width=(unl?100:Math.max(pct-overPct,0))+'%';
+  fill.className='ufill'+(over>0?' over':(pct>=80?' warn':''));}
+ var fo=document.getElementById('bFillOver');
+ if(fo)fo.style.width=overPct+'%';
+ setTxt('bTickL',used+' used'+(over>0?(' + '+over+' extra'):''));
+ setTxt('bTickR',unl?'Unlimited':(lim+' included'));
+
+ var note=document.getElementById('bNote');
+ if(note){
+  var cls='ok',msg='';
+  if(st==='past_due'){cls='bad';
+   msg='<b>Payment overdue.</b> You can keep billing until '+(u.grace_until?fmtD(u.grace_until):'the end of the 3-day grace period')+', after which new invoices are blocked.';}
+  else if(st==='cancelled'){cls='bad';
+   msg='<b>Subscription cancelled.</b> Reactivate a plan to create new invoices.';}
+  else if(unl){cls='ok';msg='<b>Unlimited plan.</b> No invoice cap and no extra charges.';}
+  else if(over>0){cls='bad';
+   msg='<b>'+over+' invoice'+(over===1?'':'s')+' beyond your allowance.</b> Charged at '+rs(u.overage_rate)+' each — '+rs(u.overage_amount)+' will be added to this period. Upgrading to Business removes the cap.';}
+  else if(u.remaining===0){cls='bad';
+   msg='<b>Allowance used up.</b> '+(u.credits_remaining>0
+    ? ('Your next '+u.credits_remaining+' invoice'+(u.credits_remaining===1?'':'s')+' will come out of your credit balance.')
+    : 'Upgrade your plan or buy a credit pack to create more invoices this period.');}
+  else if(pct>=80){cls='warn';
+   msg='<b>'+u.remaining+' invoice'+(u.remaining===1?'':'s')+' left</b> in this period. Consider upgrading before you run out.';}
+  else{cls='ok';
+   msg='<b>'+u.remaining+' invoice'+(u.remaining===1?'':'s')+' remaining</b> in this billing period.';}
+  if(u._fallback)msg+='<br><span style="opacity:.75;font-size:10.5px">Showing locally calculated figures — run <b>phase2_billing.sql</b> in Supabase for live metering.</span>';
+  note.className='unote '+cls;note.innerHTML=msg;}
+
+ renderPlanCards();renderPacks();renderReqs();renderHist();}
+
+function setTxt(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+
+function renderPlanCards(){
+ var box=document.getElementById('bPlans');if(!box)return;
+ var u=USAGE||usageFromBiz(), cur=(u.plan||'free').toLowerCase();
+ var list=(PLANS||DEFAULT_PLANS).slice().sort(function(a,b){return (a.sort_order||0)-(b.sort_order||0);});
+ var curOrder=(planByCode(cur).sort_order)||0;
+ var pend={};
+ UPREQS.forEach(function(r){if(r.status==='pending'&&r.kind!=='credits')pend[r.to_plan]=true;});
+
+ box.innerHTML=list.map(function(p){
+  var isCur=(p.code===cur);
+  var isUp=((p.sort_order||0)>curOrder);
+  var feats=(p.features||[]).map(function(f){return '<li>'+eh(f)+'</li>';}).join('');
+  var price=p.is_contact_only?'<span style="font-size:17px">Custom</span>'
+   :(p.price_month>0?rs(p.price_month)+'<small> /mo</small>':'Free');
+  var lim=(p.invoice_limit<0)?'Unlimited invoices'
+   :(p.invoice_limit+' invoices/month'+(p.overage_rate>0?(' · then '+rs(p.overage_rate)+' each'):''));
+  var btn;
+  if(isCur)btn='<button class="pc-btn cur" disabled>Current plan</button>';
+  else if(pend[p.code])btn='<button class="pc-btn cur" disabled>Request pending</button>';
+  else if(p.is_contact_only)btn='<button class="pc-btn up" onclick="contactUpgrade()">Contact us</button>';
+  else btn='<button class="pc-btn '+(isUp?'up':'down')+'" onclick="openUpgrade(\'plan\',\''+p.code+'\')">'+(isUp?'Upgrade':'Switch')+'</button>';
+  return '<div class="plancard'+(isCur?' cur':'')+'">'+
+   (isCur?'<span class="pc-tag">Your plan</span>':'')+
+   '<div class="pc-n">'+eh(p.name)+'</div>'+
+   '<div class="pc-b">'+eh(p.blurb||'')+'</div>'+
+   '<div class="pc-p">'+price+'</div>'+
+   '<div class="pc-lim">'+lim+'</div>'+
+   '<ul class="pc-f">'+feats+'</ul>'+btn+'</div>';}).join('');}
+
+function renderPacks(){
+ var box=document.getElementById('bPacks');if(!box)return;
+ var pend={};
+ UPREQS.forEach(function(r){if(r.status==='pending'&&r.kind==='credits')pend[r.credits]=true;});
+ box.innerHTML=(PACKS||DEFAULT_PACKS).map(function(k){
+  var p=pend[k.credits];
+  return '<div class="packc"><div><b>'+k.credits+' credits</b><span>'+
+   rs(k.price/k.credits)+' per invoice</span></div>'+
+   '<div style="display:flex;align-items:center;gap:10px">'+
+   '<span class="pk-p">'+rs(k.price)+'</span>'+
+   '<button class="pc-btn '+(p?'cur':'up')+'" style="width:auto;padding:8px 14px" '+
+   (p?'disabled>Pending':('onclick="openUpgrade(\'credits\',\''+k.code+'\')">Buy'))+'</button></div></div>';}).join('');}
+
+function renderReqs(){
+ var box=document.getElementById('bReqs');if(!box)return;
+ if(!UPREQS.length){
+  box.innerHTML='<div style="padding:26px 18px;text-align:center;color:#BBB;font-size:11.5px">'+
+   'No upgrade requests yet.<br>Pick a plan above when you are ready.</div>';return;}
+ box.innerHTML='<table class="itbl" style="width:100%"><thead><tr><th>Date</th><th>Request</th><th>Amount</th><th>Status</th></tr></thead><tbody>'+
+  UPREQS.map(function(r){
+   var what=(r.kind==='credits')?(r.credits+' invoice credits')
+    :('Switch to '+(planByCode(r.to_plan).name||r.to_plan));
+   return '<tr><td>'+fmtD((r.created_at||'').slice(0,10))+'</td><td>'+eh(what)+'</td>'+
+    '<td>'+(r.amount>0?rs(r.amount):'—')+'</td>'+
+    '<td><span class="spill '+eh(r.status||'pending')+'">'+eh(r.status||'pending')+'</span></td></tr>';}).join('')+
+  '</tbody></table>';}
+
+function renderHist(){
+ var box=document.getElementById('bHist');if(!box)return;
+ if(!BILLHIST.length){
+  box.innerHTML='<div style="padding:26px 18px;text-align:center;color:#BBB;font-size:11.5px">'+
+   'No closed periods yet.<br>Your first period ends '+
+   ((USAGE&&USAGE.period_end)?fmtD(USAGE.period_end):'next month')+'.</div>';return;}
+ box.innerHTML='<table class="itbl" style="width:100%"><thead><tr><th>Period</th><th>Plan</th><th>Invoices</th><th>Extras</th><th>Total</th></tr></thead><tbody>'+
+  BILLHIST.map(function(h){
+   return '<tr><td>'+fmtD(h.period_start)+'</td><td>'+eh(planByCode(h.plan).name||h.plan||'—')+'</td>'+
+    '<td>'+(h.invoices_used||0)+(h.invoice_limit>=0?(' / '+h.invoice_limit):'')+'</td>'+
+    '<td>'+(h.overage_used||0)+'</td>'+
+    '<td><b>'+rs(h.total_amount||0)+'</b></td></tr>';}).join('')+
+  '</tbody></table>';}
+
+/* ---- upgrade request flow ---- */
+function openUpgrade(kind,code){
+ var u=USAGE||usageFromBiz();
+ upTarget={kind:kind,code:code};
+ var sum,title;
+ if(kind==='credits'){
+  var k=null,list=PACKS||DEFAULT_PACKS;
+  for(var i=0;i<list.length;i++)if(list[i].code===code)k=list[i];
+  if(!k)return;
+  upTarget.credits=k.credits;upTarget.amount=k.price;
+  title='Buy invoice credits';
+  sum='<b>'+k.credits+' invoice credits</b> for <b>'+rs(k.price)+'</b><br>'+
+   'Credits never expire and are used before any extra-invoice charge applies.<br>'+
+   'Balance after activation: <b>'+((u.credits_remaining||0)+k.credits)+' credits</b>';
+ }else{
+  var p=planByCode(code);
+  upTarget.amount=p.price_month||0;upTarget.to=code;
+  title=((p.sort_order||0)>(planByCode(u.plan||'free').sort_order||0))?'Upgrade plan':'Change plan';
+  sum='<b>'+eh(u.plan_name||'Free')+'</b> &rarr; <b>'+eh(p.name)+'</b><br>'+
+   (p.price_month>0?(rs(p.price_month)+' per month'):'No monthly charge')+'<br>'+
+   ((p.invoice_limit<0)?'Unlimited invoices':(p.invoice_limit+' invoices included each month'+
+     (p.overage_rate>0?(', then '+rs(p.overage_rate)+' per extra invoice'):'')));
+ }
+ setTxt('upTitle',title);
+ var e=document.getElementById('upSummary');if(e)e.innerHTML=sum;
+ var c=document.getElementById('upContact');
+ if(c&&!c.value)c.value=(myBiz&&(myBiz.whatsapp||myBiz.phone))||'';
+ document.getElementById('upModal').classList.add('show');}
+
+function closeUpgrade(){
+ document.getElementById('upModal').classList.remove('show');
+ upTarget=null;}
+
+async function sendUpgrade(){
+ if(!upTarget)return;
+ if(!myBiz){toast('Not signed in',true);return;}
+ var btn=document.getElementById('upSendBtn');
+ btn.disabled=true;btn.textContent='Sending...';
+ var u=USAGE||usageFromBiz();
+ var row={business_id:myBiz.id,
+  requested_by:(session&&session.user&&session.user.id)||null,
+  kind:upTarget.kind,
+  from_plan:u.plan||'free',
+  to_plan:(upTarget.kind==='credits')?null:upTarget.code,
+  credits:(upTarget.kind==='credits')?upTarget.credits:0,
+  amount:upTarget.amount||0,
+  note:gv('upNote')||null,
+  contact:gv('upContact')||null,
+  status:'pending'};
+ try{
+  await sbFetch(SB_BASE+'/upgrade_requests','POST',row);
+  closeUpgrade();
+  toast('✓ Request sent — we will activate it shortly');
+  await loadBilling(true);
+ }catch(e){
+  var m=e.message||'';
+  if(/upgrade_requests|PGRST205|404/i.test(m)){
+   closeUpgrade();
+   toast('Billing tables missing — run phase2_billing.sql',true);
+  }else toast('Could not send request: '+m,true);
+ }finally{btn.disabled=false;btn.textContent='Send Request';}}
+
+/* ---- sidebar meter ---- */
+function renderSbMeter(){
+ var u=USAGE||usageFromBiz(),box=document.getElementById('sbMeter');
+ if(!box)return;
+ if(u.invoice_limit<0){box.style.display='none';return;}
+ box.style.display='block';
+ var used=u.invoices_used||0,lim=u.invoice_limit,over=u.overage_used||0;
+ var pct=Math.min(Math.round((used/Math.max(lim,1))*100),100);
+ setTxt('sbMlbl',used+' / '+lim+' invoices'+(over>0?(' +'+over):''));
+ setTxt('sbMdays',(u.days_left!=null)?(u.days_left+'d left'):'');
+ var f=document.getElementById('sbMfill');
+ if(f){f.style.width=pct+'%';f.className='sb-mfill'+(over>0?' over':(pct>=80?' warn':''));}}
+
+/* ---- warn as the allowance runs down ---- */
+var warnedAt=null;
+function checkQuotaWarning(){
+ var u=USAGE||usageFromBiz();
+ if(u.invoice_limit<0)return;
+ var key=(u.period_start||'')+':'+u.invoices_used;
+ if(warnedAt===key)return;
+ warnedAt=key;
+ if(u.overage_used>0){
+  toast('Extra invoice — '+rs(u.overage_rate)+' added ('+u.overage_used+' this period)',true);
+ }else if(u.remaining===0&&u.credits_remaining>0){
+  toast('Allowance used up — now drawing on your '+u.credits_remaining+' credits');
+ }else if(u.remaining>0&&u.remaining<=Math.max(Math.round(u.invoice_limit*0.2),1)){
+  toast('Heads up: '+u.remaining+' invoice'+(u.remaining===1?'':'s')+' left this period');}}
+
+/* ---- pre-flight before composing a new invoice ---- */
+function quotaBlocked(){
+ var u=USAGE||usageFromBiz();
+ if(u.invoice_limit<0)return false;
+ if((u.credits_remaining||0)>0)return false;
+ var p=planByCode(u.plan||'free');
+ if(p.allow_overage)return false;
+ return (u.invoices_used||0)>=u.invoice_limit;}
 
 /* ========== INIT ========== */
 async function bootApp(){
