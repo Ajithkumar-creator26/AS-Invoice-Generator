@@ -560,6 +560,19 @@ body.sbmin .sb-meter{display:none}
     <div class="unote ok" id="bNote">Loading usage&hellip;</div>
   </div>
 
+  <div class="upanel" id="bDues" style="display:none;border-left:4px solid #C0392B">
+    <div class="uhead" style="margin-bottom:10px">
+      <div>
+        <h2>Outstanding</h2>
+        <p id="bDuesSub">Extra invoices from closed billing periods</p>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Playfair Display',serif;font-size:23px;font-weight:800;color:#C0392B" id="bDuesTotal">&#8377;0</div>
+      </div>
+    </div>
+    <div id="bDuesList"></div>
+  </div>
+
   <div>
     <div class="dth" style="padding:0 2px 12px;border:none">
       <h2 style="font-family:'Playfair Display',serif;font-size:16px;color:var(--dm)">Plans</h2>
@@ -588,6 +601,12 @@ body.sbmin .sb-meter{display:none}
       <div id="bHist" style="padding:6px 0"></div>
     </div>
   </div>
+
+  <div class="dtw" style="flex:none">
+    <div class="dth"><h2>&#128179; Payments</h2>
+      <span style="font-size:10px;color:#BBB" id="bPayNote">Card, UPI, netbanking and wallets via Razorpay</span></div>
+    <div id="bPays" style="padding:6px 0"></div>
+  </div>
 </div>
 
 <!-- UPGRADE MODAL -->
@@ -603,12 +622,13 @@ body.sbmin .sb-meter{display:none}
       <label>Anything we should know? (optional)</label>
       <textarea id="upNote" rows="2" placeholder="Billing name, GSTIN, preferred start date..."></textarea>
     </div>
-    <div style="font-size:10.5px;color:#A08878;line-height:1.6;margin-bottom:14px">
-      Card and UPI checkout arrives in Phase&nbsp;3. For now this raises a request against your account and we activate it manually, usually the same day.
+    <div style="font-size:10.5px;color:#A08878;line-height:1.6;margin-bottom:14px" id="upFoot">
+      Paid securely through Razorpay &mdash; card, UPI, netbanking or wallet. Your plan activates the moment the payment is confirmed.
     </div>
-    <div style="display:flex;gap:8px;justify-content:flex-end">
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
       <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeUpgrade()">Cancel</button>
-      <button class="b b-g" style="padding:9px 20px" id="upSendBtn" onclick="sendUpgrade()">Send Request</button>
+      <button class="b" style="background:#fff;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" id="upSendBtn" onclick="sendUpgrade()">Request manually</button>
+      <button class="b b-g" style="padding:9px 22px" id="upPayBtn" onclick="payFromModal()">Pay</button>
     </div>
   </div>
 </div>
@@ -2561,12 +2581,14 @@ function showQuotaModal(msg){
   .map(function(x){
    return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:7px 0;border-bottom:1px solid #F0E4D4">'+
     '<span><b>'+eh(x.name)+'</b> &mdash; '+((x.invoice_limit<0)?'Unlimited':(x.invoice_limit+' invoices/mo'))+'</span>'+
-    '<button class="pc-btn up" style="width:auto;padding:6px 13px;font-size:11px" onclick="closeQuota();showBilling();">'+
+    '<button class="pc-btn up" style="width:auto;padding:6px 13px;font-size:11px" '+
+     'onclick="closeQuota();showBilling();openUpgrade(\'plan\',\''+x.code+'\');">'+
      (x.price_month>0?rs(x.price_month)+'/mo':'Free')+'</button></div>';}).join('');
  var packs=(PACKS||DEFAULT_PACKS).slice(0,1).map(function(k){
    return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:7px 0">'+
     '<span><b>Credit pack</b> &mdash; '+k.credits+' invoices</span>'+
-    '<button class="pc-btn up" style="width:auto;padding:6px 13px;font-size:11px" onclick="closeQuota();showBilling();">'+
+    '<button class="pc-btn up" style="width:auto;padding:6px 13px;font-size:11px" '+
+     'onclick="closeQuota();showBilling();openUpgrade(\'credits\',\''+k.code+'\');">'+
      rs(k.price)+'</button></div>';}).join('');
 
  m.innerHTML='<div class="mcard" style="max-width:470px;text-align:center">'+
@@ -2586,7 +2608,7 @@ function showQuotaModal(msg){
    '<button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:10px 18px" onclick="closeQuota()">Close</button>'+
    '<button class="b b-g" style="padding:10px 22px" onclick="closeQuota();showBilling();">See plans</button>'+
   '</div>'+
-  '<div style="font-size:10px;color:#BBB;margin-top:12px">Card and UPI checkout arrives in Phase 3 \u2014 upgrades are activated manually for now.</div>'+
+  '<div style="font-size:10px;color:#BBB;margin-top:12px">Paid securely through Razorpay \u2014 card, UPI, netbanking or wallet.</div>'+
  '</div>';
  m.classList.add('show');}
 function closeQuota(){
@@ -2683,6 +2705,9 @@ async function loadBilling(force){
   catch(e){UPREQS=[];}
   try{BILLHIST=await sbFetch(SB_BASE+'/billing_periods?select=*&order=period_start.desc&limit=12')||[];}
   catch(e){BILLHIST=[];}
+  try{PAYMENTS=await sbFetch(SB_BASE+'/payments?select=*&order=created_at.desc&limit=20')||[];}
+  catch(e){PAYMENTS=[];}
+  DUES=BILLHIST.filter(function(h){return h.paid!==true&&(parseFloat(h.due_amount)||0)>0;});
   billLoaded=true;
   renderBilling();renderUserChip();
   setSbStatus('ok','Connected');
@@ -2714,7 +2739,8 @@ function renderBilling(){
 
  setTxt('bMeterTitle',unl?'Invoices this period':'Included allowance');
  setTxt('bPeriod',(u.period_start&&u.period_end)
-  ? (fmtD(u.period_start)+' — '+fmtD(u.period_end)+(u.days_left!=null?('  ·  '+u.days_left+' day'+(u.days_left===1?'':'s')+' left'):''))
+  ? (fmtD(u.period_start)+' — '+fmtD(u.period_end)+(u.days_left!=null?('  ·  '+u.days_left+' day'+(u.days_left===1?'':'s')+' left'):'')
+     +(u.plan_expires_at?('  ·  renews '+fmtD(u.plan_expires_at)):''))
   : 'Billing period not set');
 
  var pct=unl?100:Math.min(Math.round((used/Math.max(lim,1))*100),100);
@@ -2747,9 +2773,11 @@ function renderBilling(){
   else{cls='ok';
    msg='<b>'+u.remaining+' invoice'+(u.remaining===1?'':'s')+' remaining</b> in this billing period.';}
   if(u._fallback)msg+='<br><span style="opacity:.75;font-size:10.5px">Showing locally calculated figures — run <b>phase2_billing.sql</b> in Supabase for live metering.</span>';
+  if(u.dues_total>0)msg+='<br><b>'+rs(u.dues_total)+'</b> outstanding from '+u.dues_count+' closed period'+(u.dues_count===1?'':'s')+' — settle it below.';
   note.className='unote '+cls;note.innerHTML=msg;}
 
- renderPlanCards();renderPacks();renderReqs();renderHist();}
+ renderPlanCards();renderPacks();renderReqs();renderHist();
+ try{renderDues();renderPays();}catch(e){console.error('Payments:',e);}}
 
 function setTxt(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
 
@@ -2770,7 +2798,9 @@ function renderPlanCards(){
   var lim=(p.invoice_limit<0)?'Unlimited invoices'
    :(p.invoice_limit+' invoices/month'+(p.overage_rate>0?(' · then '+rs(p.overage_rate)+' each'):''));
   var btn;
-  if(isCur)btn='<button class="pc-btn cur" disabled>Current plan</button>';
+  if(isCur)btn=(p.price_month>0&&!p.is_contact_only)
+   ? '<button class="pc-btn down" onclick="openUpgrade(\'plan\',\''+p.code+'\')">Renew &mdash; '+rs(p.price_month)+'</button>'
+   : '<button class="pc-btn cur" disabled>Current plan</button>';
   else if(pend[p.code])btn='<button class="pc-btn cur" disabled>Request pending</button>';
   else if(p.is_contact_only)btn='<button class="pc-btn up" onclick="contactUpgrade()">Contact us</button>';
   else btn='<button class="pc-btn '+(isUp?'up':'down')+'" onclick="openUpgrade(\'plan\',\''+p.code+'\')">'+(isUp?'Upgrade':'Switch')+'</button>';
@@ -2848,10 +2878,20 @@ function openUpgrade(kind,code){
  }
  setTxt('upTitle',title);
  var e=document.getElementById('upSummary');if(e)e.innerHTML=sum;
+ var pb=document.getElementById('upPayBtn');
+ if(pb){
+  var amt=upTarget.amount||0;
+  pb.textContent=amt>0?('Pay '+rs(amt)):'Activate';
+  pb.style.display=amt>0?'':'none';}
+ var fo=document.getElementById('upFoot');
+ if(fo&&PAY_READY===false)fo.innerHTML='Online payment is not switched on for this project yet &mdash; use <b>Request manually</b> and we will activate it by hand.';
  var c=document.getElementById('upContact');
  if(c&&!c.value)c.value=(myBiz&&(myBiz.whatsapp||myBiz.phone))||'';
  document.getElementById('upModal').classList.add('show');}
 
+function payFromModal(){
+ if(!upTarget)return;
+ payNow(upTarget.kind,upTarget.code);}
 function closeUpgrade(){
  document.getElementById('upModal').classList.remove('show');
  upTarget=null;}
@@ -2921,6 +2961,144 @@ function quotaBlocked(){
  var p=planByCode(u.plan||'free');
  if(p.allow_overage)return false;
  return (u.invoices_used||0)>=u.invoice_limit;}
+
+/* ========== PAYMENTS — Razorpay (Phase 3) ========== */
+var FN_URL=SB_HOST+'/functions/v1';
+var RZP_SRC='https://checkout.razorpay.com/v1/checkout.js';
+var PAYMENTS=[], DUES=[], payBusy=false;
+/* null = not probed yet · true = Edge Functions live · false = fall back to manual requests */
+var PAY_READY=null;
+
+function loadRzp(){
+ return new Promise(function(res,rej){
+  if(window.Razorpay)return res(true);
+  var s=document.createElement('script');
+  s.src=RZP_SRC;s.async=true;
+  s.onload=function(){res(true);};
+  s.onerror=function(){rej(new Error('Could not load the payment window — check your connection'));};
+  document.head.appendChild(s);});}
+
+async function createOrder(kind,code,periodId){
+ await ensureToken();
+ if(!session||!session.access_token)throw new Error('Sign in first');
+ var r=await fetch(FN_URL+'/create-order',{
+  method:'POST',
+  headers:{'Content-Type':'application/json',apikey:SB_ANON,
+   Authorization:'Bearer '+session.access_token},
+  body:JSON.stringify({kind:kind,code:code||null,period_id:periodId||null})});
+ var t=await r.text(),j=null;
+ try{j=t?JSON.parse(t):null;}catch(e){}
+ if(r.status===404||r.status===401&&/function/i.test(t||'')){
+  PAY_READY=false;
+  throw new Error('NOT_DEPLOYED');}
+ if(!r.ok)throw new Error((j&&j.error)||('Could not start the payment ('+r.status+')'));
+ PAY_READY=true;
+ return j;}
+
+/* The webhook is what actually grants the plan, so after checkout closes we
+   poll our own payments row until the server has marked it paid. */
+async function waitForPayment(orderId,tries){
+ tries=tries||14;
+ for(var i=0;i<tries;i++){
+  await new Promise(function(r){setTimeout(r,i<4?1200:2500);});
+  try{
+   var rows=await sbFetch(SB_BASE+'/payments?select=status,error_reason&razorpay_order_id=eq.'+encodeURIComponent(orderId));
+   if(rows&&rows[0]){
+    if(rows[0].status==='paid')return 'paid';
+    if(rows[0].status==='failed')return rows[0].error_reason||'failed';}
+  }catch(e){}
+ }
+ return 'pending';}
+
+async function payNow(kind,code,periodId){
+ if(payBusy)return;
+ payBusy=true;
+ var ord=null;
+ try{
+  toast('Opening secure checkout...');
+  ord=await createOrder(kind,code,periodId);
+  await loadRzp();
+
+  await new Promise(function(resolve){
+   var rz=new window.Razorpay({
+    key:ord.key_id,
+    order_id:ord.order_id,
+    amount:ord.amount_paise,
+    currency:ord.currency||'INR',
+    name:ord.business_name||'AS Invoice Generator',
+    description:ord.label||'Subscription',
+    image:(myBiz&&myBiz.logo)||undefined,
+    prefill:ord.prefill||{},
+    theme:{color:(myBiz&&myBiz.primary_color)||'#5C0F28'},
+    notes:{order:ord.order_id},
+    modal:{ondismiss:function(){toast('Payment window closed',true);resolve('dismissed');}},
+    handler:function(){resolve('submitted');}});
+   rz.on('payment.failed',function(resp){
+    var d=(resp&&resp.error&&resp.error.description)||'Payment failed';
+    toast('✗ '+d,true);resolve('failed');});
+   rz.open();});
+
+  // Checkout says it is done; the webhook decides. Poll our own ledger.
+  toast('Confirming payment...');
+  var out=await waitForPayment(ord.order_id);
+  if(out==='paid'){
+   toast('✓ Payment received — plan updated');
+   closeUpgrade();
+   await loadBilling(true);
+  }else if(out==='pending'){
+   toast('Payment is still being confirmed — refresh in a minute',true);
+   await loadBilling(true);
+  }else{
+   toast('✗ '+out,true);
+   await loadBilling(true);}
+
+ }catch(e){
+  if(e.message==='NOT_DEPLOYED'){
+   toast('Online payment is not switched on yet — sending a request instead',true);
+   try{await sendUpgrade();}catch(e2){}
+  }else{
+   toast(e.message||'Payment could not be started',true);}
+ }finally{payBusy=false;}}
+
+/* ---- renderers ---- */
+function renderDues(){
+ var box=document.getElementById('bDues');if(!box)return;
+ if(!DUES.length){box.style.display='none';return;}
+ box.style.display='block';
+ var tot=DUES.reduce(function(t,d){return t+(parseFloat(d.due_amount)||0);},0);
+ setTxt('bDuesTotal',rs(tot));
+ setTxt('bDuesSub',DUES.length+' closed period'+(DUES.length===1?'':'s')+' with extra invoices to settle');
+ document.getElementById('bDuesList').innerHTML=
+  '<table class="itbl" style="width:100%"><thead><tr><th>Period</th><th>Extra invoices</th><th>Amount</th><th></th></tr></thead><tbody>'+
+  DUES.map(function(d){
+   return '<tr><td>'+fmtD(d.period_start)+' — '+fmtD(d.period_end)+'</td>'+
+    '<td>'+(d.overage_used||0)+' &times; '+rs(d.overage_rate||0)+'</td>'+
+    '<td><b>'+rs(d.due_amount||0)+'</b></td>'+
+    '<td style="text-align:right"><button class="pc-btn up" style="width:auto;padding:7px 15px;font-size:11px" '+
+     'onclick="payNow(\'due\',null,\''+d.id+'\')">Pay now</button></td></tr>';}).join('')+
+  '</tbody></table>';}
+
+function renderPays(){
+ var box=document.getElementById('bPays');if(!box)return;
+ if(!PAYMENTS.length){
+  box.innerHTML='<div style="padding:26px 18px;text-align:center;color:#BBB;font-size:11.5px">'+
+   'No payments yet.'+(PAY_READY===false
+    ? '<br>Online payment is not switched on — upgrades are activated manually.'
+    : '<br>Card, UPI, netbanking and wallets are accepted.')+'</div>';return;}
+ box.innerHTML='<table class="itbl" style="width:100%"><thead><tr>'+
+  '<th>Date</th><th>For</th><th>Method</th><th>Reference</th><th>Amount</th><th>Status</th></tr></thead><tbody>'+
+  PAYMENTS.map(function(x){
+   var what=(x.kind==='credits')?((x.credits||0)+' invoice credits')
+    :(x.kind==='due')?'Extra invoices'
+    :('Plan — '+(planByCode(x.plan_code).name||x.plan_code||'—'));
+   var st=(x.status==='paid')?'approved':(x.status==='failed')?'rejected':'pending';
+   return '<tr><td>'+fmtD((x.created_at||'').slice(0,10))+'</td>'+
+    '<td>'+eh(what)+'</td>'+
+    '<td>'+eh((x.method||'—').toUpperCase())+'</td>'+
+    '<td style="font-size:10.5px;color:#A08878">'+eh(x.razorpay_payment_id||x.razorpay_order_id||'—')+'</td>'+
+    '<td><b>'+rs(x.amount||0)+'</b></td>'+
+    '<td><span class="spill '+st+'">'+eh(x.status)+'</span></td></tr>';}).join('')+
+  '</tbody></table>';}
 
 /* ========== INIT ========== */
 async function bootApp(){
