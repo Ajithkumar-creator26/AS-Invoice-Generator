@@ -103,7 +103,7 @@ body.sbmin .sb-mark{display:block}
  .snav{justify-content:center;padding:11px 0}
  .sb-user,.sb-planrow{justify-content:center}
 }
-#dashV,#invV,#rentV,#repV,#billV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 54px)}
+#dashV,#invV,#rentV,#custV,#repV,#billV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 54px)}
 #editorV{flex-direction:row;height:calc(100vh - 54px)}
 .stats{display:grid;gap:12px}
 .sc{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid var(--m)}
@@ -385,6 +385,8 @@ body.sbmin .sb-meter{display:none}
       <span class="snav-ico">◫</span><span class="snav-lbl">Inventory</span></button>
     <button class="snav" id="tabRent" onclick="showRentals()">
       <span class="snav-ico">◴</span><span class="snav-lbl">Rentals</span></button>
+    <button class="snav" id="tabC" onclick="showCustomers()">
+      <span class="snav-ico">◌</span><span class="snav-lbl">Customers</span></button>
     <button class="snav" id="tabR" onclick="showReports()">
       <span class="snav-ico">◥</span><span class="snav-lbl">Reports</span></button>
     <button class="snav" id="tabB" onclick="showBilling()">
@@ -430,14 +432,15 @@ body.sbmin .sb-meter{display:none}
 
 <!-- DASHBOARD -->
 <div id="dashV" style="display:none">
-  <div class="stats" style="grid-template-columns:repeat(7,1fr)">
+  <div class="stats" style="grid-template-columns:repeat(8,1fr)">
     <div class="sc"><div class="sc-l">Total Invoices</div><div class="sc-v" id="dTot">—</div><div class="sc-s">All time</div></div>
-    <div class="sc" style="border-left-color:var(--g)"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">Incl. ship &amp; GST</div></div>
+    <div class="sc" style="border-left-color:var(--g)"><div class="sc-l">Total Revenue</div><div class="sc-v" id="dRev">—</div><div class="sc-s">Net of refunds</div></div>
     <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="dNetRev" style="color:#00838F">—</div><div class="sc-s">Received only</div></div>
     <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping</div><div class="sc-v" id="dShip" style="color:#7B5EA7">—</div><div class="sc-s">Collected</div></div>
     <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Total Profit</div><div class="sc-v" id="dProfit" style="color:#2E7D32">—</div><div class="sc-s">Realised only</div></div>
     <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Avg Margin</div><div class="sc-v" id="dMargin">—</div><div class="sc-s">Across invoices</div></div>
     <div class="sc" style="border-left-color:#E67E22"><div class="sc-l">Pending</div><div class="sc-v" id="dPend">—</div><div class="sc-s">Outstanding</div></div>
+    <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Refunded</div><div class="sc-v" id="dRefund" style="color:#C0392B">—</div><div class="sc-s" id="dRefundSub">No returns</div></div>
   </div>
   <div class="dtw">
     <div class="dth">
@@ -505,8 +508,9 @@ body.sbmin .sb-meter{display:none}
     <div style="flex:1"></div>
     <button class="b b-s" style="padding:8px 16px" onclick="exportCSV()">📥 Export CSV</button>
   </div>
-  <div class="stats" style="grid-template-columns:repeat(6,1fr)">
+  <div class="stats" style="grid-template-columns:repeat(7,1fr)">
     <div class="sc"><div class="sc-l">Revenue</div><div class="sc-v" id="rRev">—</div><div class="sc-s" id="rCount">—</div></div>
+    <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Refunds</div><div class="sc-v" id="rRefund" style="color:#C0392B">—</div><div class="sc-s" id="rRefundSub">No returns</div></div>
     <div class="sc" style="border-left-color:#00838F"><div class="sc-l">Product Sales</div><div class="sc-v" id="rNetRev" style="color:#00838F">—</div><div class="sc-s">Received only</div></div>
     <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Shipping</div><div class="sc-v" id="rShip" style="color:#7B5EA7">—</div><div class="sc-s">Collected</div></div>
     <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Total Cost</div><div class="sc-v" id="rCost" style="color:#C0392B">—</div><div class="sc-s">Goods purchased</div></div>
@@ -520,6 +524,119 @@ body.sbmin .sb-meter{display:none}
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
     <div class="dtw" style="flex:none"><div class="dth"><h2>📍 Sales by Location</h2></div><div id="repLoc" style="padding:6px 0"></div></div>
     <div class="dtw" style="flex:none"><div class="dth"><h2>⚠️ Low Margin Invoices</h2></div><div id="repLow" style="padding:6px 0"></div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:16px">
+    <div class="dtw" style="flex:none"><div class="dth"><h2>🔁 New vs Repeat</h2>
+      <span style="font-size:10px;color:#BBB">By invoice date in range</span></div>
+      <div id="repMix"></div></div>
+    <div class="dtw" style="flex:none"><div class="dth"><h2>↩ Refunds</h2>
+      <span style="font-size:10px;color:#BBB">Most recent first</span></div>
+      <div id="repRef" style="padding:6px 0"></div></div>
+  </div>
+</div>
+
+<!-- CUSTOMERS -->
+<div id="custV" style="display:none">
+  <div class="stats" style="grid-template-columns:repeat(5,1fr)">
+    <div class="sc"><div class="sc-l">Customers</div><div class="sc-v" id="cTot">&mdash;</div><div class="sc-s">All time</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Repeat Customers</div>
+      <div class="sc-v" id="cRep" style="color:#2E7D32">&mdash;</div><div class="sc-s">2 or more orders</div></div>
+    <div class="sc" style="border-left-color:var(--g)"><div class="sc-l">Repeat Rate</div>
+      <div class="sc-v" id="cRate" style="color:#B8962E">&mdash;</div><div class="sc-s" id="cRateSub">Share of customers</div></div>
+    <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">Revenue From Repeats</div>
+      <div class="sc-v" id="cRepRev" style="color:#1565C0">&mdash;</div><div class="sc-s" id="cRepRevSub">Net of refunds</div></div>
+    <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Avg Lifetime Value</div>
+      <div class="sc-v" id="cLTV" style="color:#7B5EA7">&mdash;</div><div class="sc-s">Per customer</div></div>
+  </div>
+
+  <div class="dtw" style="flex:none">
+    <div class="dth"><h2>&#128100; Customer Book</h2>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <select id="custFilter" onchange="renderCustomers()" style="padding:7px 10px;border:1.5px solid #E0D5CF;border-radius:6px;font-size:11.5px;font-family:'Open Sans',sans-serif">
+          <option value="all">All customers</option>
+          <option value="repeat">Repeat only</option>
+          <option value="new">One-time only</option>
+          <option value="lapsed">Not seen in 90 days</option>
+        </select>
+        <select id="custSort" onchange="renderCustomers()" style="padding:7px 10px;border:1.5px solid #E0D5CF;border-radius:6px;font-size:11.5px;font-family:'Open Sans',sans-serif">
+          <option value="spent">Top spenders</option>
+          <option value="orders">Most orders</option>
+          <option value="recent">Most recent</option>
+          <option value="name">Name</option>
+        </select>
+        <input id="custSearch" placeholder="&#128269; Name, phone or place..." oninput="renderCustomers()"
+          style="padding:7px 11px;border:1.5px solid #E0D5CF;border-radius:6px;font-size:11.5px;min-width:200px;font-family:'Open Sans',sans-serif">
+        <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:7px 12px;font-size:11px" onclick="exportCustomersCSV()">&#128229; CSV</button>
+      </div></div>
+    <div id="custC" style="overflow-x:auto"></div>
+  </div>
+</div>
+
+<!-- CUSTOMER DETAIL MODAL -->
+<div id="custModal" class="modal-overlay">
+  <div class="mcard" style="max-width:720px">
+    <div class="mhead"><h2 id="custMTitle">Customer</h2><button class="mx" onclick="closeCust()">&times;</button></div>
+    <div id="custMBody"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeCust()">Close</button>
+      <button class="b b-g" style="padding:9px 20px" id="custNewBtn">&#43; New Invoice For This Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- REFUND MODAL -->
+<div id="refModal" class="modal-overlay">
+  <div class="mcard" style="max-width:660px">
+    <div class="mhead"><h2 id="refTitle">Refund</h2><button class="mx" onclick="closeRefund()">&times;</button></div>
+
+    <div id="refHead" style="background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px;line-height:1.7;color:#5A4A42"></div>
+
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:7px">Items being returned</div>
+    <div id="refItems" style="border:1.5px solid #EADFD7;border-radius:8px;overflow:hidden;margin-bottom:14px"></div>
+
+    <div class="row r2" style="margin-bottom:12px">
+      <div class="fg"><label>Reason</label>
+        <select id="refReason" onchange="refRecalc()">
+          <option value="damaged">Damaged / defective</option>
+          <option value="wrong_item">Wrong item sent</option>
+          <option value="size">Size or fit issue</option>
+          <option value="not_needed">Customer changed mind</option>
+          <option value="late">Delivered late</option>
+          <option value="other">Other</option>
+        </select></div>
+      <div class="fg"><label>Refund method</label>
+        <select id="refMethod">
+          <option value="upi">UPI</option>
+          <option value="cash">Cash</option>
+          <option value="bank">Bank transfer</option>
+          <option value="card">Back to card</option>
+          <option value="credit_note">Credit note (no money out)</option>
+          <option value="exchange">Exchanged for other goods</option>
+        </select></div>
+    </div>
+
+    <div class="row r2" style="margin-bottom:12px">
+      <div class="fg"><label>Refund date</label><input type="date" id="refDate"></div>
+      <div class="fg"><label>Amount returned to customer</label>
+        <input id="refAmt" type="number" step="0.01" oninput="refTouchAmt()" placeholder="0.00"></div>
+    </div>
+
+    <div class="fg" style="margin-bottom:12px"><label>Note (optional)</label>
+      <input id="refNote" placeholder="Bangle clasp broken on arrival"></div>
+
+    <label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#5A4A42;margin-bottom:6px;cursor:pointer">
+      <input type="checkbox" id="refRestock" style="margin-top:2px">
+      <span>Add the returned quantity back to inventory stock</span></label>
+    <div style="font-size:10px;color:#A08878;line-height:1.5;margin-bottom:14px;padding-left:22px">
+      Selling an item does not reduce its stock automatically, so leave this off unless you also adjust stock by hand.
+    </div>
+
+    <div id="refSummary" style="background:#FDF1F0;border:1.5px solid #F0CFCB;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px;line-height:1.8;color:#96281B"></div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeRefund()">Cancel</button>
+      <button class="b" style="background:#C0392B;color:#fff;padding:9px 20px" id="refSaveBtn" onclick="saveRefund()">Record Refund</button>
+    </div>
   </div>
 </div>
 
@@ -815,7 +932,8 @@ body.sbmin .sb-meter{display:none}
 
     <div class="sec">
       <div class="sec-t">👤 Customer</div>
-      <div class="row r1"><div class="fg"><label>Name</label><input id="fCN" placeholder="Mrs. Priya Raman" oninput="rp()"></div></div>
+      <div class="row r1"><div class="fg"><label>Name</label><input id="fCN" placeholder="Mrs. Priya Raman" oninput="rp();custLookupSoon()"></div></div>
+      <div id="custChip" style="display:none"></div>
       <div class="row r1"><div class="fg"><label>Address</label><textarea id="fCA" oninput="rp()"></textarea></div></div>
       <div class="row r2">
         <div class="fg"><label>District / City</label><input id="fCDist" placeholder="Chennai" oninput="rp()"></div>
@@ -823,7 +941,7 @@ body.sbmin .sb-meter{display:none}
       </div>
       <div class="row r2">
         <div class="fg"><label>Country</label><input id="fCCountry" value="India" oninput="rp()"></div>
-        <div class="fg"><label>Phone</label><input id="fCP" placeholder="+91 XXXXX XXXXX" oninput="rp()"></div>
+        <div class="fg"><label>Phone</label><input id="fCP" placeholder="+91 XXXXX XXXXX" oninput="rp();custLookupSoon()"></div>
       </div>
     </div>
 
@@ -1318,11 +1436,11 @@ function setItemImgPreview(src){
 function clearItemImg(ev){if(ev)ev.stopPropagation();itemImg='';setItemImgPreview('');}
 
 /* ========== NAV ========== */
-var PAGE_TITLES={dash:'Dashboard',inv:'Inventory',rent:'Rentals',rep:'Reports',bill:'Billing & Plan',edit:'Invoice Editor'};
+var PAGE_TITLES={dash:'Dashboard',inv:'Inventory',rent:'Rentals',cust:'Customers',rep:'Reports',bill:'Billing & Plan',edit:'Invoice Editor'};
 function switchView(view){
  try{
-  var views={dash:'dashV',inv:'invV',rent:'rentV',rep:'repV',bill:'billV',edit:'editorV'};
-  var tabs={dash:'tabD',inv:'tabI',rent:'tabRent',rep:'tabR',bill:'tabB',edit:'tabE'};
+  var views={dash:'dashV',inv:'invV',rent:'rentV',cust:'custV',rep:'repV',bill:'billV',edit:'editorV'};
+  var tabs={dash:'tabD',inv:'tabI',rent:'tabRent',cust:'tabC',rep:'tabR',bill:'tabB',edit:'tabE'};
   Object.keys(views).forEach(function(k){
    var el=document.getElementById(views[k]);
    if(el)el.style.display=(k===view)?'flex':'none';
@@ -1351,6 +1469,8 @@ function showBilling(){switchView('bill');loadBilling();}
 async function showReports(){
  switchView('rep');
  if(!allInvs.length){try{allInvs=await sbFetch(SB_URL+'?select=*&order=created_at.desc')||[];}catch(e){}}
+ if(!allRefunds.length){try{await loadRefunds();}catch(e){}}
+ try{buildCustomers();}catch(e){}
  renderReports();}
 
 /* ========== PRODUCTS ========== */
@@ -2307,6 +2427,8 @@ async function loadDash(){
  setSbStatus('busy','Loading...');
  try{
   allInvs=await sbFetch(SB_URL+'?select=*&order=created_at.desc')||[];
+  try{await loadRefunds();}catch(e){}
+  try{buildCustomers();}catch(e){}
   setSbStatus('ok','Supabase ✓');renderDash(allInvs);
  }catch(e){
   setSbStatus('err','DB Error');
@@ -2322,17 +2444,19 @@ function filterDash(){
 function renderDash(invs){
  if(!invs.length){
   ['dTot','dPend'].forEach(function(id){document.getElementById(id).textContent='0';});
-  ['dRev','dNetRev','dShip','dProfit'].forEach(function(id){document.getElementById(id).textContent='₹0';});
+  ['dRev','dNetRev','dShip','dProfit','dRefund'].forEach(function(id){
+   var e=document.getElementById(id);if(e)e.textContent='₹0';});
   document.getElementById('dMargin').textContent='0%';
   document.getElementById('dashC').innerHTML='<div class="empty"><div>📄</div><p style="margin-bottom:14px">No invoices yet.</p>'+
    '<button class="b b-g" onclick="newInv()" style="margin:0 auto;font-size:11px;padding:7px 16px">＋ New Invoice</button></div>';
   return;}
- var rev=0,ship=0,netRev=0,profit=0,mSum=0,mCount=0;
+ var rev=0,ship=0,netRev=0,profit=0,mSum=0,mCount=0,refd=0;
  invs.forEach(function(i){
-  rev+=parseFloat(i.total)||0;
+  rev+=invNetRevenue(i);
+  refd+=invRefunded(i);
   ship+=parseFloat((i.data||{}).ship)||0;
-  netRev+=invNetSales(i);
-  var p=invProfit(i);
+  netRev+=invNetSalesAfterRefund(i);
+  var p=invProfitAfterRefund(i);
   profit+=p.net;
   if(p.fullCost>0&&p.ratio>0){mSum+=p.margin;mCount++;}});
  var paid=invs.filter(function(i){return i.status==='PAID';}).length;
@@ -2343,12 +2467,18 @@ function renderDash(invs){
  document.getElementById('dProfit').textContent='₹'+profit.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('dMargin').textContent=(mCount?(mSum/mCount).toFixed(1):'0')+'%';
  document.getElementById('dPend').textContent=invs.length-paid;
+ var rc=document.getElementById('dRefund');
+ if(rc){rc.textContent='₹'+refd.toLocaleString('en-IN',{maximumFractionDigits:0});
+  var rn=invs.filter(function(i){return invRefunded(i)>0;}).length;
+  var rs2=document.getElementById('dRefundSub');
+  if(rs2)rs2.textContent=rn?(rn+' invoice'+(rn===1?'':'s')+' refunded'):'No returns';}
  var rows=invs.map(function(inv){
   var d=inv.data||{};
   var loc=[d.cdist,d.cstate,d.ccountry].map(function(s){return (s||'').trim();}).filter(Boolean).join(', ')||'—';
-  var p=invProfit(inv);
+  var p=invProfitAfterRefund(inv);
   var sym=d.sym||'₹';
   var hasRent=(d.prods||[]).some(function(x){return x.type==='rental';});
+  var rfd=invRefunded(inv);
   var pCell;
   if(p.fullCost>0){
    if(p.ratio===0){
@@ -2365,15 +2495,19 @@ function renderDash(invs){
    '<td>'+eh(inv.customer_name||'—')+'</td>'+
    '<td style="font-size:11px;color:#666">'+eh(loc)+'</td>'+
    '<td>'+fmtD(inv.invoice_date)+'</td>'+
-   '<td style="font-weight:700">'+sym+' '+(parseFloat(inv.total)||0).toFixed(2)+'</td>'+
+   '<td style="font-weight:700">'+sym+' '+(parseFloat(inv.total)||0).toFixed(2)+
+    (rfd>0?('<div style="font-size:9.5px;color:#C0392B;font-weight:600">&minus;'+sym+' '+rfd.toFixed(2)+' refunded</div>'):'')+'</td>'+
    '<td style="color:#C0392B;font-size:11px">'+(p.fullCost>0?sym+' '+p.fullCost.toFixed(2):'—')+'</td>'+
    '<td style="text-align:right">'+pCell+'</td>'+
-   '<td><span class="bdg '+(inv.status||'paid').toLowerCase()+'">'+(inv.status||'PAID')+'</span></td>'+
+   '<td><span class="bdg '+(inv.status||'paid').toLowerCase()+'">'+(inv.status||'PAID')+'</span>'+
+    (inv.refund_status?('<div style="font-size:8px;background:#FDECEA;color:#C0392B;padding:1px 5px;border-radius:8px;font-weight:800;display:inline-block;margin-top:3px">'+
+      (inv.refund_status==='FULL'?'REFUNDED':'PART REFUND')+'</div>'):'')+'</td>'+
    '<td><div class="tact">'+
-   '<button class="tbtn vi" onclick="viewInv(\''+inv.id+'\')">👁</button>'+
-   '<button class="tbtn ic" onclick="dlFromDash(\''+inv.id+'\')">⬇</button>'+
-   '<button class="tbtn ed" onclick="editInv(\''+inv.id+'\')">✏️</button>'+
-   '<button class="tbtn del" onclick="delInv(\''+inv.id+'\')">🗑</button>'+
+   '<button class="tbtn vi" title="View" onclick="viewInv(\''+inv.id+'\')">👁</button>'+
+   '<button class="tbtn ic" title="Download" onclick="dlFromDash(\''+inv.id+'\')">⬇</button>'+
+   '<button class="tbtn ed" title="Edit" onclick="editInv(\''+inv.id+'\')">✏️</button>'+
+   '<button class="tbtn del" title="Refund" style="background:#FFF3E0;color:#C0392B" onclick="openRefund(\''+inv.id+'\')">↩</button>'+
+   '<button class="tbtn del" title="Delete" onclick="delInv(\''+inv.id+'\')">🗑</button>'+
    '</div></td></tr>';}).join('');
  document.getElementById('dashC').innerHTML='<table class="itbl" style="min-width:1100px"><thead><tr>'+
   '<th>Invoice No.</th><th>Customer</th><th>Location</th><th>Date</th><th>Amount</th><th>Cost</th>'+
@@ -2399,6 +2533,7 @@ async function editInv(id){
   prods=[];rid=0;(row.data.prods||[]).forEach(function(p){rid++;prods.push(Object.assign({},p,{id:rid}));});
   renderP();rp();showEditor();
   setEditorTab(row.invoice_no);
+  try{custLookup();}catch(e){}
   toast('Loaded for editing');
  }catch(e){toast('Failed to load',true);}}
 async function delInv(id){
@@ -2431,6 +2566,7 @@ function resetAll(silent){
  document.getElementById('fDt').value=td;
  document.getElementById('fPO').value=td;
  ['rGC','rDV','rPart'].forEach(function(id){document.getElementById(id).classList.add('off');});
+ var cc=document.getElementById('custChip');if(cc)cc.style.display='none';
  prods=[];rid=0;addP();addP();rp();}
 
 /* ========== REPORTS ========== */
@@ -2447,12 +2583,13 @@ function repFiltered(){
   return true;});}
 function renderReports(){
  var list=repFiltered();
- var rev=0,cost=0,profit=0,ship=0,netRev=0;
+ var rev=0,cost=0,profit=0,ship=0,netRev=0,refd=0;
  list.forEach(function(i){
-  rev+=parseFloat(i.total)||0;
+  rev+=invNetRevenue(i);
+  refd+=invRefunded(i);
   ship+=parseFloat((i.data||{}).ship)||0;
-  netRev+=invNetSales(i);
-  var p=invProfit(i);cost+=p.cost;profit+=p.net;});
+  netRev+=invNetSalesAfterRefund(i);
+  var p=invProfitAfterRefund(i);cost+=p.cost;profit+=p.net;});
  document.getElementById('rRev').textContent='₹'+rev.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('rNetRev').textContent='₹'+netRev.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('rShip').textContent='₹'+ship.toLocaleString('en-IN',{maximumFractionDigits:0});
@@ -2460,15 +2597,52 @@ function renderReports(){
  document.getElementById('rCost').textContent='₹'+cost.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('rProfit').textContent='₹'+profit.toLocaleString('en-IN',{maximumFractionDigits:0});
  document.getElementById('rAOV').textContent='₹'+(list.length?Math.round(rev/list.length).toLocaleString('en-IN'):'0');
- renderMonthly(list);renderTopProducts(list);renderByLocation(list);renderLowMargin(list);}
+ var rr=document.getElementById('rRefund');
+ if(rr){rr.textContent='₹'+refd.toLocaleString('en-IN',{maximumFractionDigits:0});
+  var rsub=document.getElementById('rRefundSub');
+  if(rsub){var gross=refd+rev;
+   rsub.textContent=gross>0?((refd/gross*100).toFixed(1)+'% of billed'):'No returns';}}
+ renderMonthly(list);renderTopProducts(list);renderByLocation(list);renderLowMargin(list);
+ try{renderRefundPanel();renderCustMix(list);}catch(e){console.error('Reports:',e);}}
+
+/* New vs repeat split for the period in view */
+function renderCustMix(list){
+ var box=document.getElementById('repMix');if(!box)return;
+ if(!CUSTS.length)buildCustomers();
+ var firstOf={};
+ CUSTS.forEach(function(c){firstOf[c.key]=c.first;});
+ var mix={nw:{n:0,rev:0},rp:{n:0,rev:0}};
+ list.forEach(function(i){
+  var k=custKeyOf(i);if(!k)return;
+  var isFirst=(firstOf[k]&&i.invoice_date===firstOf[k]);
+  var b=isFirst?mix.nw:mix.rp;
+  b.n++;b.rev+=invNetRevenue(i);});
+ var tot=mix.nw.rev+mix.rp.rev;
+ if(!tot){box.innerHTML='<div style="text-align:center;color:#CCC;padding:30px">No customer data in range</div>';return;}
+ var pr=Math.round(mix.rp.rev/tot*100);
+ box.innerHTML='<div style="padding:18px">'+
+  '<div style="display:flex;height:14px;border-radius:8px;overflow:hidden;background:#F0E7E0;margin-bottom:12px">'+
+   '<div style="width:'+(100-pr)+'%;background:#A08878"></div>'+
+   '<div style="width:'+pr+'%;background:#2E7D32"></div></div>'+
+  '<div style="display:flex;justify-content:space-between;font-size:11.5px;color:#5A4A42;line-height:2">'+
+   '<span><span style="display:inline-block;width:9px;height:9px;background:#A08878;border-radius:2px;margin-right:5px"></span>'+
+    'First-time &mdash; <b>'+mix.nw.n+'</b> invoice'+(mix.nw.n===1?'':'s')+'</span>'+
+   '<b>₹'+mix.nw.rev.toFixed(0)+'</b></div>'+
+  '<div style="display:flex;justify-content:space-between;font-size:11.5px;color:#5A4A42;line-height:2">'+
+   '<span><span style="display:inline-block;width:9px;height:9px;background:#2E7D32;border-radius:2px;margin-right:5px"></span>'+
+    'Repeat &mdash; <b>'+mix.rp.n+'</b> invoice'+(mix.rp.n===1?'':'s')+'</span>'+
+   '<b>₹'+mix.rp.rev.toFixed(0)+'</b></div>'+
+  '<div style="margin-top:12px;padding-top:12px;border-top:1px dashed #EADFD7;font-size:11.5px;color:#777">'+
+   '<b style="color:#2E7D32;font-size:15px">'+pr+'%</b> of revenue in this period came from customers who had bought before.</div>'+
+  '</div>';}
 function renderMonthly(list){
  var months={};
  list.forEach(function(i){
   var d=i.invoice_date;if(!d)return;
   var key=d.slice(0,7);
   if(!months[key])months[key]={rev:0,profit:0};
-  months[key].rev+=parseFloat(i.total)||0;
-  months[key].profit+=invProfit(i).net;});
+  months[key].rev+=invNetRevenue(i);
+  months[key].profit+=invProfitAfterRefund(i).net;});
  var keys=Object.keys(months).sort().slice(-8);
  if(!keys.length){document.getElementById('repChart').innerHTML='<div style="text-align:center;color:#CCC;padding:30px">No data in range</div>';return;}
  var max=Math.max.apply(null,keys.map(function(k){return months[k].rev;}))||1;
@@ -2500,7 +2674,20 @@ function renderTopProducts(list){
    var prof=rev-q*(parseFloat(p.c)||0);
    if(!map[n])map[n]={qty:0,rev:0,profit:0};
    map[n].qty+=q;map[n].rev+=rev*ratio;map[n].profit+=prof*ratio;});});
+ /* subtract what came back, keyed the same way the sales side keys it */
+ var inRange={};
+ list.forEach(function(i){if(i.invoice_no)inRange[i.invoice_no]=true;});
+ (allRefunds||[]).forEach(function(r){
+  if(!inRange[r.invoice_no])return;
+  (r.items||[]).forEach(function(it){
+   var n=((it.cat||'').trim()||(it.n||'').trim());
+   if(!n||!map[n])return;
+   var q=parseFloat(it.q)||0;
+   map[n].qty-=q;
+   map[n].rev-=(parseFloat(it.r)||0)*q;
+   map[n].profit-=((parseFloat(it.r)||0)-(parseFloat(it.c)||0))*q;});});
  var arr=Object.keys(map).map(function(k){return Object.assign({name:k},map[k]);})
+  .filter(function(x){return x.qty>0||x.rev>0;})
   .sort(function(a,b){return b.rev-a.rev;}).slice(0,8);
  if(!arr.length){document.getElementById('repTop').innerHTML='<div style="text-align:center;color:#CCC;padding:30px">No product data</div>';return;}
  document.getElementById('repTop').innerHTML=arr.map(function(p,i){
@@ -2516,7 +2703,7 @@ function renderByLocation(list){
   var d=i.data||{};
   var loc=[(d.cdist||'').trim(),(d.cstate||'').trim()].filter(Boolean).join(', ')||'Unknown';
   if(!map[loc])map[loc]={rev:0,count:0};
-  map[loc].rev+=parseFloat(i.total)||0;
+  map[loc].rev+=invNetRevenue(i);
   map[loc].count++;});
  var arr=Object.keys(map).map(function(k){return{loc:k,rev:map[k].rev,count:map[k].count};})
   .sort(function(a,b){return b.rev-a.rev;}).slice(0,7);
@@ -2531,8 +2718,9 @@ function renderByLocation(list){
    '<div style="height:100%;width:'+((l.rev/max)*100)+'%;background:linear-gradient(90deg,var(--dm),var(--g))"></div></div></div>';}).join('');}
 function renderLowMargin(list){
  var arr=list.map(function(i){
-  var p=invProfit(i);
-  return{no:i.invoice_no,cust:i.customer_name,margin:p.margin,net:p.net,cost:p.fullCost,ratio:p.ratio};})
+  var p=invProfitAfterRefund(i);
+  return{no:i.invoice_no,cust:i.customer_name,margin:p.margin,net:p.net,cost:p.fullCost,ratio:p.ratio,
+         refunded:p.refunded};})
   .filter(function(x){return x.cost>0&&x.ratio>0;})
   .sort(function(a,b){return a.margin-b.margin;}).slice(0,7);
  if(!arr.length){
@@ -2618,6 +2806,471 @@ function contactUpgrade(){
  var mail=(session&&session.user&&session.user.email)||'';
  window.open('https://wa.me/919342382918?text='+encodeURIComponent(
   'Hi, I would like to upgrade my AS Invoice Generator plan. Account: '+mail),'_blank');}
+
+/* ========== REFUNDS ========== */
+var REF_URL=SB_BASE+'/refunds';
+var allRefunds=[], refInv=null, refLines=[], refAmtTouched=false;
+
+var REASON_LABEL={damaged:'Damaged / defective',wrong_item:'Wrong item sent',size:'Size or fit issue',
+ not_needed:'Changed mind',late:'Delivered late',other:'Other'};
+var METHOD_LABEL={upi:'UPI',cash:'Cash',bank:'Bank transfer',card:'Card',
+ credit_note:'Credit note',exchange:'Exchange'};
+
+/* ---- figures that already account for refunds ---- */
+function invRefunded(inv){return parseFloat(inv.refunded_amount)||0;}
+function invRefundedGoods(inv){return parseFloat(inv.refunded_goods)||0;}
+function invRefundedCost(inv){return parseFloat(inv.refunded_cost)||0;}
+/* Money actually kept on this invoice */
+function invNetRevenue(inv){return Math.max((parseFloat(inv.total)||0)-invRefunded(inv),0);}
+/* Product sales after returns — realised, then less returned goods */
+function invNetSalesAfterRefund(inv){
+ return Math.max(invNetSales(inv)-invRefundedGoods(inv),0);}
+/* Profit after returns: the margin on returned goods goes back out */
+function invProfitAfterRefund(inv){
+ var p=invProfit(inv);
+ var lostMargin=invRefundedGoods(inv)-invRefundedCost(inv);
+ return{cost:Math.max(p.cost-invRefundedCost(inv),0),
+        net:p.net-lostMargin,
+        margin:p.margin,ratio:p.ratio,
+        fullCost:p.fullCost,fullNet:p.fullNet,
+        refunded:invRefunded(inv)};}
+
+/* ---- line pricing, mirroring the invoice's own maths ---- */
+function lineUnitValue(p){
+ var rate=parseFloat(p.r)||0;
+ if(p.type==='rental')return rate*((p.unit==='event')?1:(parseInt(p.days)||1));
+ return rate;}
+
+/* Share of the invoice discount that applies to one line, so a refund
+   returns what the customer actually paid, not the pre-discount price. */
+function discountFactor(inv){
+ var d=inv.data||{},sub=0;
+ (d.prods||[]).forEach(function(p){sub+=lineUnitValue(p)*(parseFloat(p.q)||0);});
+ if(sub<=0)return 1;
+ var disc=0,dv=parseFloat(d.discv)||0;
+ if(d.disc==='fl')disc=dv;
+ else if(d.disc==='pc')disc=sub*dv/100;
+ else if(d.disc&&d.disc!=='0')disc=sub*(parseFloat(String(d.disc).replace('p',''))||0)/100;
+ return Math.max((sub-disc)/sub,0);}
+
+/* ---- modal ---- */
+function openRefund(id){
+ var inv=null;
+ for(var i=0;i<allInvs.length;i++)if(allInvs[i].id===id)inv=allInvs[i];
+ if(!inv){toast('Invoice not found',true);return;}
+ refInv=inv;refAmtTouched=false;
+ var d=inv.data||{},sym=d.sym||'₹';
+ var f=discountFactor(inv);
+
+ refLines=(d.prods||[]).map(function(p,ix){
+  var q=parseFloat(p.q)||0;
+  return{ix:ix,n:p.n||('Item '+(ix+1)),cat:p.cat||'',sz:p.sz||'',
+   type:p.type||'sale',inv_id:p.inv_id||'',
+   qty:q,back:0,
+   unit:lineUnitValue(p)*f,
+   cost:parseFloat(p.c)||0};});
+
+ var already=invRefunded(inv);
+ var tot=parseFloat(inv.total)||0;
+ setTxt('refTitle','Refund — '+(inv.invoice_no||''));
+ document.getElementById('refHead').innerHTML=
+  '<b>'+eh(inv.customer_name||'—')+'</b> &nbsp;·&nbsp; '+fmtD(inv.invoice_date)+'<br>'+
+  'Invoice total <b>'+sym+' '+tot.toFixed(2)+'</b>'+
+  (already>0?(' &nbsp;·&nbsp; already refunded <b style="color:#C0392B">'+sym+' '+already.toFixed(2)+'</b>'+
+              ' &nbsp;·&nbsp; refundable <b>'+sym+' '+Math.max(tot-already,0).toFixed(2)+'</b>'):'');
+
+ document.getElementById('refDate').value=todayStr();
+ document.getElementById('refAmt').value='';
+ document.getElementById('refNote').value='';
+ document.getElementById('refRestock').checked=false;
+ document.getElementById('refReason').value='damaged';
+ document.getElementById('refMethod').value='upi';
+
+ renderRefLines();refRecalc();
+ document.getElementById('refModal').classList.add('show');}
+
+function renderRefLines(){
+ var sym=(refInv&&(refInv.data||{}).sym)||'₹';
+ var box=document.getElementById('refItems');
+ if(!refLines.length){
+  box.innerHTML='<div style="padding:18px;text-align:center;color:#BBB;font-size:11.5px">'+
+   'This invoice has no itemised lines — enter the refund amount below.</div>';return;}
+ box.innerHTML='<table class="itbl" style="width:100%;min-width:0"><thead><tr>'+
+  '<th>Item</th><th style="text-align:center">Sold</th><th style="text-align:center">Return</th>'+
+  '<th style="text-align:right">Value</th></tr></thead><tbody>'+
+  refLines.map(function(l,i){
+   return '<tr><td><b>'+eh(l.n)+'</b>'+
+    (l.cat||l.sz?('<div style="font-size:9.5px;color:#AAA">'+eh([l.cat,l.sz].filter(Boolean).join(' · '))+'</div>'):'')+
+    (l.type==='rental'?' <span style="font-size:8px;background:#F0E8FA;color:#7B5EA7;padding:1px 5px;border-radius:8px">RENT</span>':'')+'</td>'+
+    '<td style="text-align:center">'+l.qty+'</td>'+
+    '<td style="text-align:center"><input type="number" min="0" step="1" max="'+l.qty+'" value="'+l.back+'" '+
+     'onchange="refSetQty('+i+',this.value)" style="width:62px;padding:5px;border:1.5px solid #E0D5CF;border-radius:5px;text-align:center;font-family:\'Open Sans\',sans-serif"></td>'+
+    '<td style="text-align:right">'+sym+' '+(l.unit*l.back).toFixed(2)+
+     '<div style="font-size:9px;color:#AAA">'+sym+' '+l.unit.toFixed(2)+' each</div></td></tr>';}).join('')+
+  '<tr><td colspan="2"></td>'+
+  '<td style="text-align:center"><button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:5px 10px;font-size:10px" onclick="refAll()">Return all</button></td>'+
+  '<td style="text-align:right;font-weight:800" id="refGoodsCell">—</td></tr>'+
+  '</tbody></table>';}
+
+function refSetQty(i,v){
+ var l=refLines[i];
+ var n=parseInt(v)||0;
+ l.back=Math.max(Math.min(n,l.qty),0);
+ renderRefLines();refRecalc();}
+function refAll(){
+ refLines.forEach(function(l){l.back=l.qty;});
+ refAmtTouched=false;
+ renderRefLines();refRecalc();}
+function refTouchAmt(){refAmtTouched=true;refRecalc(true);}
+
+function refTotals(){
+ var goods=0,cost=0,units=0;
+ refLines.forEach(function(l){goods+=l.unit*l.back;cost+=l.cost*l.back;units+=l.back;});
+ return{goods:goods,cost:cost,units:units};}
+
+function refRecalc(keepAmt){
+ if(!refInv)return;
+ var sym=(refInv.data||{}).sym||'₹';
+ var t=refTotals();
+ var cell=document.getElementById('refGoodsCell');
+ if(cell)cell.textContent=sym+' '+t.goods.toFixed(2);
+
+ var amtEl=document.getElementById('refAmt');
+ if(!refAmtTouched&&!keepAmt&&t.units>0)amtEl.value=t.goods.toFixed(2);
+
+ var amt=parseFloat(amtEl.value)||0;
+ var tot=parseFloat(refInv.total)||0;
+ var already=invRefunded(refInv);
+ var left=Math.max(tot-already,0);
+ var margin=t.goods-t.cost;
+
+ var warn='';
+ if(amt>left+0.01)warn='<div style="margin-top:6px;font-weight:700">⚠ That is more than the '+sym+' '+left.toFixed(2)+' still refundable on this invoice — the save will be rejected.</div>';
+ else if(t.units===0&&amt>0)warn='<div style="margin-top:6px;opacity:.85">No items marked for return — recording this as a goodwill refund with no stock or cost impact.</div>';
+
+ document.getElementById('refSummary').innerHTML=
+  'Returning <b>'+t.units+'</b> item'+(t.units===1?'':'s')+' worth <b>'+sym+' '+t.goods.toFixed(2)+'</b><br>'+
+  'Money back to customer: <b>'+sym+' '+amt.toFixed(2)+'</b><br>'+
+  'Profit reduces by <b>'+sym+' '+margin.toFixed(2)+'</b> ('+sym+' '+t.cost.toFixed(2)+' of cost comes back)'+warn;}
+
+async function saveRefund(){
+ if(!refInv)return;
+ var btn=document.getElementById('refSaveBtn');
+ btn.disabled=true;btn.textContent='Saving...';
+ try{
+  var t=refTotals();
+  var amt=parseFloat(gv('refAmt'))||0;
+  if(amt<=0&&t.units===0){toast('Enter an amount or mark items to return',true);return;}
+  var tot=parseFloat(refInv.total)||0;
+  var full=(invRefunded(refInv)+amt)>=tot-0.01;
+
+  var row={business_id:myBiz&&myBiz.id,
+   invoice_id:refInv.id,invoice_no:refInv.invoice_no,
+   refund_no:nextRefundNo(),
+   refund_date:gv('refDate')||todayStr(),
+   kind:full?'full':'partial',
+   amount:+amt.toFixed(2),
+   goods_value:+t.goods.toFixed(2),
+   cost_value:+t.cost.toFixed(2),
+   reason:gv('refReason'),
+   reason_note:gv('refNote')||null,
+   method:gv('refMethod'),
+   restocked:document.getElementById('refRestock').checked,
+   items:refLines.filter(function(l){return l.back>0;}).map(function(l){
+    return{n:l.n,cat:l.cat,sz:l.sz,q:l.back,r:l.unit,c:l.cost,inv_id:l.inv_id,type:l.type};})};
+
+  await sbFetch(REF_URL,'POST',row);
+  if(row.restocked)await restockItems(row.items);
+
+  closeRefund();
+  toast('✓ Refund recorded');
+  await loadDash();
+  await loadRefunds();
+ }catch(e){
+  var m=e.message||'';
+  if(/REFUND:/.test(m))toast(m.replace(/^.*REFUND:\s*/,''),true);
+  else if(/refunds|PGRST205|404/i.test(m))toast('Refunds table missing — run feature_refunds_customers.sql',true);
+  else toast('Could not save the refund: '+m,true);
+ }finally{btn.disabled=false;btn.textContent='Record Refund';}}
+
+function nextRefundNo(){
+ var yr=new Date().getFullYear();
+ var n=allRefunds.filter(function(r){return (r.refund_no||'').indexOf('RF-'+yr)===0;}).length+1;
+ return 'RF-'+yr+'-'+String(n).padStart(3,'0');}
+
+async function restockItems(items){
+ for(var i=0;i<items.length;i++){
+  var it=items[i];
+  if(!it.inv_id||!it.q)continue;
+  try{
+   var rows=await sbFetch(INV_URL+'?select=id,quantity&id=eq.'+it.inv_id);
+   if(rows&&rows[0]){
+    var q=(parseFloat(rows[0].quantity)||0)+(parseFloat(it.q)||0);
+    await sbFetch(INV_URL+'?id=eq.'+it.inv_id,'PATCH',{quantity:q});}
+  }catch(e){console.error('restock',e);}}}
+
+function closeRefund(){
+ document.getElementById('refModal').classList.remove('show');
+ refInv=null;refLines=[];}
+
+async function loadRefunds(){
+ try{allRefunds=await sbFetch(REF_URL+'?select=*&order=refund_date.desc&limit=200')||[];}
+ catch(e){allRefunds=[];}
+ try{renderRefundPanel();}catch(e){}
+ return allRefunds;}
+
+function renderRefundPanel(){
+ var box=document.getElementById('repRef');if(!box)return;
+ var list=allRefunds;
+ var from=gv('rFrom'),to=gv('rTo');
+ if(from)list=list.filter(function(r){return r.refund_date>=from;});
+ if(to)list=list.filter(function(r){return r.refund_date<=to;});
+ if(!list.length){
+  box.innerHTML='<div style="padding:26px 18px;text-align:center;color:#BBB;font-size:11.5px">'+
+   'No refunds in this range.</div>';return;}
+ box.innerHTML='<table class="itbl" style="width:100%"><thead><tr>'+
+  '<th>Date</th><th>Invoice</th><th>Reason</th><th>Method</th><th style="text-align:right">Amount</th></tr></thead><tbody>'+
+  list.slice(0,12).map(function(r){
+   return '<tr><td>'+fmtD(r.refund_date)+'</td>'+
+    '<td><b style="color:var(--m)">'+eh(r.invoice_no||'—')+'</b>'+
+     (r.kind==='full'?' <span style="font-size:8px;background:#FDECEA;color:#C0392B;padding:1px 5px;border-radius:8px">FULL</span>':'')+'</td>'+
+    '<td style="font-size:11px">'+eh(REASON_LABEL[r.reason]||r.reason||'—')+
+     (r.reason_note?('<div style="font-size:9.5px;color:#AAA">'+eh(r.reason_note)+'</div>'):'')+'</td>'+
+    '<td style="font-size:11px">'+eh(METHOD_LABEL[r.method]||r.method||'—')+'</td>'+
+    '<td style="text-align:right;color:#C0392B;font-weight:700">₹'+(parseFloat(r.amount)||0).toFixed(2)+'</td></tr>';}).join('')+
+  '</tbody></table>';}
+
+/* ========== CUSTOMERS ========== */
+var CUSTS=[], custTimer=null, custOpen=null;
+
+/* Phone is the identity when there is one, since the same person is often
+   entered as "Priya", "Mrs Priya" and "Priya R". */
+function normPhone(v){return String(v||'').replace(/[^0-9]/g,'').slice(-10);}
+function custKeyOf(inv){
+ var d=inv.data||{};
+ var ph=normPhone(d.cp);
+ if(ph.length>=10)return 'p:'+ph;
+ var n=String(inv.customer_name||d.cn||'').trim().toLowerCase().replace(/\s+/g,' ');
+ return n?('n:'+n):'';}
+
+function buildCustomers(){
+ var map={};
+ (allInvs||[]).forEach(function(inv){
+  var k=custKeyOf(inv);
+  if(!k)return;
+  var d=inv.data||{};
+  if(!map[k]){
+   map[k]={key:k,name:inv.customer_name||d.cn||'—',phone:d.cp||'',
+    district:d.cdist||'',state:d.cstate||'',country:d.ccountry||'',address:d.ca||'',
+    orders:0,spent:0,refunded:0,net:0,profit:0,first:null,last:null,invs:[]};}
+  var c=map[k];
+  c.orders++;
+  c.spent+=parseFloat(inv.total)||0;
+  c.refunded+=invRefunded(inv);
+  c.net+=invNetRevenue(inv);
+  c.profit+=invProfitAfterRefund(inv).net;
+  var dt=inv.invoice_date||'';
+  if(dt){
+   if(!c.first||dt<c.first)c.first=dt;
+   if(!c.last||dt>c.last){c.last=dt;
+    /* keep the most recent contact details */
+    c.name=inv.customer_name||c.name;
+    if(d.cp)c.phone=d.cp;
+    if(d.cdist)c.district=d.cdist;
+    if(d.cstate)c.state=d.cstate;
+    if(d.ca)c.address=d.ca;}}
+  c.invs.push(inv);});
+
+ CUSTS=Object.keys(map).map(function(k){
+  var c=map[k];
+  c.avg=c.orders?c.net/c.orders:0;
+  c.repeat=c.orders>1;
+  c.daysSince=c.last?Math.floor((new Date()-new Date(c.last+'T00:00:00'))/86400000):null;
+  return c;});
+ return CUSTS;}
+
+function findCustomer(name,phone){
+ var ph=normPhone(phone);
+ var n=String(name||'').trim().toLowerCase().replace(/\s+/g,' ');
+ if(!CUSTS.length)buildCustomers();
+ for(var i=0;i<CUSTS.length;i++){
+  var c=CUSTS[i];
+  if(ph.length>=10&&normPhone(c.phone)===ph)return c;}
+ if(!n)return null;
+ for(var j=0;j<CUSTS.length;j++){
+  if(String(CUSTS[j].name||'').trim().toLowerCase().replace(/\s+/g,' ')===n)return CUSTS[j];}
+ return null;}
+
+async function showCustomers(){
+ switchView('cust');
+ if(!allInvs.length){
+  try{allInvs=await sbFetch(SB_URL+'?select=*&order=created_at.desc')||[];}catch(e){}}
+ if(!allRefunds.length){try{await loadRefunds();}catch(e){}}
+ buildCustomers();renderCustomers();}
+
+function renderCustomers(){
+ var list=CUSTS.slice();
+ var tot=list.length;
+ var rep=list.filter(function(c){return c.repeat;});
+ var repRev=rep.reduce(function(t,c){return t+c.net;},0);
+ var allRev=list.reduce(function(t,c){return t+c.net;},0);
+
+ setTxt('cTot',String(tot));
+ setTxt('cRep',String(rep.length));
+ setTxt('cRate',(tot?Math.round(rep.length/tot*100):0)+'%');
+ setTxt('cRateSub',rep.length+' of '+tot+' have ordered again');
+ setTxt('cRepRev','₹'+Math.round(repRev).toLocaleString('en-IN'));
+ setTxt('cRepRevSub',(allRev?Math.round(repRev/allRev*100):0)+'% of net revenue');
+ setTxt('cLTV','₹'+(tot?Math.round(allRev/tot).toLocaleString('en-IN'):'0'));
+
+ var f=gv('custFilter')||'all';
+ if(f==='repeat')list=list.filter(function(c){return c.repeat;});
+ else if(f==='new')list=list.filter(function(c){return !c.repeat;});
+ else if(f==='lapsed')list=list.filter(function(c){return c.daysSince!=null&&c.daysSince>90;});
+
+ var q=(gv('custSearch')||'').toLowerCase();
+ if(q)list=list.filter(function(c){
+  return [c.name,c.phone,c.district,c.state].join(' ').toLowerCase().indexOf(q)>-1;});
+
+ var sort=gv('custSort')||'spent';
+ list.sort(function(a,b){
+  if(sort==='orders')return b.orders-a.orders||b.net-a.net;
+  if(sort==='recent')return String(b.last||'').localeCompare(String(a.last||''));
+  if(sort==='name')return String(a.name).localeCompare(String(b.name));
+  return b.net-a.net;});
+
+ var box=document.getElementById('custC');
+ if(!list.length){
+  box.innerHTML='<div class="empty"><div>👤</div><p>'+
+   (CUSTS.length?'No customers match that filter.':'No customers yet — they appear here as you save invoices.')+'</p></div>';
+  return;}
+
+ var maxNet=Math.max.apply(null,list.map(function(c){return c.net;}))||1;
+ box.innerHTML='<table class="itbl" style="min-width:1050px"><thead><tr>'+
+  '<th>Customer</th><th>Phone</th><th>Location</th><th style="text-align:center">Orders</th>'+
+  '<th>First</th><th>Last</th><th style="text-align:right">Net Spent</th>'+
+  '<th style="text-align:right">Avg Order</th><th></th></tr></thead><tbody>'+
+ list.map(function(c){
+  var badge=c.orders>=5?'<span style="font-size:8px;background:#F3E8C8;color:#8A6D1F;padding:1px 6px;border-radius:8px;font-weight:800">VIP</span>'
+   :c.repeat?'<span style="font-size:8px;background:#E8F5E9;color:#2E7D32;padding:1px 6px;border-radius:8px;font-weight:800">REPEAT</span>'
+   :'<span style="font-size:8px;background:#F5EDE8;color:#A08878;padding:1px 6px;border-radius:8px;font-weight:800">NEW</span>';
+  var lapsed=(c.daysSince!=null&&c.daysSince>90)
+   ?'<div style="font-size:9px;color:#C0392B">'+c.daysSince+' days ago</div>':'';
+  var loc=[c.district,c.state].filter(Boolean).join(', ')||'—';
+  var bar=Math.round((c.net/maxNet)*100);
+  return '<tr><td><b>'+eh(c.name)+'</b> '+badge+
+    (c.refunded>0?('<div style="font-size:9px;color:#C0392B">₹'+c.refunded.toFixed(0)+' refunded</div>'):'')+'</td>'+
+   '<td style="font-size:11px;color:#666">'+eh(c.phone||'—')+'</td>'+
+   '<td style="font-size:11px;color:#666">'+eh(loc)+'</td>'+
+   '<td style="text-align:center;font-weight:800;color:'+(c.repeat?'#2E7D32':'#999')+'">'+c.orders+'</td>'+
+   '<td style="font-size:11px">'+fmtD(c.first)+'</td>'+
+   '<td style="font-size:11px">'+fmtD(c.last)+lapsed+'</td>'+
+   '<td style="text-align:right"><b>₹'+c.net.toFixed(0)+'</b>'+
+    '<div style="height:3px;border-radius:2px;background:#F0E7E0;margin-top:3px"><div style="height:100%;width:'+bar+'%;background:var(--m);border-radius:2px"></div></div></td>'+
+   '<td style="text-align:right;color:#666">₹'+c.avg.toFixed(0)+'</td>'+
+   '<td><div class="tact">'+
+    '<button class="tbtn vi" title="History" onclick="openCust(\''+encodeURIComponent(c.key)+'\')">👁</button>'+
+    '<button class="tbtn ed" title="New invoice" onclick="invoiceFor(\''+encodeURIComponent(c.key)+'\')">✏️</button>'+
+   '</div></td></tr>';}).join('')+'</tbody></table>';}
+
+function custByKey(k){
+ var key=decodeURIComponent(k);
+ for(var i=0;i<CUSTS.length;i++)if(CUSTS[i].key===key)return CUSTS[i];
+ return null;}
+
+function openCust(k){
+ var c=custByKey(k);if(!c)return;
+ custOpen=c;
+ setTxt('custMTitle',c.name);
+ var rows=c.invs.slice().sort(function(a,b){
+  return String(b.invoice_date||'').localeCompare(String(a.invoice_date||''));});
+ document.getElementById('custMBody').innerHTML=
+  '<div class="stats" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">'+
+   '<div class="sc" style="padding:12px 14px"><div class="sc-l">Orders</div><div class="sc-v" style="font-size:19px">'+c.orders+'</div></div>'+
+   '<div class="sc" style="padding:12px 14px;border-left-color:#2E7D32"><div class="sc-l">Net Spent</div><div class="sc-v" style="font-size:19px;color:#2E7D32">₹'+c.net.toFixed(0)+'</div></div>'+
+   '<div class="sc" style="padding:12px 14px;border-left-color:#1565C0"><div class="sc-l">Avg Order</div><div class="sc-v" style="font-size:19px;color:#1565C0">₹'+c.avg.toFixed(0)+'</div></div>'+
+   '<div class="sc" style="padding:12px 14px;border-left-color:#C0392B"><div class="sc-l">Refunded</div><div class="sc-v" style="font-size:19px;color:#C0392B">₹'+c.refunded.toFixed(0)+'</div></div>'+
+  '</div>'+
+  '<div style="font-size:11.5px;color:#777;margin-bottom:10px">'+
+   eh([c.address,c.district,c.state,c.country].filter(Boolean).join(', ')||'No address on file')+
+   (c.phone?(' &nbsp;·&nbsp; '+eh(c.phone)):'')+'</div>'+
+  '<div style="max-height:300px;overflow:auto;border:1.5px solid #EADFD7;border-radius:8px">'+
+  '<table class="itbl" style="width:100%"><thead><tr><th>Invoice</th><th>Date</th>'+
+   '<th style="text-align:right">Total</th><th style="text-align:right">Refunded</th><th>Status</th></tr></thead><tbody>'+
+  rows.map(function(i){
+   var rf=invRefunded(i);
+   return '<tr><td><b style="color:var(--m)">'+eh(i.invoice_no||'—')+'</b></td>'+
+    '<td>'+fmtD(i.invoice_date)+'</td>'+
+    '<td style="text-align:right">₹'+(parseFloat(i.total)||0).toFixed(2)+'</td>'+
+    '<td style="text-align:right;color:'+(rf>0?'#C0392B':'#DDD')+'">'+(rf>0?('₹'+rf.toFixed(2)):'—')+'</td>'+
+    '<td><span class="bdg '+(i.status||'paid').toLowerCase()+'">'+(i.status||'PAID')+'</span></td></tr>';}).join('')+
+  '</tbody></table></div>';
+ document.getElementById('custNewBtn').onclick=function(){invoiceFor(k);};
+ document.getElementById('custModal').classList.add('show');}
+
+function closeCust(){document.getElementById('custModal').classList.remove('show');custOpen=null;}
+
+async function invoiceFor(k){
+ var c=custByKey(k);if(!c)return;
+ closeCust();
+ await newInv();
+ fillCustomer(c);
+ toast('Details filled from '+c.orders+' previous order'+(c.orders===1?'':'s'));}
+
+function fillCustomer(c){
+ function sv(id,v){var e=document.getElementById(id);if(e&&v)e.value=v;}
+ sv('fCN',c.name);sv('fCA',c.address);sv('fCP',c.phone);
+ sv('fCDist',c.district);sv('fCState',c.state);
+ if(c.country)sv('fCCountry',c.country);
+ rp();custLookup();}
+
+/* ---- repeat-customer chip in the editor ---- */
+function custLookupSoon(){
+ clearTimeout(custTimer);
+ custTimer=setTimeout(custLookup,450);}
+
+function custLookup(){
+ var box=document.getElementById('custChip');
+ if(!box)return;
+ var name=gv('fCN'),phone=gv('fCP');
+ if(!name&&!phone){box.style.display='none';return;}
+ if(!CUSTS.length)buildCustomers();
+ var c=findCustomer(name,phone);
+ /* editing an existing invoice of theirs is not a second order */
+ if(!c||(c.orders===1&&curKey&&c.invs[0]&&c.invs[0].id===curKey)){box.style.display='none';return;}
+
+ var same=curKey&&c.invs.some(function(i){return i.id===curKey;});
+ var n=same?c.orders-1:c.orders;
+ if(n<1){box.style.display='none';return;}
+
+ box.style.display='block';
+ box.innerHTML='<div style="background:#F1F8F2;border:1.5px solid #CFE6D2;border-radius:8px;padding:10px 12px;margin-bottom:10px;'+
+  'display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+
+  '<span style="font-size:8.5px;background:#2E7D32;color:#fff;padding:2px 7px;border-radius:8px;font-weight:800;letter-spacing:.4px">REPEAT</span>'+
+  '<span style="font-size:11.5px;color:#2E7D32;line-height:1.5">'+
+   '<b>'+n+'</b> previous order'+(n===1?'':'s')+' &nbsp;·&nbsp; <b>₹'+c.net.toFixed(0)+'</b> lifetime'+
+   (c.last?(' &nbsp;·&nbsp; last on '+fmtD(c.last)):'')+'</span>'+
+  '<span style="flex:1"></span>'+
+  '<button class="b" style="background:#fff;color:#2E7D32;border:1.5px solid #CFE6D2;padding:5px 11px;font-size:10.5px" '+
+   'onclick="fillCustomer(custByKey(\''+encodeURIComponent(c.key)+'\'))">Fill details</button>'+
+  '<button class="b" style="background:#fff;color:#2E7D32;border:1.5px solid #CFE6D2;padding:5px 11px;font-size:10.5px" '+
+   'onclick="openCust(\''+encodeURIComponent(c.key)+'\')">History</button>'+
+  '</div>';}
+
+function exportCustomersCSV(){
+ if(!CUSTS.length){toast('Nothing to export',true);return;}
+ var rows=[['Name','Phone','District','State','Orders','First Order','Last Order',
+            'Total Spent','Refunded','Net Spent','Avg Order','Type']];
+ CUSTS.slice().sort(function(a,b){return b.net-a.net;}).forEach(function(c){
+  rows.push([c.name,c.phone,c.district,c.state,c.orders,c.first||'',c.last||'',
+   c.spent.toFixed(2),c.refunded.toFixed(2),c.net.toFixed(2),c.avg.toFixed(2),
+   c.orders>=5?'VIP':(c.repeat?'Repeat':'New')]);});
+ var csv=rows.map(function(r){
+  return r.map(function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+ var a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+ a.download='customers_'+todayStr()+'.csv';a.click();
+ toast('✓ Customers exported');}
 
 /* ========== BILLING / SUBSCRIPTION (Phase 2) ========== */
 var PLANS=null, PACKS=null, USAGE=null, UPREQS=[], BILLHIST=[], billLoaded=false, upTarget=null;
