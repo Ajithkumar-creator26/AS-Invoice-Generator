@@ -162,7 +162,15 @@ body.sbmin .sb-meter{display:none}
 .packc b{display:block;font-size:13px;color:var(--dm)}
 .packc span{font-size:10px;color:#A08878}
 .packc .pk-p{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--m);white-space:nowrap}
+.issuecard{display:flex;flex-direction:column;align-items:flex-start;gap:7px;text-align:left;cursor:pointer;
+ background:#fff;border:1.5px solid #EADFD7;border-radius:10px;padding:16px 15px;font-family:'Open Sans',sans-serif;
+ transition:transform .14s,box-shadow .14s,border-color .14s}
+.issuecard:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.1);border-color:var(--g)}
+.ic-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.issuecard b{font-family:'Playfair Display',serif;font-size:15px;color:var(--dm)}
+.issuecard span:last-child{font-size:10.5px;color:#A08878;line-height:1.55}
 .spill{display:inline-block;padding:2px 9px;border-radius:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.spill.exchange{background:#EAF3FB;color:#1565C0}
 .spill.pending{background:#FFF3E0;color:#B07000}
 .spill.approved{background:#E8F5E9;color:#2E7D32}
 .spill.rejected,.spill.cancelled{background:#FDECEA;color:#C0392B}
@@ -584,6 +592,26 @@ body.sbmin .sb-meter{display:none}
   </div>
 </div>
 
+<!-- RETURN / DAMAGE CHOOSER -->
+<div id="issueModal" class="modal-overlay">
+  <div class="mcard" style="max-width:520px">
+    <div class="mhead"><h2 id="issueTitle">What happened?</h2><button class="mx" onclick="closeIssue()">&times;</button></div>
+    <p style="font-size:12px;color:#777;line-height:1.7;margin-bottom:16px" id="issueSub"></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <button class="issuecard" onclick="startIssue('exchange')">
+        <span class="ic-ico" style="background:#EAF3FB;color:#1565C0">&#8646;</span>
+        <b>Return</b>
+        <span>Customer swaps it for a different product. Only the price difference moves.</span>
+      </button>
+      <button class="issuecard" onclick="startIssue('refund')">
+        <span class="ic-ico" style="background:#FDECEA;color:#C0392B">&#9888;</span>
+        <b>Damage</b>
+        <span>Item arrived damaged or faulty. Money goes back to the customer.</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- REFUND MODAL -->
 <div id="refModal" class="modal-overlay">
   <div class="mcard" style="max-width:660px">
@@ -593,6 +621,14 @@ body.sbmin .sb-meter{display:none}
 
     <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:7px">Items being returned</div>
     <div id="refItems" style="border:1.5px solid #EADFD7;border-radius:8px;overflow:hidden;margin-bottom:14px"></div>
+
+    <div id="refSwapWrap" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999">Replacement given</span>
+        <button class="b" style="background:#EAF3FB;color:#1565C0;border:1.5px solid #CFE0F0;padding:5px 12px;font-size:10.5px" onclick="pickReplacement()">&#43; Add from inventory</button>
+      </div>
+      <div id="refSwap" style="border:1.5px solid #EADFD7;border-radius:8px;overflow:hidden;margin-bottom:14px"></div>
+    </div>
 
     <div class="row r2" style="margin-bottom:12px">
       <div class="fg"><label>Reason</label>
@@ -617,7 +653,7 @@ body.sbmin .sb-meter{display:none}
 
     <div class="row r2" style="margin-bottom:12px">
       <div class="fg"><label>Refund date</label><input type="date" id="refDate"></div>
-      <div class="fg"><label>Amount returned to customer</label>
+      <div class="fg"><label id="refAmtLbl">Amount returned to customer</label>
         <input id="refAmt" type="number" step="0.01" oninput="refTouchAmt()" placeholder="0.00"></div>
     </div>
 
@@ -626,7 +662,7 @@ body.sbmin .sb-meter{display:none}
 
     <label style="display:flex;align-items:flex-start;gap:8px;font-size:11.5px;color:#5A4A42;margin-bottom:6px;cursor:pointer">
       <input type="checkbox" id="refRestock" style="margin-top:2px">
-      <span>Add the returned quantity back to inventory stock</span></label>
+      <span id="refRestockLbl">Add the returned quantity back to inventory stock</span></label>
     <div style="font-size:10px;color:#A08878;line-height:1.5;margin-bottom:14px;padding-left:22px">
       Selling an item does not reduce its stock automatically, so leave this off unless you also adjust stock by hand.
     </div>
@@ -2006,7 +2042,9 @@ async function openPicker(){
   renderPicker();
  }catch(e){
   document.getElementById('pickerList').innerHTML='<div style="padding:24px;text-align:center;color:#C0392B;font-size:12px">Could not load inventory.<br><span style="font-size:11px;color:#888">'+eh(e.message)+'</span></div>';}}
-function closePicker(){document.getElementById('pickerModal').classList.remove('show');}
+function closePicker(){
+ document.getElementById('pickerModal').classList.remove('show');
+ pickerTarget='invoice';}
 function renderPicker(){
  var q=gv('pkSearch').toLowerCase();
  var list=allItems.filter(function(i){
@@ -2038,9 +2076,12 @@ function renderPicker(){
    (rental?'<div style="font-size:9px;color:#7B5EA7">per '+(i.rental_unit||'day')+'</div>'
           :(parseFloat(i.offer_price)>0?'<div style="font-size:9.5px;color:#999;text-decoration:line-through">₹'+(parseFloat(i.selling_price)||0).toFixed(2)+'</div>':''))+
    '</div><div style="color:var(--g);font-size:18px;font-weight:700">＋</div></div>';}).join('');}
+var pickerTarget='invoice';
 function pickItem(id){
  var it=allItems.find(function(x){return x.id===id;});
- if(it)addItemToInvoice(it);}
+ if(!it)return;
+ if(pickerTarget==='exchange'){addReplacement(it);return;}
+ addItemToInvoice(it);}
 
 /* ========== RENTAL AVAILABILITY ========== */
 async function checkAvailability(invId,from,to,excludeInvoice){
@@ -2496,17 +2537,22 @@ function renderDash(invs){
    '<td style="font-size:11px;color:#666">'+eh(loc)+'</td>'+
    '<td>'+fmtD(inv.invoice_date)+'</td>'+
    '<td style="font-weight:700">'+sym+' '+(parseFloat(inv.total)||0).toFixed(2)+
-    (rfd>0?('<div style="font-size:9.5px;color:#C0392B;font-weight:600">&minus;'+sym+' '+rfd.toFixed(2)+' refunded</div>'):'')+'</td>'+
+    (rfd>0?('<div style="font-size:9.5px;color:#C0392B;font-weight:600">&minus;'+sym+' '+rfd.toFixed(2)+' refunded</div>'):'')+
+    (invExtra(inv)>0?('<div style="font-size:9.5px;color:#2E7D32;font-weight:600">+'+sym+' '+invExtra(inv).toFixed(2)+' on swap</div>'):'')+'</td>'+
    '<td style="color:#C0392B;font-size:11px">'+(p.fullCost>0?sym+' '+p.fullCost.toFixed(2):'—')+'</td>'+
    '<td style="text-align:right">'+pCell+'</td>'+
    '<td><span class="bdg '+(inv.status||'paid').toLowerCase()+'">'+(inv.status||'PAID')+'</span>'+
-    (inv.refund_status?('<div style="font-size:8px;background:#FDECEA;color:#C0392B;padding:1px 5px;border-radius:8px;font-weight:800;display:inline-block;margin-top:3px">'+
-      (inv.refund_status==='FULL'?'REFUNDED':'PART REFUND')+'</div>'):'')+'</td>'+
+    (inv.refund_status?('<div style="font-size:8px;'+
+      (inv.refund_status==='EXCHANGED'?'background:#EAF3FB;color:#1565C0':'background:#FDECEA;color:#C0392B')+
+      ';padding:1px 5px;border-radius:8px;font-weight:800;display:inline-block;margin-top:3px">'+
+      (inv.refund_status==='FULL'?'REFUNDED':inv.refund_status==='EXCHANGED'?'EXCHANGED':'PART REFUND')+'</div>'):'')+
+    (invExchanged(inv)&&inv.refund_status!=='EXCHANGED'
+      ?'<div style="font-size:8px;background:#EAF3FB;color:#1565C0;padding:1px 5px;border-radius:8px;font-weight:800;display:inline-block;margin-top:3px">SWAP</div>':'')+'</td>'+
    '<td><div class="tact">'+
    '<button class="tbtn vi" title="View" onclick="viewInv(\''+inv.id+'\')">👁</button>'+
    '<button class="tbtn ic" title="Download" onclick="dlFromDash(\''+inv.id+'\')">⬇</button>'+
    '<button class="tbtn ed" title="Edit" onclick="editInv(\''+inv.id+'\')">✏️</button>'+
-   '<button class="tbtn del" title="Refund" style="background:#FFF3E0;color:#C0392B" onclick="openRefund(\''+inv.id+'\')">↩</button>'+
+   '<button class="tbtn del" title="Refund" style="background:#FFF3E0;color:#C0392B" onclick="openIssue(\''+inv.id+'\')">↩</button>'+
    '<button class="tbtn del" title="Delete" onclick="delInv(\''+inv.id+'\')">🗑</button>'+
    '</div></td></tr>';}).join('');
  document.getElementById('dashC').innerHTML='<table class="itbl" style="min-width:1100px"><thead><tr>'+
@@ -2600,8 +2646,11 @@ function renderReports(){
  var rr=document.getElementById('rRefund');
  if(rr){rr.textContent='₹'+refd.toLocaleString('en-IN',{maximumFractionDigits:0});
   var rsub=document.getElementById('rRefundSub');
-  if(rsub){var gross=refd+rev;
-   rsub.textContent=gross>0?((refd/gross*100).toFixed(1)+'% of billed'):'No returns';}}
+  if(rsub){
+   var xc=list.reduce(function(t,i){return t+invExchanged(i);},0);
+   var gross=refd+rev;
+   rsub.textContent=(gross>0?((refd/gross*100).toFixed(1)+'% of billed'):'No refunds')+
+    (xc?('  ·  '+xc+' exchange'+(xc===1?'':'s')):'');}}
  renderMonthly(list);renderTopProducts(list);renderByLocation(list);renderLowMargin(list);
  try{renderRefundPanel();renderCustMix(list);}catch(e){console.error('Reports:',e);}}
 
@@ -2685,7 +2734,16 @@ function renderTopProducts(list){
    var q=parseFloat(it.q)||0;
    map[n].qty-=q;
    map[n].rev-=(parseFloat(it.r)||0)*q;
-   map[n].profit-=((parseFloat(it.r)||0)-(parseFloat(it.c)||0))*q;});});
+   map[n].profit-=((parseFloat(it.r)||0)-(parseFloat(it.c)||0))*q;});
+  /* whatever went out instead counts as sold */
+  (r.replacement_items||[]).forEach(function(it){
+   var n=((it.cat||'').trim()||(it.n||'').trim());
+   if(!n)return;
+   var q=parseFloat(it.q)||0;
+   if(!map[n])map[n]={qty:0,rev:0,profit:0};
+   map[n].qty+=q;
+   map[n].rev+=(parseFloat(it.r)||0)*q;
+   map[n].profit+=((parseFloat(it.r)||0)-(parseFloat(it.c)||0))*q;});});
  var arr=Object.keys(map).map(function(k){return Object.assign({name:k},map[k]);})
   .filter(function(x){return x.qty>0||x.rev>0;})
   .sort(function(a,b){return b.rev-a.rev;}).slice(0,8);
@@ -2810,21 +2868,50 @@ function contactUpgrade(){
 /* ========== REFUNDS ========== */
 var REF_URL=SB_BASE+'/refunds';
 var allRefunds=[], refInv=null, refLines=[], refAmtTouched=false;
+var refMode='refund', refSwap=[], issueInvId=null;
 
-var REASON_LABEL={damaged:'Damaged / defective',wrong_item:'Wrong item sent',size:'Size or fit issue',
+var REASONS={
+ refund:[['damaged','Damaged on arrival'],['faulty','Faulty / broken clasp'],
+         ['quality','Quality not as expected'],['wrong_item','Wrong item sent'],
+         ['late','Delivered late'],['other','Other']],
+ exchange:[['size','Size or fit issue'],['colour','Wanted a different colour'],
+           ['design','Wanted a different design'],['wrong_item','Wrong item sent'],
+           ['upgrade','Upgrading to another piece'],['other','Other']]};
+
+function openIssue(id){
+ var inv=null;
+ for(var i=0;i<allInvs.length;i++)if(allInvs[i].id===id)inv=allInvs[i];
+ if(!inv){toast('Invoice not found',true);return;}
+ issueInvId=id;
+ setTxt('issueTitle','Return or damage — '+(inv.invoice_no||''));
+ setTxt('issueSub',(inv.customer_name||'This customer')+' has an issue with invoice '+
+  (inv.invoice_no||'')+' ('+fmtD(inv.invoice_date)+'). Pick what you are doing about it.');
+ document.getElementById('issueModal').classList.add('show');}
+function closeIssue(){document.getElementById('issueModal').classList.remove('show');}
+function startIssue(mode){
+ closeIssue();
+ openRefund(issueInvId,mode);}
+
+var REASON_LABEL={damaged:'Damaged on arrival',faulty:'Faulty / broken',quality:'Quality not as expected',
+ wrong_item:'Wrong item sent',size:'Size or fit issue',colour:'Wanted another colour',
+ design:'Wanted another design',upgrade:'Upgraded to another piece',
  not_needed:'Changed mind',late:'Delivered late',other:'Other'};
 var METHOD_LABEL={upi:'UPI',cash:'Cash',bank:'Bank transfer',card:'Card',
- credit_note:'Credit note',exchange:'Exchange'};
+ credit_note:'Credit note',exchange:'Goods exchanged'};
 
 /* ---- figures that already account for refunds ---- */
 function invRefunded(inv){return parseFloat(inv.refunded_amount)||0;}
 function invRefundedGoods(inv){return parseFloat(inv.refunded_goods)||0;}
 function invRefundedCost(inv){return parseFloat(inv.refunded_cost)||0;}
-/* Money actually kept on this invoice */
-function invNetRevenue(inv){return Math.max((parseFloat(inv.total)||0)-invRefunded(inv),0);}
-/* Product sales after returns — realised, then less returned goods */
+function invExtra(inv){return parseFloat(inv.collected_extra)||0;}
+/* Money actually kept on this invoice, including anything collected on a swap */
+function invNetRevenue(inv){
+ return Math.max((parseFloat(inv.total)||0)-invRefunded(inv)+invExtra(inv),0);}
+/* Product sales after returns. refunded_goods is NET of any replacement,
+   so an upgrade exchange is negative here and correctly pushes sales up. */
 function invNetSalesAfterRefund(inv){
  return Math.max(invNetSales(inv)-invRefundedGoods(inv),0);}
+function invExchanged(inv){return parseInt(inv.exchange_count)||0;}
 /* Profit after returns: the margin on returned goods goes back out */
 function invProfitAfterRefund(inv){
  var p=invProfit(inv);
@@ -2854,11 +2941,13 @@ function discountFactor(inv){
  return Math.max((sub-disc)/sub,0);}
 
 /* ---- modal ---- */
-function openRefund(id){
+function openRefund(id,mode){
  var inv=null;
  for(var i=0;i<allInvs.length;i++)if(allInvs[i].id===id)inv=allInvs[i];
  if(!inv){toast('Invoice not found',true);return;}
  refInv=inv;refAmtTouched=false;
+ refMode=(mode==='exchange')?'exchange':'refund';
+ refSwap=[];
  var d=inv.data||{},sym=d.sym||'₹';
  var f=discountFactor(inv);
 
@@ -2872,7 +2961,25 @@ function openRefund(id){
 
  var already=invRefunded(inv);
  var tot=parseFloat(inv.total)||0;
- setTxt('refTitle','Refund — '+(inv.invoice_no||''));
+ var xch=(refMode==='exchange');
+
+ setTxt('refTitle',(xch?'Return & exchange — ':'Damage refund — ')+(inv.invoice_no||''));
+ var rs=document.getElementById('refReason');
+ rs.innerHTML=REASONS[refMode].map(function(r){
+  return '<option value="'+r[0]+'">'+r[1]+'</option>';}).join('');
+ document.getElementById('refSwapWrap').style.display=xch?'block':'none';
+ setTxt('refAmtLbl',xch?'Cash settled now (leave blank if even)':'Amount returned to customer');
+ setTxt('refRestockLbl',xch
+  ? 'Adjust stock — returned items back in, replacements out'
+  : 'Add the returned quantity back to inventory stock');
+ var sb=document.getElementById('refSaveBtn');
+ sb.textContent=xch?'Record Exchange':'Record Refund';
+ sb.style.background=xch?'#1565C0':'#C0392B';
+ var sm=document.getElementById('refSummary');
+ sm.style.background=xch?'#F2F7FC':'#FDF1F0';
+ sm.style.borderColor=xch?'#CFE0F0':'#F0CFCB';
+ sm.style.color=xch?'#13497F':'#96281B';
+
  document.getElementById('refHead').innerHTML=
   '<b>'+eh(inv.customer_name||'—')+'</b> &nbsp;·&nbsp; '+fmtD(inv.invoice_date)+'<br>'+
   'Invoice total <b>'+sym+' '+tot.toFixed(2)+'</b>'+
@@ -2883,10 +2990,10 @@ function openRefund(id){
  document.getElementById('refAmt').value='';
  document.getElementById('refNote').value='';
  document.getElementById('refRestock').checked=false;
- document.getElementById('refReason').value='damaged';
- document.getElementById('refMethod').value='upi';
-
- renderRefLines();refRecalc();
+ /* the reason list was just rebuilt for this mode — take its first entry */
+ document.getElementById('refReason').selectedIndex=0;
+ document.getElementById('refMethod').value=xch?'exchange':'upi';
+ renderRefLines();renderRefSwap();refRecalc();
  document.getElementById('refModal').classList.add('show');}
 
 function renderRefLines(){
@@ -2912,6 +3019,44 @@ function renderRefLines(){
   '<td style="text-align:right;font-weight:800" id="refGoodsCell">—</td></tr>'+
   '</tbody></table>';}
 
+/* ---- replacement side of an exchange ---- */
+function renderRefSwap(){
+ var box=document.getElementById('refSwap');if(!box)return;
+ var sym=(refInv&&(refInv.data||{}).sym)||'₹';
+ if(!refSwap.length){
+  box.innerHTML='<div style="padding:20px;text-align:center;color:#BBB;font-size:11.5px">'+
+   'Nothing chosen yet &mdash; add the product the customer is taking instead.</div>';return;}
+ box.innerHTML='<table class="itbl" style="width:100%;min-width:0"><thead><tr>'+
+  '<th>Replacement</th><th style="text-align:center">Qty</th>'+
+  '<th style="text-align:right">Price</th><th style="text-align:right">Value</th><th></th></tr></thead><tbody>'+
+  refSwap.map(function(l,i){
+   return '<tr><td><b>'+eh(l.n)+'</b>'+
+    (l.code?('<div style="font-size:9.5px;color:#AAA">'+eh(l.code)+(l.sz?(' · '+eh(l.sz)):'')+'</div>'):'')+'</td>'+
+    '<td style="text-align:center"><input type="number" min="1" step="1" value="'+l.q+'" '+
+     'onchange="swapSetQty('+i+',this.value)" style="width:58px;padding:5px;border:1.5px solid #E0D5CF;border-radius:5px;text-align:center;font-family:\'Open Sans\',sans-serif"></td>'+
+    '<td style="text-align:right"><input type="number" min="0" step="0.01" value="'+l.r+'" '+
+     'onchange="swapSetRate('+i+',this.value)" style="width:86px;padding:5px;border:1.5px solid #E0D5CF;border-radius:5px;text-align:right;font-family:\'Open Sans\',sans-serif"></td>'+
+    '<td style="text-align:right;font-weight:700">'+sym+' '+(l.r*l.q).toFixed(2)+'</td>'+
+    '<td style="text-align:right"><button class="tbtn del" onclick="swapRemove('+i+')">🗑</button></td></tr>';}).join('')+
+  '</tbody></table>';}
+
+function swapSetQty(i,v){refSwap[i].q=Math.max(parseInt(v)||1,1);refAmtTouched=false;renderRefSwap();refRecalc();}
+function swapSetRate(i,v){refSwap[i].r=Math.max(parseFloat(v)||0,0);refAmtTouched=false;renderRefSwap();refRecalc();}
+function swapRemove(i){refSwap.splice(i,1);refAmtTouched=false;renderRefSwap();refRecalc();}
+
+function pickReplacement(){
+ pickerTarget='exchange';
+ openPicker();}
+
+function addReplacement(it){
+ var price=(parseFloat(it.offer_price)>0)?parseFloat(it.offer_price)
+  :(parseFloat(it.selling_price)||parseFloat(it.rental_rate)||0);
+ refSwap.push({n:it.name||'—',code:it.code||'',cat:it.category||'',sz:it.size||'',
+  inv_id:it.id,q:1,r:price,c:parseFloat(it.purchase_price)||0});
+ refAmtTouched=false;
+ closePicker();pickerTarget='invoice';
+ renderRefSwap();refRecalc();}
+
 function refSetQty(i,v){
  var l=refLines[i];
  var n=parseInt(v)||0;
@@ -2926,7 +3071,11 @@ function refTouchAmt(){refAmtTouched=true;refRecalc(true);}
 function refTotals(){
  var goods=0,cost=0,units=0;
  refLines.forEach(function(l){goods+=l.unit*l.back;cost+=l.cost*l.back;units+=l.back;});
- return{goods:goods,cost:cost,units:units};}
+ var rep=0,repCost=0,repUnits=0;
+ refSwap.forEach(function(l){rep+=l.r*l.q;repCost+=l.c*l.q;repUnits+=l.q;});
+ return{goods:goods,cost:cost,units:units,
+        rep:rep,repCost:repCost,repUnits:repUnits,
+        diff:rep-goods};}
 
 function refRecalc(keepAmt){
  if(!refInv)return;
@@ -2936,19 +3085,49 @@ function refRecalc(keepAmt){
  if(cell)cell.textContent=sym+' '+t.goods.toFixed(2);
 
  var amtEl=document.getElementById('refAmt');
- if(!refAmtTouched&&!keepAmt&&t.units>0)amtEl.value=t.goods.toFixed(2);
-
- var amt=parseFloat(amtEl.value)||0;
  var tot=parseFloat(refInv.total)||0;
  var already=invRefunded(refInv);
  var left=Math.max(tot-already,0);
+ var box=document.getElementById('refSummary');
+
+ if(refMode==='exchange'){
+  /* the customer pays the difference, or we hand back the difference */
+  if(!refAmtTouched&&!keepAmt)amtEl.value=Math.abs(t.diff)>0.005?Math.abs(t.diff).toFixed(2):'';
+  var cash=parseFloat(amtEl.value)||0;
+  var owedToUs=t.diff>0;
+  var netGoods=t.goods-t.rep;
+  var netCost=t.cost-t.repCost;
+  var profitShift=-(netGoods-netCost);
+
+  var xwarn='';
+  if(t.units===0)xwarn='<div style="margin-top:6px;font-weight:700">⚠ Mark which items are coming back before saving.</div>';
+  else if(!t.repUnits)xwarn='<div style="margin-top:6px;font-weight:700">⚠ Add the replacement product — an exchange needs one.</div>';
+  else if(!owedToUs&&t.diff<-0.005&&cash>left+0.01)
+   xwarn='<div style="margin-top:6px;font-weight:700">⚠ Handing back '+sym+' '+cash.toFixed(2)+' is more than the '+sym+' '+left.toFixed(2)+' still refundable — the save will be rejected.</div>';
+
+  var line3;
+  if(Math.abs(t.diff)<=0.005)line3='Even swap &mdash; <b>no money moves</b>.';
+  else if(owedToUs)line3='Customer pays you <b>'+sym+' '+Math.abs(t.diff).toFixed(2)+'</b> more.';
+  else line3='You hand back <b>'+sym+' '+Math.abs(t.diff).toFixed(2)+'</b>.';
+
+  box.innerHTML=
+   'Coming back: <b>'+t.units+'</b> item'+(t.units===1?'':'s')+' worth <b>'+sym+' '+t.goods.toFixed(2)+'</b><br>'+
+   'Going out: <b>'+t.repUnits+'</b> item'+(t.repUnits===1?'':'s')+' worth <b>'+sym+' '+t.rep.toFixed(2)+'</b><br>'+
+   line3+'<br>'+
+   'Profit '+(profitShift>=0?'rises':'falls')+' by <b>'+sym+' '+Math.abs(profitShift).toFixed(2)+'</b>'+
+   ' (cost '+(netCost>=0?'down ':'up ')+sym+' '+Math.abs(netCost).toFixed(2)+')'+xwarn;
+  return;}
+
+ /* damage refund */
+ if(!refAmtTouched&&!keepAmt&&t.units>0)amtEl.value=t.goods.toFixed(2);
+ var amt=parseFloat(amtEl.value)||0;
  var margin=t.goods-t.cost;
 
  var warn='';
  if(amt>left+0.01)warn='<div style="margin-top:6px;font-weight:700">⚠ That is more than the '+sym+' '+left.toFixed(2)+' still refundable on this invoice — the save will be rejected.</div>';
  else if(t.units===0&&amt>0)warn='<div style="margin-top:6px;opacity:.85">No items marked for return — recording this as a goodwill refund with no stock or cost impact.</div>';
 
- document.getElementById('refSummary').innerHTML=
+ box.innerHTML=
   'Returning <b>'+t.units+'</b> item'+(t.units===1?'':'s')+' worth <b>'+sym+' '+t.goods.toFixed(2)+'</b><br>'+
   'Money back to customer: <b>'+sym+' '+amt.toFixed(2)+'</b><br>'+
   'Profit reduces by <b>'+sym+' '+margin.toFixed(2)+'</b> ('+sym+' '+t.cost.toFixed(2)+' of cost comes back)'+warn;}
@@ -2959,31 +3138,55 @@ async function saveRefund(){
  btn.disabled=true;btn.textContent='Saving...';
  try{
   var t=refTotals();
-  var amt=parseFloat(gv('refAmt'))||0;
-  if(amt<=0&&t.units===0){toast('Enter an amount or mark items to return',true);return;}
+  var cash=parseFloat(gv('refAmt'))||0;
+  var xch=(refMode==='exchange');
+
+  if(xch){
+   if(t.units===0){toast('Mark which items are coming back',true);return;}
+   if(!t.repUnits){toast('Add the replacement product',true);return;}
+  }else if(cash<=0&&t.units===0){
+   toast('Enter an amount or mark items to return',true);return;}
+
   var tot=parseFloat(refInv.total)||0;
-  var full=(invRefunded(refInv)+amt)>=tot-0.01;
+  /* on an exchange the cash only moves one way: out if we owe them,
+     in if they owe us. Everything else stays at zero. */
+  var amount=0,extra=0;
+  if(xch){
+   if(t.diff>0.005)extra=cash;        // replacement dearer → they pay us
+   else if(t.diff<-0.005)amount=cash; // replacement cheaper → we pay them
+  }else amount=cash;
+
+  var full=!xch&&((invRefunded(refInv)+amount)>=tot-0.01);
 
   var row={business_id:myBiz&&myBiz.id,
    invoice_id:refInv.id,invoice_no:refInv.invoice_no,
-   refund_no:nextRefundNo(),
+   refund_no:nextRefundNo(xch),
    refund_date:gv('refDate')||todayStr(),
+   type:xch?'exchange':'refund',
    kind:full?'full':'partial',
-   amount:+amt.toFixed(2),
+   amount:+amount.toFixed(2),
+   extra_collected:+extra.toFixed(2),
    goods_value:+t.goods.toFixed(2),
    cost_value:+t.cost.toFixed(2),
+   replacement_value:+t.rep.toFixed(2),
+   replacement_cost:+t.repCost.toFixed(2),
    reason:gv('refReason'),
    reason_note:gv('refNote')||null,
    method:gv('refMethod'),
    restocked:document.getElementById('refRestock').checked,
    items:refLines.filter(function(l){return l.back>0;}).map(function(l){
-    return{n:l.n,cat:l.cat,sz:l.sz,q:l.back,r:l.unit,c:l.cost,inv_id:l.inv_id,type:l.type};})};
+    return{n:l.n,cat:l.cat,sz:l.sz,q:l.back,r:l.unit,c:l.cost,inv_id:l.inv_id,type:l.type};}),
+   replacement_items:refSwap.map(function(l){
+    return{n:l.n,code:l.code,cat:l.cat,sz:l.sz,q:l.q,r:l.r,c:l.c,inv_id:l.inv_id};})};
 
   await sbFetch(REF_URL,'POST',row);
-  if(row.restocked)await restockItems(row.items);
+  if(row.restocked){
+   await restockItems(row.items);                 // returned goods back in
+   if(xch)await restockItems(row.replacement_items,-1);  // replacements out
+  }
 
   closeRefund();
-  toast('✓ Refund recorded');
+  toast(xch?'✓ Exchange recorded':'✓ Refund recorded');
   await loadDash();
   await loadRefunds();
  }catch(e){
@@ -2993,25 +3196,27 @@ async function saveRefund(){
   else toast('Could not save the refund: '+m,true);
  }finally{btn.disabled=false;btn.textContent='Record Refund';}}
 
-function nextRefundNo(){
- var yr=new Date().getFullYear();
- var n=allRefunds.filter(function(r){return (r.refund_no||'').indexOf('RF-'+yr)===0;}).length+1;
- return 'RF-'+yr+'-'+String(n).padStart(3,'0');}
+function nextRefundNo(isExchange){
+ var yr=new Date().getFullYear(),pre=isExchange?'EX-':'RF-';
+ var n=allRefunds.filter(function(r){return (r.refund_no||'').indexOf(pre+yr)===0;}).length+1;
+ return pre+yr+'-'+String(n).padStart(3,'0');}
 
-async function restockItems(items){
- for(var i=0;i<items.length;i++){
+/* sign = +1 puts stock back, -1 takes it out */
+async function restockItems(items,sign){
+ var dir=(sign===-1)?-1:1;
+ for(var i=0;i<(items||[]).length;i++){
   var it=items[i];
   if(!it.inv_id||!it.q)continue;
   try{
    var rows=await sbFetch(INV_URL+'?select=id,quantity&id=eq.'+it.inv_id);
    if(rows&&rows[0]){
-    var q=(parseFloat(rows[0].quantity)||0)+(parseFloat(it.q)||0);
-    await sbFetch(INV_URL+'?id=eq.'+it.inv_id,'PATCH',{quantity:q});}
+    var q=(parseFloat(rows[0].quantity)||0)+dir*(parseFloat(it.q)||0);
+    await sbFetch(INV_URL+'?id=eq.'+it.inv_id,'PATCH',{quantity:Math.max(q,0)});}
   }catch(e){console.error('restock',e);}}}
 
 function closeRefund(){
  document.getElementById('refModal').classList.remove('show');
- refInv=null;refLines=[];}
+ refInv=null;refLines=[];refSwap=[];pickerTarget='invoice';}
 
 async function loadRefunds(){
  try{allRefunds=await sbFetch(REF_URL+'?select=*&order=refund_date.desc&limit=200')||[];}
@@ -3029,15 +3234,25 @@ function renderRefundPanel(){
   box.innerHTML='<div style="padding:26px 18px;text-align:center;color:#BBB;font-size:11.5px">'+
    'No refunds in this range.</div>';return;}
  box.innerHTML='<table class="itbl" style="width:100%"><thead><tr>'+
-  '<th>Date</th><th>Invoice</th><th>Reason</th><th>Method</th><th style="text-align:right">Amount</th></tr></thead><tbody>'+
+  '<th>Date</th><th>Ref</th><th>Type</th><th>Reason</th><th style="text-align:right">Cash</th></tr></thead><tbody>'+
   list.slice(0,12).map(function(r){
+   var xch=(r.type==='exchange');
+   var extra=parseFloat(r.extra_collected)||0;
+   var amt=parseFloat(r.amount)||0;
+   var cash=xch
+    ? (extra>0?('<span style="color:#2E7D32">+₹'+extra.toFixed(2)+'</span>')
+      :amt>0?('<span style="color:#C0392B">−₹'+amt.toFixed(2)+'</span>')
+      :'<span style="color:#AAA">even</span>')
+    : ('<span style="color:#C0392B">−₹'+amt.toFixed(2)+'</span>');
+   var rep=(r.replacement_items||[]).map(function(x){return x.n;}).join(', ');
    return '<tr><td>'+fmtD(r.refund_date)+'</td>'+
-    '<td><b style="color:var(--m)">'+eh(r.invoice_no||'—')+'</b>'+
-     (r.kind==='full'?' <span style="font-size:8px;background:#FDECEA;color:#C0392B;padding:1px 5px;border-radius:8px">FULL</span>':'')+'</td>'+
+    '<td><b style="color:var(--m)">'+eh(r.refund_no||'—')+'</b>'+
+     '<div style="font-size:9.5px;color:#AAA">'+eh(r.invoice_no||'')+'</div></td>'+
+    '<td><span class="spill '+(xch?'exchange':'rejected')+'">'+(xch?'Exchange':'Refund')+'</span>'+
+     (xch&&rep?('<div style="font-size:9.5px;color:#AAA;margin-top:2px">→ '+eh(rep)+'</div>'):'')+'</td>'+
     '<td style="font-size:11px">'+eh(REASON_LABEL[r.reason]||r.reason||'—')+
      (r.reason_note?('<div style="font-size:9.5px;color:#AAA">'+eh(r.reason_note)+'</div>'):'')+'</td>'+
-    '<td style="font-size:11px">'+eh(METHOD_LABEL[r.method]||r.method||'—')+'</td>'+
-    '<td style="text-align:right;color:#C0392B;font-weight:700">₹'+(parseFloat(r.amount)||0).toFixed(2)+'</td></tr>';}).join('')+
+    '<td style="text-align:right;font-weight:700">'+cash+'</td></tr>';}).join('')+
   '</tbody></table>';}
 
 /* ========== CUSTOMERS ========== */
@@ -3062,11 +3277,12 @@ function buildCustomers(){
   if(!map[k]){
    map[k]={key:k,name:inv.customer_name||d.cn||'—',phone:d.cp||'',
     district:d.cdist||'',state:d.cstate||'',country:d.ccountry||'',address:d.ca||'',
-    orders:0,spent:0,refunded:0,net:0,profit:0,first:null,last:null,invs:[]};}
+    orders:0,spent:0,refunded:0,swaps:0,net:0,profit:0,first:null,last:null,invs:[]};}
   var c=map[k];
   c.orders++;
   c.spent+=parseFloat(inv.total)||0;
   c.refunded+=invRefunded(inv);
+  c.swaps+=invExchanged(inv);
   c.net+=invNetRevenue(inv);
   c.profit+=invProfitAfterRefund(inv).net;
   var dt=inv.invoice_date||'';
@@ -3159,7 +3375,8 @@ function renderCustomers(){
   var loc=[c.district,c.state].filter(Boolean).join(', ')||'—';
   var bar=Math.round((c.net/maxNet)*100);
   return '<tr><td><b>'+eh(c.name)+'</b> '+badge+
-    (c.refunded>0?('<div style="font-size:9px;color:#C0392B">₹'+c.refunded.toFixed(0)+' refunded</div>'):'')+'</td>'+
+    (c.refunded>0?('<div style="font-size:9px;color:#C0392B">₹'+c.refunded.toFixed(0)+' refunded</div>'):'')+
+    (c.swaps>0?('<div style="font-size:9px;color:#1565C0">'+c.swaps+' exchange'+(c.swaps===1?'':'s')+'</div>'):'')+'</td>'+
    '<td style="font-size:11px;color:#666">'+eh(c.phone||'—')+'</td>'+
    '<td style="font-size:11px;color:#666">'+eh(loc)+'</td>'+
    '<td style="text-align:center;font-weight:800;color:'+(c.repeat?'#2E7D32':'#999')+'">'+c.orders+'</td>'+
@@ -3259,10 +3476,10 @@ function custLookup(){
 
 function exportCustomersCSV(){
  if(!CUSTS.length){toast('Nothing to export',true);return;}
- var rows=[['Name','Phone','District','State','Orders','First Order','Last Order',
+ var rows=[['Name','Phone','District','State','Orders','Exchanges','First Order','Last Order',
             'Total Spent','Refunded','Net Spent','Avg Order','Type']];
  CUSTS.slice().sort(function(a,b){return b.net-a.net;}).forEach(function(c){
-  rows.push([c.name,c.phone,c.district,c.state,c.orders,c.first||'',c.last||'',
+  rows.push([c.name,c.phone,c.district,c.state,c.orders,c.swaps,c.first||'',c.last||'',
    c.spent.toFixed(2),c.refunded.toFixed(2),c.net.toFixed(2),c.avg.toFixed(2),
    c.orders>=5?'VIP':(c.repeat?'Repeat':'New')]);});
  var csv=rows.map(function(r){
