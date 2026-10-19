@@ -209,7 +209,7 @@ body.sbmin .sb-meter{display:none}
 .itbl tr:hover td{background:#fffaf6}
 .bdg{padding:3px 10px;border-radius:12px;font-size:9.5px;font-weight:700;display:inline-block}
 .bdg.paid{background:#E8F5E9;color:#2E7D32}.bdg.pending{background:#FFEBEE;color:#C0392B}.bdg.partial{background:#FFF3E0;color:#E67E22}
-.tact{display:flex;gap:4px}
+.tact{display:flex;gap:4px;flex-wrap:nowrap;white-space:nowrap}
 .tbtn{padding:5px 9px;border:none;border-radius:5px;font-size:10.5px;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;white-space:nowrap}
 .tbtn:hover{opacity:.8}
 .tbtn.vi{background:#EDE7F6;color:#5C0F28}.tbtn.ic{background:#E8F5E9;color:#1B5E20}
@@ -2667,17 +2667,17 @@ function renderDash(invs){
      (p.ratio<1?' • '+Math.round(p.ratio*100)+'% recd':'')+'</div>';
    }
   }else pCell='<span style="color:#DDD">—</span>';
-  return '<tr><td><b style="color:var(--m)">'+eh(inv.invoice_no||'—')+'</b>'+
+  return '<tr><td style="white-space:nowrap"><b style="color:var(--m)">'+eh(inv.invoice_no||'—')+'</b>'+
    (hasRent?' <span style="font-size:8px;background:#F0E8FA;color:#7B5EA7;padding:1px 5px;border-radius:8px">RENT</span>':'')+'</td>'+
    '<td>'+eh(inv.customer_name||'—')+'</td>'+
    '<td style="font-size:11px;color:#666">'+eh(loc)+'</td>'+
    '<td>'+shipCell(inv)+'</td>'+
-   '<td>'+fmtD(inv.invoice_date)+'</td>'+
-   '<td style="font-weight:700">'+sym+' '+(parseFloat(inv.total)||0).toFixed(2)+
+   '<td style="white-space:nowrap">'+fmtD(inv.invoice_date)+'</td>'+
+   '<td style="font-weight:700;white-space:nowrap">'+sym+' '+(parseFloat(inv.total)||0).toFixed(2)+
     (rfd>0?('<div style="font-size:9.5px;color:#C0392B;font-weight:600">&minus;'+sym+' '+rfd.toFixed(2)+' refunded</div>'):'')+
     (invExtra(inv)>0?('<div style="font-size:9.5px;color:#2E7D32;font-weight:600">+'+sym+' '+invExtra(inv).toFixed(2)+' on swap</div>'):'')+'</td>'+
-   '<td style="color:#C0392B;font-size:11px">'+(p.fullCost>0?sym+' '+p.fullCost.toFixed(2):'—')+'</td>'+
-   '<td style="text-align:right">'+pCell+'</td>'+
+   '<td style="color:#C0392B;font-size:11px;white-space:nowrap">'+(p.fullCost>0?sym+' '+p.fullCost.toFixed(2):'—')+'</td>'+
+   '<td style="text-align:right;white-space:nowrap">'+pCell+'</td>'+
    '<td><span class="bdg '+(inv.status||'paid').toLowerCase()+'">'+(inv.status||'PAID')+'</span>'+
     (inv.refund_status?('<div style="font-size:8px;'+
       (inv.refund_status==='EXCHANGED'?'background:#EAF3FB;color:#1565C0':'background:#FDECEA;color:#C0392B')+
@@ -2685,7 +2685,7 @@ function renderDash(invs){
       (inv.refund_status==='FULL'?'REFUNDED':inv.refund_status==='EXCHANGED'?'EXCHANGED':'PART REFUND')+'</div>'):'')+
     (invExchanged(inv)&&inv.refund_status!=='EXCHANGED'
       ?'<div style="font-size:8px;background:#EAF3FB;color:#1565C0;padding:1px 5px;border-radius:8px;font-weight:800;display:inline-block;margin-top:3px">SWAP</div>':'')+'</td>'+
-   '<td><div class="tact">'+
+   '<td style="white-space:nowrap"><div class="tact">'+
    '<button class="tbtn vi" title="View" onclick="viewInv(\''+inv.id+'\')">👁</button>'+
    '<button class="tbtn ic" title="Download" onclick="dlFromDash(\''+inv.id+'\')">⬇</button>'+
    '<button class="tbtn ed" title="Edit" onclick="editInv(\''+inv.id+'\')">✏️</button>'+
@@ -2693,7 +2693,7 @@ function renderDash(invs){
    '<button class="tbtn del" title="Refund" style="background:#FFF3E0;color:#C0392B" onclick="openIssue(\''+inv.id+'\')">↩</button>'+
    '<button class="tbtn del" title="Delete" onclick="delInv(\''+inv.id+'\')">🗑</button>'+
    '</div></td></tr>';}).join('');
- document.getElementById('dashC').innerHTML='<table class="itbl" style="min-width:1100px"><thead><tr>'+
+ document.getElementById('dashC').innerHTML='<table class="itbl" style="min-width:1280px"><thead><tr>'+
   '<th>Invoice No.</th><th>Customer</th><th>Location</th><th>Shipping</th><th>Date</th><th>Amount</th><th>Cost</th>'+
   '<th style="text-align:right">Profit</th><th>Status</th><th>Actions</th>'+
   '</tr></thead><tbody>'+rows+'</tbody></table>';}
