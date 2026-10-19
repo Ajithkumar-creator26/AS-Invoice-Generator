@@ -103,7 +103,7 @@ body.sbmin .sb-mark{display:block}
  .snav{justify-content:center;padding:11px 0}
  .sb-user,.sb-planrow{justify-content:center}
 }
-#dashV,#invV,#rentV,#custV,#repV,#billV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 54px)}
+#dashV,#invV,#rentV,#custV,#shipV,#repV,#billV{flex-direction:column;padding:20px;gap:16px;min-height:calc(100vh - 54px)}
 #editorV{flex-direction:row;height:calc(100vh - 54px)}
 .stats{display:grid;gap:12px}
 .sc{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid var(--m)}
@@ -171,6 +171,30 @@ body.sbmin .sb-meter{display:none}
 .issuecard span:last-child{font-size:10.5px;color:#A08878;line-height:1.55}
 .spill{display:inline-block;padding:2px 9px;border-radius:9px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
 .spill.exchange{background:#EAF3FB;color:#1565C0}
+.cbadge{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:9px;font-size:9px;
+ font-weight:800;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap;color:#fff}
+.sbadge{display:inline-block;padding:2px 9px;border-radius:9px;font-size:8.5px;font-weight:800;
+ letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+.sbadge.pending{background:#F5EDE8;color:#A08878}
+.sbadge.booked{background:#FFF3E0;color:#B07000}
+.sbadge.in_transit{background:#EAF3FB;color:#1565C0}
+.sbadge.out_for_delivery{background:#EDE7F6;color:#5E35B1}
+.sbadge.delivered{background:#E8F5E9;color:#2E7D32}
+.sbadge.rto{background:#FDECEA;color:#C0392B}
+.sbadge.lost{background:#424242;color:#fff}
+.tline{list-style:none;margin:4px 0 0;padding-left:4px}
+.tline li{position:relative;padding:0 0 13px 20px;font-size:11.5px;color:#5A4A42;line-height:1.5}
+.tline li:before{content:'';position:absolute;left:3px;top:4px;width:9px;height:9px;border-radius:50%;
+ background:#fff;border:2px solid var(--g)}
+.tline li:after{content:'';position:absolute;left:7px;top:14px;bottom:0;width:1px;background:#EADFD7}
+.tline li:last-child{padding-bottom:0}
+.tline li:last-child:after{display:none}
+.tline li.done:before{background:var(--g)}
+.tline b{display:block;font-size:12px;color:var(--dm)}
+.tline span{font-size:10px;color:#A08878}
+.trackbox{display:flex;gap:8px;align-items:center;background:#FFF9F0;border:1.5px solid var(--gl);
+ border-radius:8px;padding:10px 13px;font-family:'Courier New',monospace;font-size:13px;
+ font-weight:700;letter-spacing:1px;color:var(--dm)}
 .spill.pending{background:#FFF3E0;color:#B07000}
 .spill.approved{background:#E8F5E9;color:#2E7D32}
 .spill.rejected,.spill.cancelled{background:#FDECEA;color:#C0392B}
@@ -395,6 +419,8 @@ body.sbmin .sb-meter{display:none}
       <span class="snav-ico">◴</span><span class="snav-lbl">Rentals</span></button>
     <button class="snav" id="tabC" onclick="showCustomers()">
       <span class="snav-ico">◌</span><span class="snav-lbl">Customers</span></button>
+    <button class="snav" id="tabS" onclick="showShipping()">
+      <span class="snav-ico">✈</span><span class="snav-lbl">Shipping</span></button>
     <button class="snav" id="tabR" onclick="showReports()">
       <span class="snav-ico">◥</span><span class="snav-lbl">Reports</span></button>
     <button class="snav" id="tabB" onclick="showBilling()">
@@ -540,6 +566,99 @@ body.sbmin .sb-meter{display:none}
     <div class="dtw" style="flex:none"><div class="dth"><h2>↩ Refunds</h2>
       <span style="font-size:10px;color:#BBB">Most recent first</span></div>
       <div id="repRef" style="padding:6px 0"></div></div>
+  </div>
+</div>
+
+<!-- SHIPPING -->
+<div id="shipV" style="display:none">
+  <div class="stats" style="grid-template-columns:repeat(6,1fr)">
+    <div class="sc"><div class="sc-l">To Dispatch</div><div class="sc-v" id="sPend">&mdash;</div><div class="sc-s">No tracking yet</div></div>
+    <div class="sc" style="border-left-color:#B07000"><div class="sc-l">Booked</div><div class="sc-v" id="sBook" style="color:#B07000">&mdash;</div><div class="sc-s">Handed to courier</div></div>
+    <div class="sc" style="border-left-color:#1565C0"><div class="sc-l">In Transit</div><div class="sc-v" id="sTran" style="color:#1565C0">&mdash;</div><div class="sc-s">On the way</div></div>
+    <div class="sc" style="border-left-color:#2E7D32"><div class="sc-l">Delivered</div><div class="sc-v" id="sDel" style="color:#2E7D32">&mdash;</div><div class="sc-s" id="sDelSub">All time</div></div>
+    <div class="sc" style="border-left-color:#C0392B"><div class="sc-l">Returned / Lost</div><div class="sc-v" id="sRto" style="color:#C0392B">&mdash;</div><div class="sc-s">Needs attention</div></div>
+    <div class="sc" style="border-left-color:#7B5EA7"><div class="sc-l">Avg Delivery</div><div class="sc-v" id="sAvg" style="color:#7B5EA7">&mdash;</div><div class="sc-s">Booked to delivered</div></div>
+  </div>
+
+  <div class="dtw" style="flex:none">
+    <div class="dth"><h2>&#9993; Shipments</h2>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <select id="shipStatus" onchange="renderShipments()" style="padding:7px 10px;border:1.5px solid #E0D5CF;border-radius:6px;font-size:11.5px;font-family:'Open Sans',sans-serif">
+          <option value="open">Open shipments</option>
+          <option value="all">All</option>
+          <option value="PENDING">To dispatch</option>
+          <option value="BOOKED">Booked</option>
+          <option value="IN_TRANSIT">In transit</option>
+          <option value="OUT_FOR_DELIVERY">Out for delivery</option>
+          <option value="DELIVERED">Delivered</option>
+          <option value="RTO">Returned</option>
+          <option value="LOST">Lost</option>
+        </select>
+        <select id="shipCourier" onchange="renderShipments()" style="padding:7px 10px;border:1.5px solid #E0D5CF;border-radius:6px;font-size:11.5px;font-family:'Open Sans',sans-serif">
+          <option value="all">All couriers</option>
+          <option value="stcourier">ST Courier</option>
+          <option value="indiapost">India Post</option>
+          <option value="other">Other</option>
+        </select>
+        <input id="shipSearch" placeholder="&#128269; Invoice, name or tracking..." oninput="renderShipments()"
+          style="padding:7px 11px;border:1.5px solid #E0D5CF;border-radius:6px;font-size:11.5px;min-width:210px;font-family:'Open Sans',sans-serif">
+        <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:7px 12px;font-size:11px" onclick="exportShipCSV()">&#128229; CSV</button>
+        <button class="b b-g" style="padding:7px 13px;font-size:11px" onclick="loadShipping(true)">&#8635; Refresh</button>
+      </div></div>
+    <div id="shipC" style="overflow-x:auto"></div>
+  </div>
+</div>
+
+<!-- DISPATCH MODAL -->
+<div id="dispModal" class="modal-overlay">
+  <div class="mcard" style="max-width:620px">
+    <div class="mhead"><h2 id="dispTitle">Dispatch</h2><button class="mx" onclick="closeDispatch()">&times;</button></div>
+
+    <div id="dispHead" style="background:#FFF9F0;border:1.5px solid var(--gl);border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px;line-height:1.7;color:#5A4A42"></div>
+
+    <div class="row r2" style="margin-bottom:12px">
+      <div class="fg"><label>Courier</label>
+        <select id="dispCourier" onchange="dispCourierChanged()"></select>
+        <div id="dispRule" style="font-size:10px;color:#A08878;margin-top:4px;line-height:1.5"></div></div>
+      <div class="fg"><label id="dispTrackLbl">Tracking number</label>
+        <input id="dispTrack" oninput="dispValidate()" placeholder="">
+        <div id="dispTrackMsg" style="font-size:10px;margin-top:4px;line-height:1.5"></div></div>
+    </div>
+
+    <div class="row r3" style="margin-bottom:12px">
+      <div class="fg"><label>Status</label>
+        <select id="dispStatus" onchange="dispValidate()">
+          <option value="PENDING">To dispatch</option>
+          <option value="BOOKED">Booked</option>
+          <option value="IN_TRANSIT">In transit</option>
+          <option value="OUT_FOR_DELIVERY">Out for delivery</option>
+          <option value="DELIVERED">Delivered</option>
+          <option value="RTO">Returned to sender</option>
+          <option value="LOST">Lost</option>
+        </select></div>
+      <div class="fg"><label>Booked on</label><input type="date" id="dispBooked"></div>
+      <div class="fg"><label>Expected by</label><input type="date" id="dispExpected"></div>
+    </div>
+
+    <div class="row r3" style="margin-bottom:12px">
+      <div class="fg"><label>Pincode</label><input id="dispPin" placeholder="603202"></div>
+      <div class="fg"><label>Weight (g)</label><input id="dispWeight" type="number" step="10" placeholder="250"></div>
+      <div class="fg"><label>Courier charge</label><input id="dispCharge" type="number" step="0.01" placeholder="0.00"></div>
+    </div>
+
+    <div class="fg" style="margin-bottom:14px"><label>Note (optional)</label>
+      <input id="dispNote" placeholder="Handed over at Guduvanchery PO"></div>
+
+    <div id="dispTimelineWrap" style="display:none;margin-bottom:14px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px">History</div>
+      <ul class="tline" id="dispTimeline"></ul>
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+      <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" onclick="closeDispatch()">Cancel</button>
+      <button class="b" style="background:#fff;color:var(--m);border:1.5px solid #E0D5CF;padding:9px 16px" id="dispTrackBtn" onclick="trackFromModal()">&#128269; Track</button>
+      <button class="b b-g" style="padding:9px 20px" id="dispSaveBtn" onclick="saveDispatch()">Save</button>
+    </div>
   </div>
 </div>
 
@@ -973,10 +1092,11 @@ body.sbmin .sb-meter{display:none}
       <div class="row r1"><div class="fg"><label>Address</label><textarea id="fCA" oninput="rp()"></textarea></div></div>
       <div class="row r2">
         <div class="fg"><label>District / City</label><input id="fCDist" placeholder="Chennai" oninput="rp()"></div>
-        <div class="fg"><label>State</label><input id="fCState" placeholder="Tamil Nadu" oninput="rp()"></div>
+        <div class="fg"><label>State</label><input id="fCState" placeholder="Tamil Nadu" oninput="rp();shipLookupSoon()"></div>
       </div>
+      <div id="shipChip" style="display:none"></div>
       <div class="row r2">
-        <div class="fg"><label>Country</label><input id="fCCountry" value="India" oninput="rp()"></div>
+        <div class="fg"><label>Country</label><input id="fCCountry" value="India" oninput="rp();shipLookupSoon()"></div>
         <div class="fg"><label>Phone</label><input id="fCP" placeholder="+91 XXXXX XXXXX" oninput="rp();custLookupSoon()"></div>
       </div>
     </div>
@@ -1472,11 +1592,11 @@ function setItemImgPreview(src){
 function clearItemImg(ev){if(ev)ev.stopPropagation();itemImg='';setItemImgPreview('');}
 
 /* ========== NAV ========== */
-var PAGE_TITLES={dash:'Dashboard',inv:'Inventory',rent:'Rentals',cust:'Customers',rep:'Reports',bill:'Billing & Plan',edit:'Invoice Editor'};
+var PAGE_TITLES={dash:'Dashboard',inv:'Inventory',rent:'Rentals',cust:'Customers',ship:'Shipping & Tracking',rep:'Reports',bill:'Billing & Plan',edit:'Invoice Editor'};
 function switchView(view){
  try{
-  var views={dash:'dashV',inv:'invV',rent:'rentV',cust:'custV',rep:'repV',bill:'billV',edit:'editorV'};
-  var tabs={dash:'tabD',inv:'tabI',rent:'tabRent',cust:'tabC',rep:'tabR',bill:'tabB',edit:'tabE'};
+  var views={dash:'dashV',inv:'invV',rent:'rentV',cust:'custV',ship:'shipV',rep:'repV',bill:'billV',edit:'editorV'};
+  var tabs={dash:'tabD',inv:'tabI',rent:'tabRent',cust:'tabC',ship:'tabS',rep:'tabR',bill:'tabB',edit:'tabE'};
   Object.keys(views).forEach(function(k){
    var el=document.getElementById(views[k]);
    if(el)el.style.display=(k===view)?'flex':'none';
@@ -1632,6 +1752,21 @@ function renderProfit(){
  set('pfMargin',p.margin.toFixed(1)+'%',p.margin>=0?'var(--m)':'#C0392B');}
 
 /* ========== BUILD INVOICE ========== */
+/* Shown on the invoice only once the parcel actually has a tracking number,
+   so a draft never prints an empty courier line. */
+function invTrackRow(){
+ try{
+  if(!curKey)return '';
+  var inv=null;
+  for(var i=0;i<allInvs.length;i++)if(allInvs[i].id===curKey)inv=allInvs[i];
+  if(!inv||!inv.tracking_no)return '';
+  var c=courierBy(inv.ship_courier);
+  return '<div class="imr"><span class="imi">✈</span><div class="imc">'+
+   '<div class="iml">'+eh(c.name)+'</div>'+
+   '<div class="imv" style="font-family:\'Courier New\',monospace;letter-spacing:.5px">'+
+   eh(inv.tracking_no)+'</div></div></div>';
+ }catch(e){return '';}}
+
 function buildHTML(){
  var sym=getSym(),sub=0;
  /* Merge rows that share the same category (or name), size and rate */
@@ -1714,6 +1849,7 @@ function buildHTML(){
  '<div class="imr"><span class="imi">📋</span><div class="imc"><div class="iml">Invoice No.</div><div class="imv">'+(gv('fNo')||'—')+'</div></div></div>'+
  '<div class="imr"><span class="imi">📅</span><div class="imc"><div class="iml">Invoice Date</div><div class="imv">'+fmtD(gv('fDt'))+'</div></div></div>'+
  '<div class="imr"><span class="imi">📦</span><div class="imc"><div class="iml">Order ID</div><div class="imv">'+(gv('fOrd')||'—')+'</div></div></div>'+
+ invTrackRow()+
  '</div></div>'+
  '<div class="ipts"><div class="ipt"><div class="ipth">🏪 FROM</div><div class="ifn">'+eh(gv('fSN'))+'</div>'+
  '<div class="ifd">'+(gv('fSA')||'').replace(/\n/g,'<br>')+'</div>'+
@@ -2535,6 +2671,7 @@ function renderDash(invs){
    (hasRent?' <span style="font-size:8px;background:#F0E8FA;color:#7B5EA7;padding:1px 5px;border-radius:8px">RENT</span>':'')+'</td>'+
    '<td>'+eh(inv.customer_name||'—')+'</td>'+
    '<td style="font-size:11px;color:#666">'+eh(loc)+'</td>'+
+   '<td>'+shipCell(inv)+'</td>'+
    '<td>'+fmtD(inv.invoice_date)+'</td>'+
    '<td style="font-weight:700">'+sym+' '+(parseFloat(inv.total)||0).toFixed(2)+
     (rfd>0?('<div style="font-size:9.5px;color:#C0392B;font-weight:600">&minus;'+sym+' '+rfd.toFixed(2)+' refunded</div>'):'')+
@@ -2552,13 +2689,37 @@ function renderDash(invs){
    '<button class="tbtn vi" title="View" onclick="viewInv(\''+inv.id+'\')">👁</button>'+
    '<button class="tbtn ic" title="Download" onclick="dlFromDash(\''+inv.id+'\')">⬇</button>'+
    '<button class="tbtn ed" title="Edit" onclick="editInv(\''+inv.id+'\')">✏️</button>'+
+   '<button class="tbtn ic" title="Dispatch" onclick="dispatchFor(\''+inv.id+'\')">📦</button>'+
    '<button class="tbtn del" title="Refund" style="background:#FFF3E0;color:#C0392B" onclick="openIssue(\''+inv.id+'\')">↩</button>'+
    '<button class="tbtn del" title="Delete" onclick="delInv(\''+inv.id+'\')">🗑</button>'+
    '</div></td></tr>';}).join('');
  document.getElementById('dashC').innerHTML='<table class="itbl" style="min-width:1100px"><thead><tr>'+
-  '<th>Invoice No.</th><th>Customer</th><th>Location</th><th>Date</th><th>Amount</th><th>Cost</th>'+
+  '<th>Invoice No.</th><th>Customer</th><th>Location</th><th>Shipping</th><th>Date</th><th>Amount</th><th>Cost</th>'+
   '<th style="text-align:right">Profit</th><th>Status</th><th>Actions</th>'+
   '</tr></thead><tbody>'+rows+'</tbody></table>';}
+
+/* courier + status, or the carrier the destination implies when nothing is booked */
+function shipCell(inv){
+ var d=inv.data||{};
+ var code=inv.ship_courier||pickCourier(d.cstate,d.ccountry);
+ var c=courierBy(code);
+ var st=inv.ship_status||'PENDING';
+ return '<span class="cbadge" style="background:'+eh(c.colour||'#5C0F28')+';font-size:8px">'+eh(c.name)+'</span>'+
+  '<div style="margin-top:3px"><span class="sbadge '+String(st).toLowerCase()+'">'+
+   eh(SHIP_LABEL[st]||st)+'</span></div>'+
+  (inv.tracking_no?('<div style="font-size:9px;color:#AAA;font-family:\'Courier New\',monospace;margin-top:2px">'+
+    eh(inv.tracking_no)+'</div>'):'');}
+
+/* open the dispatch dialog from the dashboard, loading shipments on first use */
+async function dispatchFor(invId){
+ try{
+  if(!COURIERS)await loadCouriers();
+  if(!allShips.length){
+   try{allShips=await sbFetch(SHIP_URL+'?select=*&order=created_at.desc&limit=500')||[];}catch(e){}}
+  var found=null;
+  for(var i=0;i<allShips.length;i++)if(allShips[i].invoice_id===invId)found=allShips[i];
+  openDispatch(found?found.id:null,invId);
+ }catch(e){toast('Could not open dispatch: '+(e.message||''),true);}}
 
 async function viewInv(id){
  try{
@@ -2579,7 +2740,7 @@ async function editInv(id){
   prods=[];rid=0;(row.data.prods||[]).forEach(function(p){rid++;prods.push(Object.assign({},p,{id:rid}));});
   renderP();rp();showEditor();
   setEditorTab(row.invoice_no);
-  try{custLookup();}catch(e){}
+  try{custLookup();shipLookup();}catch(e){}
   toast('Loaded for editing');
  }catch(e){toast('Failed to load',true);}}
 async function delInv(id){
@@ -2613,6 +2774,7 @@ function resetAll(silent){
  document.getElementById('fPO').value=td;
  ['rGC','rDV','rPart'].forEach(function(id){document.getElementById(id).classList.add('off');});
  var cc=document.getElementById('custChip');if(cc)cc.style.display='none';
+ var sc=document.getElementById('shipChip');if(sc)sc.style.display='none';
  prods=[];rid=0;addP();addP();rp();}
 
 /* ========== REPORTS ========== */
@@ -2864,6 +3026,382 @@ function contactUpgrade(){
  var mail=(session&&session.user&&session.user.email)||'';
  window.open('https://wa.me/919342382918?text='+encodeURIComponent(
   'Hi, I would like to upgrade my AS Invoice Generator plan. Account: '+mail),'_blank');}
+
+/* ========== COURIER TRACKING ========== */
+var SHIP_URL=SB_BASE+'/shipments';
+var COURIER_URL=SB_BASE+'/couriers';
+var allShips=[], COURIERS=null, dispShip=null, dispInv=null;
+
+/* Mirrors public.pick_courier() in feature_courier.sql — keep the two in step */
+var DEFAULT_COURIERS=[
+ {code:'stcourier',name:'ST Courier',
+  track_url:'https://stcourier.com/#track_shipment',deep_link:null,
+  number_label:'Docket number',number_regex:'^[A-Za-z0-9-]{6,20}$',
+  number_hint:'Docket number from the ST Courier receipt',
+  serves:'tn',colour:'#1565C0',sort_order:1},
+ {code:'indiapost',name:'India Post',
+  track_url:'https://www.indiapost.gov.in/_layouts/15/dop.portal.tracking/trackconsignment.aspx',deep_link:null,
+  number_label:'Consignment number',number_regex:'^[A-Za-z]{2}[0-9]{9}[A-Za-z]{2}$',
+  number_hint:'13 characters, e.g. EK123456789IN',
+  serves:'outside_tn',colour:'#C0392B',sort_order:2},
+ {code:'other',name:'Other courier',
+  track_url:null,deep_link:null,
+  number_label:'Tracking number',number_regex:'^.{3,40}$',
+  number_hint:'Whatever the carrier printed on the receipt',
+  serves:'all',colour:'#7B5EA7',sort_order:3}];
+
+var SHIP_LABEL={PENDING:'To dispatch',BOOKED:'Booked',IN_TRANSIT:'In transit',
+ OUT_FOR_DELIVERY:'Out for delivery',DELIVERED:'Delivered',RTO:'Returned',LOST:'Lost'};
+var SHIP_ORDER=['PENDING','BOOKED','IN_TRANSIT','OUT_FOR_DELIVERY','DELIVERED'];
+
+function couriers(){return COURIERS||DEFAULT_COURIERS;}
+function courierBy(code){
+ var l=couriers();
+ for(var i=0;i<l.length;i++)if(l[i].code===code)return l[i];
+ return l[l.length-1];}
+
+/* Tamil Nadu goes by ST Courier, everything else by India Post. */
+function pickCourier(state,country){
+ var c=String(country||'India').trim().toLowerCase();
+ if(c&&!/^(india|bharat|in)$/.test(c))return 'indiapost';
+ var st=String(state||'').toLowerCase().replace(/[^a-z]/g,'');
+ if(st==='tamilnadu'||st==='tn'||st==='tamilnad'||st==='tamilnaadu')return 'stcourier';
+ return 'indiapost';}
+
+function courierReason(state,country){
+ var c=String(country||'India').trim();
+ if(c&&!/^(india|bharat|in)$/i.test(c))return c+' is outside India — India Post handles it.';
+ var code=pickCourier(state,country);
+ if(code==='stcourier')return 'Tamil Nadu — ST Courier.';
+ var st=String(state||'').trim();
+ if(!st)return 'No state set yet — defaulting to India Post.';
+ return st+' is outside Tamil Nadu — India Post.';}
+
+function validTracking(code,no){
+ var c=courierBy(code);
+ if(!no)return null;                       // nothing typed yet
+ try{return new RegExp(c.number_regex).test(String(no).trim());}
+ catch(e){return true;}}
+
+async function loadCouriers(){
+ if(COURIERS)return COURIERS;
+ try{
+  var r=await sbFetch(COURIER_URL+'?select=*&is_active=eq.true&order=sort_order.asc');
+  COURIERS=(r&&r.length)?r:DEFAULT_COURIERS;
+ }catch(e){COURIERS=DEFAULT_COURIERS;}
+ return COURIERS;}
+
+/* ---- list ---- */
+async function showShipping(){
+ switchView('ship');
+ await loadShipping();}
+
+async function loadShipping(force){
+ var box=document.getElementById('shipC');
+ if(allShips.length&&!force){renderShipments();return;}
+ box.innerHTML='<div class="empty"><div style="font-size:28px">⏳</div><p>Loading shipments...</p></div>';
+ try{
+  await loadCouriers();
+  if(!allInvs.length){try{allInvs=await sbFetch(SB_URL+'?select=*&order=created_at.desc')||[];}catch(e){}}
+  allShips=await sbFetch(SHIP_URL+'?select=*&order=created_at.desc&limit=500')||[];
+  renderShipments();
+ }catch(e){
+  console.error('Shipping:',e);
+  box.innerHTML='<div class="empty"><div>⚠️</div>'+
+   '<p style="color:#C0392B;margin-bottom:10px;font-size:12px">'+eh(e.message)+'</p>'+
+   '<p style="font-size:11px;color:#888">Run <b>feature_courier.sql</b> in Supabase to create the shipments table.</p></div>';}}
+
+function shipDays(s){
+ if(!s.booked_date||!s.delivered_at)return null;
+ var d=Math.round((new Date(s.delivered_at)-new Date(s.booked_date))/86400000);
+ return d>=0?d:null;}
+
+function renderShipments(){
+ var all=allShips;
+ var counts={PENDING:0,BOOKED:0,IN_TRANSIT:0,OUT_FOR_DELIVERY:0,DELIVERED:0,RTO:0,LOST:0};
+ var days=[];
+ all.forEach(function(s){
+  if(counts[s.status]!==undefined)counts[s.status]++;
+  var d=shipDays(s);if(d!=null)days.push(d);});
+
+ setTxt('sPend',String(counts.PENDING));
+ setTxt('sBook',String(counts.BOOKED));
+ setTxt('sTran',String(counts.IN_TRANSIT+counts.OUT_FOR_DELIVERY));
+ setTxt('sDel',String(counts.DELIVERED));
+ setTxt('sRto',String(counts.RTO+counts.LOST));
+ setTxt('sAvg',days.length?((days.reduce(function(a,b){return a+b;},0)/days.length).toFixed(1)+'d'):'—');
+ setTxt('sDelSub',days.length?(days.length+' with dates'):'All time');
+
+ var list=all.slice();
+ var st=gv('shipStatus')||'open';
+ if(st==='open')list=list.filter(function(s){return ['PENDING','BOOKED','IN_TRANSIT','OUT_FOR_DELIVERY'].indexOf(s.status)>-1;});
+ else if(st!=='all')list=list.filter(function(s){return s.status===st;});
+
+ var cf=gv('shipCourier')||'all';
+ if(cf!=='all')list=list.filter(function(s){return s.courier===cf;});
+
+ var q=(gv('shipSearch')||'').toLowerCase();
+ if(q)list=list.filter(function(s){
+  return [s.invoice_no,s.customer_name,s.tracking_no,s.destination].join(' ').toLowerCase().indexOf(q)>-1;});
+
+ /* oldest undispatched first — that is the queue to work through */
+ list.sort(function(a,b){
+  var ai=SHIP_ORDER.indexOf(a.status),bi=SHIP_ORDER.indexOf(b.status);
+  if(ai!==bi)return (ai<0?9:ai)-(bi<0?9:bi);
+  return String(a.created_at||'').localeCompare(String(b.created_at||''));});
+
+ var box=document.getElementById('shipC');
+ if(!list.length){
+  box.innerHTML='<div class="empty"><div>✈</div><p>'+
+   (all.length?'Nothing matches that filter.':'No shipments yet — they appear here as you save invoices.')+'</p></div>';
+  return;}
+
+ box.innerHTML='<table class="itbl" style="min-width:1120px"><thead><tr>'+
+  '<th>Invoice</th><th>Customer</th><th>Destination</th><th>Courier</th>'+
+  '<th>Tracking No.</th><th>Booked</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+
+ list.map(function(s){
+  var c=courierBy(s.courier);
+  var ok=validTracking(s.courier,s.tracking_no);
+  var age=s.booked_date?Math.round((new Date()-new Date(s.booked_date))/86400000):null;
+  var stale=(age!=null&&age>7&&['DELIVERED','RTO','LOST'].indexOf(s.status)<0);
+  var d=shipDays(s);
+  return '<tr><td><b style="color:var(--m)">'+eh(s.invoice_no||'—')+'</b></td>'+
+   '<td>'+eh(s.customer_name||'—')+
+    (s.customer_phone?('<div style="font-size:9.5px;color:#AAA">'+eh(s.customer_phone)+'</div>'):'')+'</td>'+
+   '<td style="font-size:11px;color:#666">'+eh(s.destination||'—')+
+    (s.dest_pincode?('<div style="font-size:9.5px;color:#AAA">'+eh(s.dest_pincode)+'</div>'):'')+'</td>'+
+   '<td><span class="cbadge" style="background:'+eh(c.colour||'#5C0F28')+'">'+eh(c.name)+'</span></td>'+
+   '<td style="font-family:\'Courier New\',monospace;font-size:11.5px;letter-spacing:.5px">'+
+    (s.tracking_no
+     ? (eh(s.tracking_no)+(ok===false?'<div style="font-size:9px;color:#C0392B;font-family:\'Open Sans\',sans-serif">format looks wrong</div>':''))
+     : '<span style="color:#DDD">—</span>')+'</td>'+
+   '<td style="font-size:11px">'+(s.booked_date?fmtD(s.booked_date):'—')+
+    (stale?('<div style="font-size:9px;color:#C0392B">'+age+' days out</div>')
+      :(d!=null?('<div style="font-size:9px;color:#2E7D32">'+d+'d to deliver</div>'):''))+'</td>'+
+   '<td><span class="sbadge '+String(s.status||'pending').toLowerCase()+'">'+
+    eh(SHIP_LABEL[s.status]||s.status)+'</span></td>'+
+   '<td><div class="tact">'+
+    '<button class="tbtn ed" title="Dispatch / update" onclick="openDispatch(\''+s.id+'\')">📦</button>'+
+    (s.tracking_no?('<button class="tbtn vi" title="Track" onclick="trackShipment(\''+s.id+'\')">🔍</button>'):'')+
+    (s.status!=='DELIVERED'?('<button class="tbtn ic" title="Mark delivered" onclick="quickStatus(\''+s.id+'\',\'DELIVERED\')">✓</button>'):'')+
+   '</div></td></tr>';}).join('')+'</tbody></table>';}
+
+/* ---- dispatch modal ---- */
+function openDispatch(shipId,invId){
+ var s=null;
+ for(var i=0;i<allShips.length;i++)if(allShips[i].id===shipId)s=allShips[i];
+
+ var inv=null;
+ var lookup=invId||(s&&s.invoice_id);
+ for(var j=0;j<allInvs.length;j++)if(allInvs[j].id===lookup)inv=allInvs[j];
+
+ if(!s&&!inv){toast('Shipment not found',true);return;}
+ dispShip=s;dispInv=inv;
+
+ var d=(inv&&inv.data)||{};
+ var state=(s&&s.dest_state)||d.cstate||'';
+ var country=d.ccountry||'India';
+ var dest=(s&&s.destination)||
+  [d.cdist,d.cstate].map(function(x){return (x||'').trim();}).filter(Boolean).join(', ');
+
+ setTxt('dispTitle',(s&&s.tracking_no?'Update shipment — ':'Dispatch — ')+
+  ((s&&s.invoice_no)||(inv&&inv.invoice_no)||''));
+ document.getElementById('dispHead').innerHTML=
+  '<b>'+eh((s&&s.customer_name)||(inv&&inv.customer_name)||'—')+'</b>'+
+  (dest?(' &nbsp;·&nbsp; '+eh(dest)):'')+
+  ((s&&s.customer_phone)||d.cp?(' &nbsp;·&nbsp; '+eh((s&&s.customer_phone)||d.cp)):'')+
+  '<br><span style="font-size:11px">'+eh(courierReason(state,country))+'</span>';
+
+ var sel=document.getElementById('dispCourier');
+ sel.innerHTML=couriers().map(function(c){
+  return '<option value="'+c.code+'">'+eh(c.name)+'</option>';}).join('');
+ sel.value=(s&&s.courier)||pickCourier(state,country);
+
+ document.getElementById('dispTrack').value=(s&&s.tracking_no)||'';
+ document.getElementById('dispStatus').value=(s&&s.status)||'PENDING';
+ document.getElementById('dispBooked').value=(s&&s.booked_date)||'';
+ document.getElementById('dispExpected').value=(s&&s.expected_at)||'';
+ document.getElementById('dispPin').value=(s&&s.dest_pincode)||'';
+ document.getElementById('dispWeight').value=(s&&s.weight_g)||'';
+ document.getElementById('dispCharge').value=(s&&s.charges)||(d.ship||'');
+ document.getElementById('dispNote').value='';
+
+ renderTimeline(s);
+ dispCourierChanged();
+ document.getElementById('dispModal').classList.add('show');}
+
+function renderTimeline(s){
+ var wrap=document.getElementById('dispTimelineWrap');
+ var h=(s&&s.history)||[];
+ if(typeof h==='string'){try{h=JSON.parse(h);}catch(e){h=[];}}
+ if(!h.length){wrap.style.display='none';return;}
+ wrap.style.display='block';
+ document.getElementById('dispTimeline').innerHTML=h.slice().reverse().map(function(e,i){
+  return '<li'+(i===0?' class="done"':'')+'><b>'+eh(SHIP_LABEL[e.status]||e.status)+'</b>'+
+   '<span>'+eh(String(e.at||'').replace('T',' at '))+(e.note?(' · '+eh(e.note)):'')+'</span></li>';}).join('');}
+
+function dispCourierChanged(){
+ var c=courierBy(gv('dispCourier'));
+ setTxt('dispTrackLbl',c.number_label||'Tracking number');
+ var t=document.getElementById('dispTrack');
+ t.placeholder=(c.code==='indiapost')?'EK123456789IN':(c.code==='stcourier'?'e.g. 1234567890':'');
+ var state=(dispShip&&dispShip.dest_state)||((dispInv&&dispInv.data)||{}).cstate||'';
+ var country=((dispInv&&dispInv.data)||{}).ccountry||'India';
+ var auto=pickCourier(state,country);
+ document.getElementById('dispRule').innerHTML=(c.code===auto)
+  ? '✓ '+eh(courierReason(state,country))
+  : '<span style="color:#B07000">Overriding the usual choice — '+eh(courierReason(state,country))+'</span>';
+ dispValidate();}
+
+function dispValidate(){
+ var code=gv('dispCourier'),no=gv('dispTrack').trim();
+ var c=courierBy(code),ok=validTracking(code,no);
+ var msg=document.getElementById('dispTrackMsg');
+ if(!no){msg.style.color='#A08878';msg.textContent=c.number_hint||'';}
+ else if(ok){msg.style.color='#2E7D32';msg.textContent='✓ Format looks right';}
+ else{msg.style.color='#C0392B';msg.textContent='Does not match '+c.name+' — '+(c.number_hint||'check the receipt');}
+
+ var btn=document.getElementById('dispTrackBtn');
+ btn.style.display=(no&&c.track_url)?'':'none';
+
+ /* typing a number while still "to dispatch" means it has been booked */
+ var ss=document.getElementById('dispStatus');
+ if(no&&ss.value==='PENDING')ss.value='BOOKED';}
+
+function closeDispatch(){
+ document.getElementById('dispModal').classList.remove('show');
+ dispShip=null;dispInv=null;}
+
+async function saveDispatch(){
+ var btn=document.getElementById('dispSaveBtn');
+ btn.disabled=true;btn.textContent='Saving...';
+ try{
+  var code=gv('dispCourier'),no=gv('dispTrack').trim();
+  if(no&&validTracking(code,no)===false&&
+     !confirm('That tracking number does not match the usual '+courierBy(code).name+
+              ' format.\n\nSave it anyway?')){
+   return;}
+
+  var inv=dispInv,d=(inv&&inv.data)||{};
+  var row={
+   business_id:myBiz&&myBiz.id,
+   courier:code,
+   tracking_no:no||null,
+   status:gv('dispStatus'),
+   booked_date:gv('dispBooked')||null,
+   expected_at:gv('dispExpected')||null,
+   dest_pincode:gv('dispPin')||null,
+   weight_g:parseInt(gv('dispWeight'))||null,
+   charges:parseFloat(gv('dispCharge'))||0,
+   note:gv('dispNote')||null};
+
+  if(dispShip){
+   await sbFetch(SHIP_URL+'?id=eq.'+dispShip.id,'PATCH',row);
+  }else{
+   if(!inv){toast('No invoice linked',true);return;}
+   row.invoice_id=inv.id;
+   row.invoice_no=inv.invoice_no;
+   row.customer_name=inv.customer_name;
+   row.customer_phone=d.cp||null;
+   row.dest_state=d.cstate||null;
+   row.destination=[d.cdist,d.cstate].map(function(x){return (x||'').trim();}).filter(Boolean).join(', ')||null;
+   await sbFetch(SHIP_URL,'POST',row);}
+
+  closeDispatch();
+  toast('✓ Shipment saved');
+  await loadShipping(true);
+  try{if(allInvs.length){allInvs=await sbFetch(SB_URL+'?select=*&order=created_at.desc')||[];renderDash(allInvs);}}catch(e){}
+ }catch(e){
+  var m=e.message||'';
+  if(/shipments|PGRST205|404/i.test(m))toast('Shipments table missing — run feature_courier.sql',true);
+  else if(/idx_ship_track|duplicate/i.test(m))toast('That tracking number is already on another shipment',true);
+  else toast('Could not save: '+m,true);
+ }finally{btn.disabled=false;btn.textContent='Save';}}
+
+async function quickStatus(id,status){
+ try{
+  await sbFetch(SHIP_URL+'?id=eq.'+id,'PATCH',{status:status});
+  toast('✓ Marked '+(SHIP_LABEL[status]||status).toLowerCase());
+  await loadShipping(true);
+ }catch(e){toast('Could not update: '+(e.message||''),true);}}
+
+/* ---- tracking ----
+   Neither carrier accepts the consignment number as a URL parameter, so the
+   number goes to the clipboard and the tracking page opens for pasting. If a
+   deep_link template ever appears in the couriers table, it is used instead. */
+function trackShipment(id){
+ var s=null;
+ for(var i=0;i<allShips.length;i++)if(allShips[i].id===id)s=allShips[i];
+ if(!s||!s.tracking_no){toast('No tracking number yet',true);return;}
+ openTracking(s.courier,s.tracking_no);}
+
+function trackFromModal(){
+ var no=gv('dispTrack').trim();
+ if(!no){toast('Enter the tracking number first',true);return;}
+ openTracking(gv('dispCourier'),no);}
+
+function openTracking(code,no){
+ var c=courierBy(code);
+ if(!c.track_url){toast('No tracking page on file for '+c.name,true);return;}
+ if(c.deep_link){
+  window.open(c.deep_link.replace('{no}',encodeURIComponent(no)),'_blank');
+  return;}
+ copyText(no).then(function(copied){
+  window.open(c.track_url,'_blank');
+  toast(copied
+   ? '📋 '+no+' copied — paste it on the '+c.name+' page'
+   : 'Opening '+c.name+' — tracking number: '+no);});}
+
+function copyText(t){
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+  return navigator.clipboard.writeText(t).then(function(){return true;})
+   .catch(function(){return fallbackCopy(t);});}
+ return Promise.resolve(fallbackCopy(t));}
+
+function fallbackCopy(t){
+ try{
+  var ta=document.createElement('textarea');
+  ta.value=t;ta.style.position='fixed';ta.style.left='-9999px';
+  document.body.appendChild(ta);ta.select();
+  var ok=document.execCommand('copy');
+  document.body.removeChild(ta);return ok;
+ }catch(e){return false;}}
+
+function exportShipCSV(){
+ if(!allShips.length){toast('Nothing to export',true);return;}
+ var rows=[['Invoice','Customer','Phone','Destination','Pincode','Courier',
+            'Tracking No','Status','Booked','Delivered','Days','Weight (g)','Charge']];
+ allShips.forEach(function(s){
+  rows.push([s.invoice_no||'',s.customer_name||'',s.customer_phone||'',
+   s.destination||'',s.dest_pincode||'',courierBy(s.courier).name,
+   s.tracking_no||'',SHIP_LABEL[s.status]||s.status,
+   s.booked_date||'',s.delivered_at||'',shipDays(s)!=null?shipDays(s):'',
+   s.weight_g||'',s.charges||0]);});
+ var csv=rows.map(function(r){
+  return r.map(function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+ var a=document.createElement('a');
+ a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+ a.download='shipments_'+todayStr()+'.csv';a.click();
+ toast('✓ Shipments exported');}
+
+/* ---- courier chip in the editor ---- */
+var shipTimer=null;
+function shipLookupSoon(){
+ clearTimeout(shipTimer);
+ shipTimer=setTimeout(shipLookup,400);}
+
+function shipLookup(){
+ var box=document.getElementById('shipChip');
+ if(!box)return;
+ var state=gv('fCState'),country=gv('fCCountry')||'India';
+ if(!state&&!gv('fCDist')){box.style.display='none';return;}
+ var c=courierBy(pickCourier(state,country));
+ box.style.display='block';
+ box.innerHTML='<div style="background:#F7FAFD;border:1.5px solid #D8E6F2;border-radius:8px;padding:9px 12px;'+
+  'margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+
+  '<span class="cbadge" style="background:'+eh(c.colour)+'">'+eh(c.name)+'</span>'+
+  '<span style="font-size:11px;color:#5A4A42;line-height:1.5">'+eh(courierReason(state,country))+'</span>'+
+  '</div>';}
 
 /* ========== REFUNDS ========== */
 var REF_URL=SB_BASE+'/refunds';
@@ -3439,7 +3977,7 @@ function fillCustomer(c){
  sv('fCN',c.name);sv('fCA',c.address);sv('fCP',c.phone);
  sv('fCDist',c.district);sv('fCState',c.state);
  if(c.country)sv('fCCountry',c.country);
- rp();custLookup();}
+ rp();custLookup();shipLookup();}
 
 /* ---- repeat-customer chip in the editor ---- */
 function custLookupSoon(){
