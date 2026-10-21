@@ -602,6 +602,7 @@ body.sbmin .sb-meter{display:none}
           <option value="all">All couriers</option>
           <option value="stcourier">ST Courier</option>
           <option value="indiapost">India Post</option>
+          <option value="doordelivery">Door Delivery</option>
           <option value="other">Other</option>
         </select>
         <select id="shipMode" onchange="renderShipments()" style="padding:7px 10px;border:1.5px solid #E0D5CF;border-radius:6px;font-size:11.5px;font-family:'Open Sans',sans-serif">
@@ -2731,7 +2732,7 @@ function shipCell(inv){
  var st=inv.ship_status||'PENDING';
  return '<span class="cbadge" style="background:'+eh(c.colour||'#5C0F28')+';font-size:8px">'+eh(c.name)+'</span>'+
   '<div style="margin-top:3px"><span class="sbadge '+String(st).toLowerCase()+'">'+
-   eh(statusLabel(st,invMode(inv)))+'</span></div>'+
+   eh(statusLabel(st,invMode(inv),code))+'</span></div>'+
   (inv.tracking_no?('<div style="font-size:9px;color:#AAA;font-family:\'Courier New\',monospace;margin-top:2px">'+
     eh(inv.tracking_no)+'</div>'):'');}
 
@@ -3069,18 +3070,30 @@ var DEFAULT_COURIERS=[
   number_label:'Consignment number',number_regex:'^[A-Za-z]{2}[0-9]{9}[A-Za-z]{2}$',
   number_hint:'13 characters, e.g. EK123456789IN',
   serves:'outside_tn',colour:'#C0392B',sort_order:2},
+ {code:'doordelivery',name:'Door Delivery',
+  track_url:null,deep_link:null,
+  number_label:'Reference (optional)',number_regex:'^.{0,40}$',
+  number_hint:'Only if you want one — nothing is tracked',
+  serves:'tn',colour:'#2E7D32',sort_order:3},
  {code:'other',name:'Other courier',
   track_url:null,deep_link:null,
   number_label:'Tracking number',number_regex:'^.{3,40}$',
   number_hint:'Whatever the carrier printed on the receipt',
-  serves:'all',colour:'#7B5EA7',sort_order:3}];
+  serves:'all',colour:'#7B5EA7',sort_order:4}];
 
 var SHIP_LABEL={PENDING:'To dispatch',BOOKED:'Booked',IN_TRANSIT:'In transit',
  OUT_FOR_DELIVERY:'Out for delivery',DELIVERED:'Delivered',RTO:'Returned',LOST:'Lost'};
 var MODE_LABEL={door:'Door delivery',branch:'Branch collection'};
+var SELF='doordelivery';
+/* No carrier is involved, so "booked" and "in transit" mean nothing here. */
+var SELF_STATUSES=['PENDING','OUT_FOR_DELIVERY','DELIVERED','RTO'];
+var SELF_LABEL={PENDING:'To deliver',OUT_FOR_DELIVERY:'Out for delivery',
+ DELIVERED:'Delivered',RTO:'Returned',BOOKED:'To deliver',IN_TRANSIT:'Out for delivery',LOST:'Lost'};
+function isSelf(code){return code===SELF;}
 
 /* The same status reads differently depending on who does the last mile. */
-function statusLabel(st,mode){
+function statusLabel(st,mode,courier){
+ if(isSelf(courier))return SELF_LABEL[st]||SHIP_LABEL[st]||st;
  if(mode==='branch'){
   if(st==='OUT_FOR_DELIVERY')return 'Ready to collect';
   if(st==='DELIVERED')return 'Collected';}
@@ -3215,6 +3228,7 @@ function renderShipments(){
  list.map(function(s){
   var c=courierBy(s.courier);
   var mode=s.delivery_mode||'door';
+  var self=isSelf(s.courier);
   var sinv=null;
   for(var k=0;k<allInvs.length;k++)if(allInvs[k].id===s.invoice_id)sinv=allInvs[k];
   var pin=s.dest_pincode||pincodeFor(null,sinv).pin;
@@ -3229,21 +3243,21 @@ function renderShipments(){
     (pin?('<div style="font-size:9.5px;color:'+(s.dest_pincode?'#AAA':'#C9A844')+'">'+eh(pin)+
       (s.dest_pincode?'':' (from address)')+'</div>'):'')+'</td>'+
    '<td><span class="cbadge" style="background:'+eh(c.colour||'#5C0F28')+'">'+eh(c.name)+'</span>'+
-    '<div style="margin-top:3px"><span class="mbadge '+(mode==='branch'?'branch':'door')+'">'+
-     (mode==='branch'?'BRANCH':'DOOR')+'</span></div></td>'+
+    (self?'':'<div style="margin-top:3px"><span class="mbadge '+(mode==='branch'?'branch':'door')+'">'+
+     (mode==='branch'?'BRANCH':'DOOR')+'</span></div>')+'</td>'+
    '<td style="font-family:\'Courier New\',monospace;font-size:11.5px;letter-spacing:.5px">'+
     (s.tracking_no
-     ? (eh(s.tracking_no)+(ok===false?'<div style="font-size:9px;color:#C0392B;font-family:\'Open Sans\',sans-serif">format looks wrong</div>':''))
-     : '<span style="color:#DDD">—</span>')+'</td>'+
+     ? (eh(s.tracking_no)+((ok===false&&!self)?'<div style="font-size:9px;color:#C0392B;font-family:\'Open Sans\',sans-serif">format looks wrong</div>':''))
+     : '<span style="color:#DDD">'+(self?'by hand':'—')+'</span>')+'</td>'+
    '<td style="font-size:11px">'+(s.booked_date?fmtD(s.booked_date):'—')+
     (stale?('<div style="font-size:9px;color:#C0392B">'+age+' days out</div>')
       :(d!=null?('<div style="font-size:9px;color:#2E7D32">'+d+'d to deliver</div>'):''))+'</td>'+
    '<td><span class="sbadge '+String(s.status||'pending').toLowerCase()+'">'+
-    eh(statusLabel(s.status,mode))+'</span></td>'+
+    eh(statusLabel(s.status,mode,s.courier))+'</span></td>'+
    '<td><div class="tact">'+
     '<button class="tbtn ed" title="Dispatch / update" onclick="openDispatch(\''+s.id+'\')">📦</button>'+
-    (s.tracking_no?('<button class="tbtn vi" title="Track" onclick="trackShipment(\''+s.id+'\')">🔍</button>'):'')+
-    (s.status!=='DELIVERED'?('<button class="tbtn ic" title="'+(mode==='branch'?'Mark collected':'Mark delivered')+
+    ((s.tracking_no&&c.track_url)?('<button class="tbtn vi" title="Track" onclick="trackShipment(\''+s.id+'\')">🔍</button>'):'')+
+    (s.status!=='DELIVERED'?('<button class="tbtn ic" title="'+(mode==='branch'&&!self?'Mark collected':'Mark delivered')+
       '" onclick="quickStatus(\''+s.id+'\',\'DELIVERED\','+(mode==='branch'?'true':'false')+')">✓</button>'):'')+
    '</div></td></tr>';}).join('')+'</tbody></table>';}
 
@@ -3271,7 +3285,10 @@ function openDispatch(shipId,invId){
   '<b>'+eh((s&&s.customer_name)||(inv&&inv.customer_name)||'—')+'</b>'+
   (dest?(' &nbsp;·&nbsp; '+eh(dest)):'')+
   ((s&&s.customer_phone)||d.cp?(' &nbsp;·&nbsp; '+eh((s&&s.customer_phone)||d.cp)):'')+
-  '<br><span style="font-size:11px">'+eh(courierReason(state,country))+'</span>';
+  '<br><span style="font-size:11px">'+eh(
+   (s&&isSelf(s.courier))
+    ? 'Delivered by you — no courier.'
+    : courierReason(state,country))+'</span>';
 
  var sel=document.getElementById('dispCourier');
  sel.innerHTML=couriers().map(function(c){
@@ -3307,8 +3324,9 @@ function renderTimeline(s){
  if(!h.length){wrap.style.display='none';return;}
  wrap.style.display='block';
  var tmode=(s&&s.delivery_mode)||'door';
+ var tcour=(s&&s.courier)||'';
  document.getElementById('dispTimeline').innerHTML=h.slice().reverse().map(function(e,i){
-  return '<li'+(i===0?' class="done"':'')+'><b>'+eh(statusLabel(e.status,tmode))+'</b>'+
+  return '<li'+(i===0?' class="done"':'')+'><b>'+eh(statusLabel(e.status,tmode,tcour))+'</b>'+
    '<span>'+eh(String(e.at||'').replace('T',' at '))+(e.note?(' · '+eh(e.note)):'')+'</span></li>';}).join('');}
 
 function dispModeChanged(){
@@ -3327,31 +3345,67 @@ function dispModeChanged(){
 
 function dispCourierChanged(){
  var c=courierBy(gv('dispCourier'));
+ var self=isSelf(c.code);
  setTxt('dispTrackLbl',c.number_label||'Tracking number');
  var t=document.getElementById('dispTrack');
- t.placeholder=(c.code==='indiapost')?'EK123456789IN':(c.code==='stcourier'?'e.g. 1234567890':'');
+ t.placeholder=(c.code==='indiapost')?'EK123456789IN'
+  :(c.code==='stcourier'?'e.g. 1234567890':(self?'Leave blank if not needed':''));
+
  var state=(dispShip&&dispShip.dest_state)||((dispInv&&dispInv.data)||{}).cstate||'';
  var country=((dispInv&&dispInv.data)||{}).ccountry||'India';
  var auto=pickCourier(state,country);
- document.getElementById('dispRule').innerHTML=(c.code===auto)
-  ? '✓ '+eh(courierReason(state,country))
-  : '<span style="color:#B07000">Overriding the usual choice — '+eh(courierReason(state,country))+'</span>';
+ var hd=document.getElementById('dispHead');
+ if(hd){
+  var tail=hd.querySelector('span');
+  if(tail)tail.textContent=self?'Delivered by you — no courier.':courierReason(state,country);}
+ document.getElementById('dispRule').innerHTML=self
+  ? '<span style="color:#2E7D32">Delivering this one yourself — no courier involved.</span>'
+  : ((c.code===auto)
+     ? '✓ '+eh(courierReason(state,country))
+     : '<span style="color:#B07000">Overriding the usual choice — '+eh(courierReason(state,country))+'</span>');
+
+ /* fields a courier needs and a hand delivery does not */
+ var mw=document.getElementById('dispMode').closest('.fg');
+ if(mw)mw.style.display=self?'none':'';
+ if(self)document.getElementById('dispMode').value='door';
+ var bk=document.getElementById('dispBooked').closest('.fg');
+ if(bk)bk.style.display=self?'none':'';
+
+ rebuildStatusOptions(self);
+ dispModeChanged();
  dispValidate();}
+
+/* Self delivery drops the two carrier-only states. */
+function rebuildStatusOptions(self){
+ var ss=document.getElementById('dispStatus');
+ if(!ss)return;
+ var keep=ss.value;
+ var all=[['PENDING','To dispatch'],['BOOKED','Booked'],['IN_TRANSIT','In transit'],
+          ['OUT_FOR_DELIVERY','Out for delivery'],['DELIVERED','Delivered'],
+          ['RTO','Returned to sender'],['LOST','Lost']];
+ var list=self?all.filter(function(o){return SELF_STATUSES.indexOf(o[0])>-1;}):all;
+ ss.innerHTML=list.map(function(o){
+  return '<option value="'+o[0]+'">'+eh(self?(SELF_LABEL[o[0]]||o[1]):o[1])+'</option>';}).join('');
+ /* a courier-only status cannot survive the switch to self delivery */
+ ss.value=(self&&SELF_STATUSES.indexOf(keep)<0)
+  ? (keep==='BOOKED'?'PENDING':keep==='IN_TRANSIT'?'OUT_FOR_DELIVERY':'PENDING')
+  : keep;
+ if(!ss.value)ss.value=list[0][0];}
 
 function dispValidate(){
  var code=gv('dispCourier'),no=gv('dispTrack').trim();
- var c=courierBy(code),ok=validTracking(code,no);
+ var c=courierBy(code),ok=validTracking(code,no),self=isSelf(code);
  var msg=document.getElementById('dispTrackMsg');
  if(!no){msg.style.color='#A08878';msg.textContent=c.number_hint||'';}
- else if(ok){msg.style.color='#2E7D32';msg.textContent='✓ Format looks right';}
+ else if(ok){msg.style.color='#2E7D32';msg.textContent=self?'Saved as a reference':'✓ Format looks right';}
  else{msg.style.color='#C0392B';msg.textContent='Does not match '+c.name+' — '+(c.number_hint||'check the receipt');}
 
  var btn=document.getElementById('dispTrackBtn');
  btn.style.display=(no&&c.track_url)?'':'none';
 
- /* typing a number while still "to dispatch" means it has been booked */
+ /* typing a number while still "to dispatch" means a courier has it */
  var ss=document.getElementById('dispStatus');
- if(no&&ss.value==='PENDING')ss.value='BOOKED';}
+ if(no&&!self&&ss.value==='PENDING')ss.value='BOOKED';}
 
 function closeDispatch(){
  document.getElementById('dispModal').classList.remove('show');
@@ -3407,7 +3461,7 @@ async function saveDispatch(){
 async function quickStatus(id,status,isBranch){
  try{
   await sbFetch(SHIP_URL+'?id=eq.'+id,'PATCH',{status:status});
-  toast('✓ Marked '+statusLabel(status,isBranch?'branch':'door').toLowerCase());
+  toast('✓ Marked '+statusLabel(status,isBranch?'branch':'door','').toLowerCase());
   await loadShipping(true);
  }catch(e){toast('Could not update: '+(e.message||''),true);}}
 
@@ -3460,8 +3514,8 @@ function exportShipCSV(){
  allShips.forEach(function(s){
   rows.push([s.invoice_no||'',s.customer_name||'',s.customer_phone||'',
    s.destination||'',s.dest_pincode||'',courierBy(s.courier).name,
-   MODE_LABEL[s.delivery_mode||'door'],
-   s.tracking_no||'',statusLabel(s.status,s.delivery_mode||'door'),
+   isSelf(s.courier)?'By hand':MODE_LABEL[s.delivery_mode||'door'],
+   s.tracking_no||'',statusLabel(s.status,s.delivery_mode||'door',s.courier),
    s.booked_date||'',s.delivered_at||'',shipDays(s)!=null?shipDays(s):'',
    s.weight_g||'',s.charges||0]);});
  var csv=rows.map(function(r){
