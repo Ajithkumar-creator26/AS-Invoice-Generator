@@ -449,7 +449,7 @@ body.sbmin .sb-meter{display:none}
       <span class="planbadge free" id="uPlan">FREE</span>
       <button class="sb-out" onclick="signOut()">Sign out</button>
     </div>
-    <div class="sb-powered">Powered by <b>AS Invoice Generator</b></div>
+    <div class="sb-powered">Powered by <b>AS Invoice Generator</b><br><span id="sbBuild" style="opacity:.7"></span></div>
   </div>
 </aside>
 
@@ -1341,6 +1341,7 @@ async function loadMyBusiness(){
  return myBiz;}
 
 function renderUserChip(){
+ try{var bv=document.getElementById('sbBuild');if(bv)bv.textContent='build '+ASIG_BUILD;}catch(e){}
  if(!session||!myBiz)return;
  var mail=(session.user&&session.user.email)||'';
  var name=myBiz.name||'My Business';
@@ -3053,6 +3054,7 @@ function contactUpgrade(){
  window.open('https://wa.me/919342382918?text='+encodeURIComponent(
   'Hi, I would like to upgrade my AS Invoice Generator plan. Account: '+mail),'_blank');}
 
+var ASIG_BUILD='2026-10-21.3';
 /* ========== COURIER TRACKING ========== */
 var SHIP_URL=SB_BASE+'/shipments';
 var COURIER_URL=SB_BASE+'/couriers';
@@ -3335,7 +3337,9 @@ function dispModeChanged(){
  if(h)h.textContent=(mode==='branch')
   ? 'Parcel waits at the courier office — tell the customer when it arrives.'
   : 'Courier takes it to the customer address.';
- /* relabel the two states whose meaning changes when the customer collects */
+ /* relabel the two states whose meaning changes when the customer collects.
+    Self delivery owns its own wording, so leave it alone. */
+ if(isSelf(gv('dispCourier')))return;
  var ss=document.getElementById('dispStatus');
  if(ss){
   for(var i=0;i<ss.options.length;i++){
