@@ -175,6 +175,10 @@ body.sbmin .sb-meter{display:none}
  font-weight:800;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap;color:#fff}
 .sbadge{display:inline-block;padding:2px 9px;border-radius:9px;font-size:8.5px;font-weight:800;
  letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+.mbadge{display:inline-block;padding:1px 7px;border-radius:8px;font-size:8px;font-weight:800;
+ letter-spacing:.4px;white-space:nowrap}
+.mbadge.door{background:#E8F5E9;color:#2E7D32}
+.mbadge.branch{background:#FFF3E0;color:#B07000}
 .sbadge.pending{background:#F5EDE8;color:#A08878}
 .sbadge.booked{background:#FFF3E0;color:#B07000}
 .sbadge.in_transit{background:#EAF3FB;color:#1565C0}
@@ -600,6 +604,11 @@ body.sbmin .sb-meter{display:none}
           <option value="indiapost">India Post</option>
           <option value="other">Other</option>
         </select>
+        <select id="shipMode" onchange="renderShipments()" style="padding:7px 10px;border:1.5px solid #E0D5CF;border-radius:6px;font-size:11.5px;font-family:'Open Sans',sans-serif">
+          <option value="all">Door &amp; branch</option>
+          <option value="door">Door delivery</option>
+          <option value="branch">Branch collection</option>
+        </select>
         <input id="shipSearch" placeholder="&#128269; Invoice, name or tracking..." oninput="renderShipments()"
           style="padding:7px 11px;border:1.5px solid #E0D5CF;border-radius:6px;font-size:11.5px;min-width:210px;font-family:'Open Sans',sans-serif">
         <button class="b" style="background:#f5ede8;color:var(--m);border:1.5px solid #E0D5CF;padding:7px 12px;font-size:11px" onclick="exportShipCSV()">&#128229; CSV</button>
@@ -640,8 +649,19 @@ body.sbmin .sb-meter{display:none}
       <div class="fg"><label>Expected by</label><input type="date" id="dispExpected"></div>
     </div>
 
-    <div class="row r3" style="margin-bottom:12px">
-      <div class="fg"><label>Pincode</label><input id="dispPin" placeholder="603202"></div>
+    <div class="row r2" style="margin-bottom:12px">
+      <div class="fg"><label>Delivery</label>
+        <select id="dispMode" onchange="dispModeChanged()">
+          <option value="door">Door delivery</option>
+          <option value="branch">Customer collects from branch</option>
+        </select>
+        <div id="dispModeHint" style="font-size:10px;color:#A08878;margin-top:4px;line-height:1.5"></div></div>
+      <div class="fg"><label>Pincode</label>
+        <input id="dispPin" placeholder="603202">
+        <div id="dispPinMsg" style="font-size:10px;margin-top:4px;line-height:1.5"></div></div>
+    </div>
+
+    <div class="row r2" style="margin-bottom:12px">
       <div class="fg"><label>Weight (g)</label><input id="dispWeight" type="number" step="10" placeholder="250"></div>
       <div class="fg"><label>Courier charge</label><input id="dispCharge" type="number" step="0.01" placeholder="0.00"></div>
     </div>
@@ -2699,6 +2719,11 @@ function renderDash(invs){
   '</tr></thead><tbody>'+rows+'</tbody></table>';}
 
 /* courier + status, or the carrier the destination implies when nothing is booked */
+function invMode(inv){
+ for(var i=0;i<allShips.length;i++)
+  if(allShips[i].invoice_id===inv.id)return allShips[i].delivery_mode||'door';
+ return 'door';}
+
 function shipCell(inv){
  var d=inv.data||{};
  var code=inv.ship_courier||pickCourier(d.cstate,d.ccountry);
@@ -2706,7 +2731,7 @@ function shipCell(inv){
  var st=inv.ship_status||'PENDING';
  return '<span class="cbadge" style="background:'+eh(c.colour||'#5C0F28')+';font-size:8px">'+eh(c.name)+'</span>'+
   '<div style="margin-top:3px"><span class="sbadge '+String(st).toLowerCase()+'">'+
-   eh(SHIP_LABEL[st]||st)+'</span></div>'+
+   eh(statusLabel(st,invMode(inv)))+'</span></div>'+
   (inv.tracking_no?('<div style="font-size:9px;color:#AAA;font-family:\'Courier New\',monospace;margin-top:2px">'+
     eh(inv.tracking_no)+'</div>'):'');}
 
@@ -3052,6 +3077,31 @@ var DEFAULT_COURIERS=[
 
 var SHIP_LABEL={PENDING:'To dispatch',BOOKED:'Booked',IN_TRANSIT:'In transit',
  OUT_FOR_DELIVERY:'Out for delivery',DELIVERED:'Delivered',RTO:'Returned',LOST:'Lost'};
+var MODE_LABEL={door:'Door delivery',branch:'Branch collection'};
+
+/* The same status reads differently depending on who does the last mile. */
+function statusLabel(st,mode){
+ if(mode==='branch'){
+  if(st==='OUT_FOR_DELIVERY')return 'Ready to collect';
+  if(st==='DELIVERED')return 'Collected';}
+ return SHIP_LABEL[st]||st;}
+
+/* Pincodes are typed inside the free-text address, so pull the first
+   standalone 6-digit block. A 10-digit phone number cannot match, because
+   both ends must fall on a word boundary. */
+function extractPincode(addr){
+ var m=String(addr||'').match(/\b[1-9][0-9]{5}\b/);
+ return m?m[0]:'';}
+
+/* Best available pincode: what was saved on the shipment, then an explicit
+   field if the invoice ever carries one, then whatever is in the address. */
+function pincodeFor(ship,inv){
+ if(ship&&ship.dest_pincode)return {pin:ship.dest_pincode,from:'saved'};
+ var d=(inv&&inv.data)||{};
+ if(d.cpin)return {pin:String(d.cpin).trim(),from:'invoice'};
+ var got=extractPincode(d.ca);
+ if(got)return {pin:got,from:'address'};
+ return {pin:'',from:'none'};}
 var SHIP_ORDER=['PENDING','BOOKED','IN_TRANSIT','OUT_FOR_DELIVERY','DELIVERED'];
 
 function couriers(){return COURIERS||DEFAULT_COURIERS;}
@@ -3140,6 +3190,9 @@ function renderShipments(){
  var cf=gv('shipCourier')||'all';
  if(cf!=='all')list=list.filter(function(s){return s.courier===cf;});
 
+ var mf=gv('shipMode')||'all';
+ if(mf!=='all')list=list.filter(function(s){return (s.delivery_mode||'door')===mf;});
+
  var q=(gv('shipSearch')||'').toLowerCase();
  if(q)list=list.filter(function(s){
   return [s.invoice_no,s.customer_name,s.tracking_no,s.destination].join(' ').toLowerCase().indexOf(q)>-1;});
@@ -3161,6 +3214,10 @@ function renderShipments(){
   '<th>Tracking No.</th><th>Booked</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+
  list.map(function(s){
   var c=courierBy(s.courier);
+  var mode=s.delivery_mode||'door';
+  var sinv=null;
+  for(var k=0;k<allInvs.length;k++)if(allInvs[k].id===s.invoice_id)sinv=allInvs[k];
+  var pin=s.dest_pincode||pincodeFor(null,sinv).pin;
   var ok=validTracking(s.courier,s.tracking_no);
   var age=s.booked_date?Math.round((new Date()-new Date(s.booked_date))/86400000):null;
   var stale=(age!=null&&age>7&&['DELIVERED','RTO','LOST'].indexOf(s.status)<0);
@@ -3169,8 +3226,11 @@ function renderShipments(){
    '<td>'+eh(s.customer_name||'—')+
     (s.customer_phone?('<div style="font-size:9.5px;color:#AAA">'+eh(s.customer_phone)+'</div>'):'')+'</td>'+
    '<td style="font-size:11px;color:#666">'+eh(s.destination||'—')+
-    (s.dest_pincode?('<div style="font-size:9.5px;color:#AAA">'+eh(s.dest_pincode)+'</div>'):'')+'</td>'+
-   '<td><span class="cbadge" style="background:'+eh(c.colour||'#5C0F28')+'">'+eh(c.name)+'</span></td>'+
+    (pin?('<div style="font-size:9.5px;color:'+(s.dest_pincode?'#AAA':'#C9A844')+'">'+eh(pin)+
+      (s.dest_pincode?'':' (from address)')+'</div>'):'')+'</td>'+
+   '<td><span class="cbadge" style="background:'+eh(c.colour||'#5C0F28')+'">'+eh(c.name)+'</span>'+
+    '<div style="margin-top:3px"><span class="mbadge '+(mode==='branch'?'branch':'door')+'">'+
+     (mode==='branch'?'BRANCH':'DOOR')+'</span></div></td>'+
    '<td style="font-family:\'Courier New\',monospace;font-size:11.5px;letter-spacing:.5px">'+
     (s.tracking_no
      ? (eh(s.tracking_no)+(ok===false?'<div style="font-size:9px;color:#C0392B;font-family:\'Open Sans\',sans-serif">format looks wrong</div>':''))
@@ -3179,11 +3239,12 @@ function renderShipments(){
     (stale?('<div style="font-size:9px;color:#C0392B">'+age+' days out</div>')
       :(d!=null?('<div style="font-size:9px;color:#2E7D32">'+d+'d to deliver</div>'):''))+'</td>'+
    '<td><span class="sbadge '+String(s.status||'pending').toLowerCase()+'">'+
-    eh(SHIP_LABEL[s.status]||s.status)+'</span></td>'+
+    eh(statusLabel(s.status,mode))+'</span></td>'+
    '<td><div class="tact">'+
     '<button class="tbtn ed" title="Dispatch / update" onclick="openDispatch(\''+s.id+'\')">📦</button>'+
     (s.tracking_no?('<button class="tbtn vi" title="Track" onclick="trackShipment(\''+s.id+'\')">🔍</button>'):'')+
-    (s.status!=='DELIVERED'?('<button class="tbtn ic" title="Mark delivered" onclick="quickStatus(\''+s.id+'\',\'DELIVERED\')">✓</button>'):'')+
+    (s.status!=='DELIVERED'?('<button class="tbtn ic" title="'+(mode==='branch'?'Mark collected':'Mark delivered')+
+      '" onclick="quickStatus(\''+s.id+'\',\'DELIVERED\','+(mode==='branch'?'true':'false')+')">✓</button>'):'')+
    '</div></td></tr>';}).join('')+'</tbody></table>';}
 
 /* ---- dispatch modal ---- */
@@ -3221,7 +3282,16 @@ function openDispatch(shipId,invId){
  document.getElementById('dispStatus').value=(s&&s.status)||'PENDING';
  document.getElementById('dispBooked').value=(s&&s.booked_date)||'';
  document.getElementById('dispExpected').value=(s&&s.expected_at)||'';
- document.getElementById('dispPin').value=(s&&s.dest_pincode)||'';
+ var pk=pincodeFor(s,inv);
+ document.getElementById('dispPin').value=pk.pin;
+ var pmsg=document.getElementById('dispPinMsg');
+ if(pmsg){
+  if(pk.from==='address'){pmsg.style.color='#2E7D32';pmsg.textContent='✓ Picked up from the customer address';}
+  else if(pk.from==='invoice'){pmsg.style.color='#2E7D32';pmsg.textContent='✓ From the invoice';}
+  else if(pk.from==='saved'){pmsg.style.color='#A08878';pmsg.textContent='Saved on this shipment';}
+  else{pmsg.style.color='#B07000';pmsg.textContent='No 6-digit pincode found in the address — type it in';}}
+ document.getElementById('dispMode').value=(s&&s.delivery_mode)||'door';
+ dispModeChanged();
  document.getElementById('dispWeight').value=(s&&s.weight_g)||'';
  document.getElementById('dispCharge').value=(s&&s.charges)||(d.ship||'');
  document.getElementById('dispNote').value='';
@@ -3236,9 +3306,24 @@ function renderTimeline(s){
  if(typeof h==='string'){try{h=JSON.parse(h);}catch(e){h=[];}}
  if(!h.length){wrap.style.display='none';return;}
  wrap.style.display='block';
+ var tmode=(s&&s.delivery_mode)||'door';
  document.getElementById('dispTimeline').innerHTML=h.slice().reverse().map(function(e,i){
-  return '<li'+(i===0?' class="done"':'')+'><b>'+eh(SHIP_LABEL[e.status]||e.status)+'</b>'+
+  return '<li'+(i===0?' class="done"':'')+'><b>'+eh(statusLabel(e.status,tmode))+'</b>'+
    '<span>'+eh(String(e.at||'').replace('T',' at '))+(e.note?(' · '+eh(e.note)):'')+'</span></li>';}).join('');}
+
+function dispModeChanged(){
+ var mode=gv('dispMode');
+ var h=document.getElementById('dispModeHint');
+ if(h)h.textContent=(mode==='branch')
+  ? 'Parcel waits at the courier office — tell the customer when it arrives.'
+  : 'Courier takes it to the customer address.';
+ /* relabel the two states whose meaning changes when the customer collects */
+ var ss=document.getElementById('dispStatus');
+ if(ss){
+  for(var i=0;i<ss.options.length;i++){
+   var o=ss.options[i];
+   if(o.value==='OUT_FOR_DELIVERY')o.textContent=(mode==='branch')?'Ready to collect':'Out for delivery';
+   if(o.value==='DELIVERED')o.textContent=(mode==='branch')?'Collected':'Delivered';}}}
 
 function dispCourierChanged(){
  var c=courierBy(gv('dispCourier'));
@@ -3291,6 +3376,7 @@ async function saveDispatch(){
    booked_date:gv('dispBooked')||null,
    expected_at:gv('dispExpected')||null,
    dest_pincode:gv('dispPin')||null,
+   delivery_mode:gv('dispMode')||'door',
    weight_g:parseInt(gv('dispWeight'))||null,
    charges:parseFloat(gv('dispCharge'))||0,
    note:gv('dispNote')||null};
@@ -3318,10 +3404,10 @@ async function saveDispatch(){
   else toast('Could not save: '+m,true);
  }finally{btn.disabled=false;btn.textContent='Save';}}
 
-async function quickStatus(id,status){
+async function quickStatus(id,status,isBranch){
  try{
   await sbFetch(SHIP_URL+'?id=eq.'+id,'PATCH',{status:status});
-  toast('✓ Marked '+(SHIP_LABEL[status]||status).toLowerCase());
+  toast('✓ Marked '+statusLabel(status,isBranch?'branch':'door').toLowerCase());
   await loadShipping(true);
  }catch(e){toast('Could not update: '+(e.message||''),true);}}
 
@@ -3369,12 +3455,13 @@ function fallbackCopy(t){
 
 function exportShipCSV(){
  if(!allShips.length){toast('Nothing to export',true);return;}
- var rows=[['Invoice','Customer','Phone','Destination','Pincode','Courier',
+ var rows=[['Invoice','Customer','Phone','Destination','Pincode','Courier','Delivery',
             'Tracking No','Status','Booked','Delivered','Days','Weight (g)','Charge']];
  allShips.forEach(function(s){
   rows.push([s.invoice_no||'',s.customer_name||'',s.customer_phone||'',
    s.destination||'',s.dest_pincode||'',courierBy(s.courier).name,
-   s.tracking_no||'',SHIP_LABEL[s.status]||s.status,
+   MODE_LABEL[s.delivery_mode||'door'],
+   s.tracking_no||'',statusLabel(s.status,s.delivery_mode||'door'),
    s.booked_date||'',s.delivered_at||'',shipDays(s)!=null?shipDays(s):'',
    s.weight_g||'',s.charges||0]);});
  var csv=rows.map(function(r){
