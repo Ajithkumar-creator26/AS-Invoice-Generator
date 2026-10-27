@@ -9,6 +9,9 @@
 
    It must sit AFTER the app's own </script>, not inside it.
 
+   Adds a "Recently Deleted" button to the Invoice Collection header,
+   next to + New Invoice.
+
    Requires feature_invoice_trash.sql to have been run in Supabase.
 
    Depends on nothing in the app — its own network calls, styling and
@@ -93,35 +96,39 @@
     setTimeout(function(){ t.remove(); }, 3600);
   }
 
-  /* ---------- the button ---------- */
+  /* ---------- the button ----------
+     Sits in the Invoice Collection header, beside "+ New Invoice". */
   function addNavItem(){
-    if (document.getElementById('tabTrash')) return true;
+    var existing = document.getElementById('tabTrash');
+    /* Three panels share .dth-right (Dashboard, Inventory, Rentals), so
+       querySelector('.dth-right') can land on the wrong one. The dashboard
+       search box is unique to the Invoice Collection header, so use its
+       parent as the anchor. */
+    var anchor = document.getElementById('dashSearch');
+    var host = anchor && anchor.parentElement;
 
-    var nav = document.querySelector('.sb-nav');
-    if (nav) {
+    if (host) {
+      if (existing && existing.parentElement === host) return true;
+      if (existing) existing.remove();          /* moved from somewhere else */
       var b = document.createElement('button');
-      b.className = 'snav';
+      b.className = 'b';
       b.id = 'tabTrash';
       b.type = 'button';
+      b.title = 'Invoices you have deleted';
+      b.innerHTML = '\u{1F5D1} Recently Deleted';
+      b.style.cssText = 'font-size:11px;padding:6px 13px;background:#fff;color:#7A1535;' +
+        'border:1.5px solid #E0D5CF;border-radius:7px;font-weight:700;cursor:pointer;' +
+        "font-family:'Open Sans',sans-serif;white-space:nowrap";
+      b.addEventListener('mouseenter', function(){ b.style.background = '#FAF5F2'; });
+      b.addEventListener('mouseleave', function(){ b.style.background = '#fff'; });
       b.addEventListener('click', openTrash);
-      b.innerHTML = '<span class="snav-ico">\u{1F5D1}</span>' +
-                    '<span class="snav-lbl">Recently Deleted</span>';
-      var sep = nav.querySelector('.sb-sep');
-      if (sep) nav.insertBefore(b, sep); else nav.appendChild(b);
+      host.appendChild(b);                      /* after "+ New Invoice" */
       return true;
     }
 
-    var f = document.createElement('button');
-    f.id = 'tabTrash';
-    f.type = 'button';
-    f.textContent = '\u{1F5D1} Recently Deleted';
-    f.addEventListener('click', openTrash);
-    f.style.cssText = 'position:fixed;right:16px;bottom:16px;z-index:9997;' +
-      'background:#5C0F28;color:#C9A844;border:none;border-radius:8px;' +
-      'padding:10px 15px;font-size:12px;font-weight:700;cursor:pointer;' +
-      "font-family:'Open Sans',sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25)";
-    document.body.appendChild(f);
-    return true;
+    /* dashboard header not on the page yet — keep waiting rather than
+       dropping a stray button somewhere odd */
+    return false;
   }
 
   /* ---------- modal ---------- */
@@ -305,15 +312,24 @@
 
   /* The sidebar may not exist yet. Try now, on DOM ready, on load, and then
      a few times after, so placement never depends on script order. */
-  function tryAdd(){ try { addNavItem(); } catch (e) {} }
+  function tryAdd(){ try { return addNavItem(); } catch (e) { return false; } }
   tryAdd();
   document.addEventListener('DOMContentLoaded', tryAdd);
   window.addEventListener('load', tryAdd);
+  /* The dashboard header only exists once the person has signed in, so keep
+     looking for a while, and watch for it appearing later. */
   var tries = 0;
   var iv = setInterval(function(){
-    tryAdd();
-    if (++tries > 10 || document.querySelector('.sb-nav #tabTrash')) clearInterval(iv);
+    if (tryAdd() || ++tries > 60) clearInterval(iv);
   }, 500);
 
-  console.log('Recently Deleted: ready. Open it from the sidebar, or run asigOpenTrash() here.');
+  if (window.MutationObserver) {
+    var mo = new MutationObserver(function(){
+      if (tryAdd()) { mo.disconnect(); clearInterval(iv); }
+    });
+    try { mo.observe(document.body, { childList: true, subtree: true }); } catch (e) {}
+    setTimeout(function(){ try { mo.disconnect(); } catch (e) {} }, 120000);
+  }
+
+  console.log('Recently Deleted: ready. Button sits beside + New Invoice. Or run asigOpenTrash() here.');
 })();
