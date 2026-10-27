@@ -3054,7 +3054,7 @@ function contactUpgrade(){
  window.open('https://wa.me/919342382918?text='+encodeURIComponent(
   'Hi, I would like to upgrade my AS Invoice Generator plan. Account: '+mail),'_blank');}
 
-var ASIG_BUILD='2026-10-21.3';
+var ASIG_BUILD='2026-10-27.1';
 /* ========== COURIER TRACKING ========== */
 var SHIP_URL=SB_BASE+'/shipments';
 var COURIER_URL=SB_BASE+'/couriers';
@@ -4709,5 +4709,9 @@ document.addEventListener('keydown',function(e){
 
 window.addEventListener('load',init);
 </script>
+
+<!-- Recently Deleted — needs trash.js beside this file,
+     and feature_invoice_trash.sql run in Supabase -->
+<script src="trash.js"></script>
 </body>
 </html>
